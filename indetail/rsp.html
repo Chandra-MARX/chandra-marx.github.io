@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Using Response Matrices with marx &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using marx with SAOSAC" href="saosac.html" />
+    <link rel="prev" title="Simulating Aspect with marx" href="aspect.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="saosac.html" title="Using marx with SAOSAC"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="aspect.html" title="Simulating Aspect with marx"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" accesskey="U">Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Using Response Matrices with <strong>marx</strong></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="using-response-matrices-with-marx">
+<span id="rsp"></span><h1>Using Response Matrices with <strong>marx</strong><a class="headerlink" href="#using-response-matrices-with-marx" title="Link to this heading">¶</a></h1>
+<p>The detector models within <strong>marx</strong> include analytic representations of
+the intrinsic spectral resolution of these instruments. For some users,
+a higher degree of accuracy may be necessary. <strong>marx</strong> allows users to
+supersede the built-in spectral response function using an external
+spectral response matrix file (RMF). In this section, we describe how to
+use the <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool in conjunction with these RMF files.</p>
+<section id="what-is-a-response-matrix">
+<h2>What is a Response Matrix?<a class="headerlink" href="#what-is-a-response-matrix" title="Link to this heading">¶</a></h2>
+<p>As commonly employed, the spectral response matrix or spectral
+redistribution function defines the mapping of input photon energy to
+detected pulse height for a given detector. In this sense, it includes
+the spectral resolving power of the detector but by definition does
+<strong>not</strong> include the quantum efficiency. Typically, these detector
+response matrices are stored as response matrix files (RMFs) in the form
+of FITS binary tables.</p>
+<p>The format for an RMF has been defined by HEASARC and <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> has been
+designed to work with RMFs which adhere to this format. Specifically,
+the <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool checks the indicated RMF file for valid values of the
+HDUCLAS3 FITS keyword. HEASARC-allowed values for this keyword include
+<code class="docutils literal notranslate"><span class="pre">REDIST</span></code>, <code class="docutils literal notranslate"><span class="pre">DETECTOR</span></code>, or <code class="docutils literal notranslate"><span class="pre">FULL</span></code>. A value of <code class="docutils literal notranslate"><span class="pre">REDIST</span></code> indicates a bare
+redistribution matrix while <code class="docutils literal notranslate"><span class="pre">DETECTOR</span></code> and <code class="docutils literal notranslate"><span class="pre">FULL</span></code> indicate that a quantum
+efficiency or effective area have been included, respectively. The
+<a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool requires a value of <code class="docutils literal notranslate"><span class="pre">HDUCLAS3=REDIST</span></code>. The <code class="docutils literal notranslate"><span class="pre">--force</span></code> option
+can be used to make <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> accept RMF files with other values of the
+HDUCLAS3 keyword. In such circumstances, the input marx simulation
+should be run with <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetIdeal"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetIdeal=&quot;yes&quot;</span></code></a>.</p>
+<p>Response matrices for the ACIS CCDs can be created using the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tool
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a>. More information and the necessary calibration data to create
+ACIS RMFs are available from the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>. There are currently no
+RMFs available for the HRC.</p>
+<figure class="align-center" id="figrmf">
+<img alt="../_images/fig_rmf.png" src="../_images/fig_rmf.png" />
+<figcaption>
+<p><span class="caption-text">A simulated ACIS pulse height spectrum computed using a marx simulation, the
+<a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool, and RMF files for a FI and BI CCD. The upper curve shows the PHA spectrum
+for the BI RMF while the lower curve represents a typical FI RMF near the ACIS-I aimpoint.
+The input spectrum was the same thermal plasma spectrum used in the examples in <a class="reference internal" href="../examples/ACISpowerpileup/powerlaw.html#sect-ex-acisccd"><span class="std std-ref">Simulating a user-defined CCD spectrum with ACIS</span></a>.</span><a class="headerlink" href="#figrmf" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="the-marxrsp-tool">
+<h2>The marxrsp Tool<a class="headerlink" href="#the-marxrsp-tool" title="Link to this heading">¶</a></h2>
+<p>Like all post-processing tools in the <strong>marx</strong> suite, <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> operates
+on an existing simulation directory created using marx. The user
+specifies a simulation directory and an RMF to use in calculating the
+pulse height spectrum. For example, to fold the Raymond-Smith thermal
+plasma spectrum simulated in <a class="reference internal" href="../examples/ACISpowerpileup/powerlaw.html#sect-ex-acisccd"><span class="std std-ref">Simulating a user-defined CCD spectrum with ACIS</span></a> through an ACIS RMF
+called <code class="docutils literal notranslate"><span class="pre">acis7b_aim_pha_rmf.fits</span></code>, we would use the syntax:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxrsp --rmf acis7b_aim_pha_rmf.fits --marx therm/
+</pre></div>
+</div>
+<p>Here, the pre-existing simulation directory is called therm.
+Operationally, marxrsp will check the indicated RMF for a valid HDUCLAS3
+keyword value. If <code class="docutils literal notranslate"><span class="pre">HDUCLAS3=REDIST</span></code>, <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> will read the <code class="docutils literal notranslate"><span class="pre">energy.dat</span></code>
+binary vector from the simulation directory and multiply it by the
+values in the RMF to determine the event pulse heights or PHA values. A
+new <code class="docutils literal notranslate"><span class="pre">pha.dat</span></code> binary vector will then be written back out to the
+<strong>marx</strong> simulation directory. The old <code class="docutils literal notranslate"><span class="pre">pha.dat</span></code> file, containing the
+pulse height spectrum calculated using <strong>marx</strong>’s internal
+redistribution function, will be renamed to <code class="docutils literal notranslate"><span class="pre">pha.dat.BAK</span></code>.
+Figure <a class="reference internal" href="#figrmf">figrmf</a> shows the pulse height spectra obtained from folding
+the thermal spectrum simulation from  <a class="reference internal" href="../examples/ACISpowerpileup/powerlaw.html#sect-ex-acisccd"><span class="std std-ref">Simulating a user-defined CCD spectrum with ACIS</span></a> through
+RMFs for an ACIS frontside and backside illuminated CCD.</p>
+<p>By default, marxrsp will process all events in the specified simulation
+directory. Users may restrict which photons are folded through the RMF
+using the <code class="docutils literal notranslate"><span class="pre">--chip</span></code> parameter. For example, the command</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxrsp --chip 7 --rmf acis7b_aim_pha_rmf.fits --marx therm/
+</pre></div>
+</div>
+<p>would calculate pulse heights for only those events which landed on chip
+7 (the aimpoint of the ACIS-S array) in the calculation of the pulse
+height spectrum.  See <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> for a detailed
+description of all options.</p>
+<p>Note, marxrsp cannot be used to process the output products of the
+<a class="reference internal" href="../Reference/tools.html#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a> tool. marxrsp uses the binary output vector <code class="docutils literal notranslate"><span class="pre">energy.dat</span></code> to compute
+the new PHA value for an event. However, the events produced by the
+pileup tool are potentially the sum of multiple photons and therefore
+their true energies are unknown.</p>
+</section>
+<section id="limitations-of-the-marxrsp-tool">
+<h2>Limitations of the marxrsp tool<a class="headerlink" href="#limitations-of-the-marxrsp-tool" title="Link to this heading">¶</a></h2>
+<p>Due to spatial variations in the gain across the ACIS CCDs, the detected
+PHA value of an event will vary even for monochromatic photons. This
+variation is illustrated in Figure <a class="reference internal" href="#gain">Gain</a> which shows the PHA
+spectra obtained for the S3 and I3 ACIS CCDs from a uniform illumination
+of 1.0 keV photons. During CXC Level 1 processing, the known calibration
+of the gain is used to correct the PHA values and produce a list of
+“pulse invariant” (PI) detector channels. These PI values are
+essentially uniformly binned energy values with bins of 14.6 eV.
+<strong>marx</strong> emulates this behavior in <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> by using the same ACIS gain
+map as the CXC Level 1 pipeline. However, processing a simulation with
+<a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> is equivalent to replacing the actual spatially varying gains
+with whatever uniform value was used in the construction of the RMF. If
+a simulation which has been folded though an RMF file with <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> is
+subsequently written to a Level 1 FITS events with <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>, the PI
+values in the file event file will be incorrect. <strong>Consequently, if
+using marxrsp, users should perform all spectral extractions and data
+analysis in PHA space.</strong></p>
+<figure class="align-center" id="gain">
+<img alt="../_images/fig_gain.png" src="../_images/fig_gain.png" />
+<figcaption>
+<p><span class="caption-text">The PHA spectra obtained for simulations of the S3 and I3 ACIS CCDs from a
+uniform illumination of 1.0 keV photons. The upper curve shows the PHA spectrum for the
+S3 while the lower curve represents I3. Both spectra have been normalized to the same total
+number of counts.</span><a class="headerlink" href="#gain" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using Response Matrices with <strong>marx</strong></a><ul>
+<li><a class="reference internal" href="#what-is-a-response-matrix">What is a Response Matrix?</a></li>
+<li><a class="reference internal" href="#the-marxrsp-tool">The marxrsp Tool</a></li>
+<li><a class="reference internal" href="#limitations-of-the-marxrsp-tool">Limitations of the marxrsp tool</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="aspect.html"
+                          title="previous chapter">Simulating Aspect with <strong>marx</strong></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="saosac.html"
+                          title="next chapter">Using <strong>marx</strong> with SAOSAC</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="saosac.html" title="Using marx with SAOSAC"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="aspect.html" title="Simulating Aspect with marx"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" >Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Using Response Matrices with <strong>marx</strong></a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Downloading and Installing Marx &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Current caveats for MARX" href="caveats.html" />
+    <link rel="prev" title="Highlights for each version of marx" href="news.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="caveats.html" title="Current caveats for MARX"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="news.html" title="Highlights for each version of marx"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" accesskey="U">MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Downloading and Installing Marx</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="downloading-and-installing-marx">
+<span id="installing"></span><h1>Downloading and Installing Marx<a class="headerlink" href="#downloading-and-installing-marx" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> is distributed in the form of a compressed tar file and must be
+compiled before it can be used.  This process is fairly painless and
+is something that even those who have never compiled a C program
+before can do.  It is written in ANSI-C (with a few POSIX extensions)
+and is intended to be portable across most 32 and 64 bit Unix
+operating systems, as well as MacOSX and CYGWIN.</p>
+<section id="the-short-cut">
+<h2>The short-cut<a class="headerlink" href="#the-short-cut" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> is now distributed as conda packages. <strong>marx</strong> is provided as one
+of those pre-complied binary packages. If you follow the
+<a class="reference external" href="https://cxc.cfa.harvard.edu/ciao/threads/ciao_install_conda/">default instruction for the CIAO installation</a>
+marx is included in that install.</p>
+</section>
+<section id="the-normal-way">
+<h2>The normal way<a class="headerlink" href="#the-normal-way" title="Link to this heading">¶</a></h2>
+<p>First download <strong>marx</strong> using either the ftp <a class="reference external" href="ftp://space.mit.edu/pub/cxc/marx/v5.5/marx-dist-5.5.3.tar.gz">distribution</a> or through
+<a class="reference download internal" download="" href="../_downloads/2fd1bb0cee7d272eda67bd14c107ec74/marx-dist-5.5.3.tar.gz"><code class="xref download docutils literal notranslate"><span class="pre">http</span></code></a>
+(depending on your network, download from http or ftp might work better)
+and copy it to a directory that has at least a
+couple of hundred megabytes of free disk space.  Note that this
+directory and its contents will no longer be needed after <strong>marx</strong> has
+been installed.</p>
+<p>Next uncompress and untar the file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>gzip -d marx-dist-5.5.3.tar.gz
+tar xf marx-dist-5.5.3.tar
+</pre></div>
+</div>
+<p>(Some versions of tar can also uncompress the file, permitting the
+above to be accomplished in one step).  At this point the tar file is
+no longer needed so it may be removed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>rm marx-dist-5.5.3.tar
+</pre></div>
+</div>
+<p>Now change to the newly created directory to start the build process:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>cd marx-5.5.3
+</pre></div>
+</div>
+<p>The next step is to run the <code class="docutils literal notranslate"><span class="pre">configure</span></code> script, which will probe your
+system to see what tools are available for compiling <strong>marx</strong>.  Before
+doing so, we recommended that you read the <code class="docutils literal notranslate"><span class="pre">INSTALL</span></code> file.</p>
+<p>Note that the configure script will take the <code class="docutils literal notranslate"><span class="pre">CC</span></code>, <code class="docutils literal notranslate"><span class="pre">CFLAGS</span></code>, <code class="docutils literal notranslate"><span class="pre">LDFLAGS</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">ARCH</span></code>, variables from your environment, if they are defined. If not, it
+will first look for gcc. So, if you have gcc installed, and you want to
+use a compiler other than gcc, such as acc perhaps, you can instruct the
+configure script to use the other compiler using:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% setenv CC acc
+unix% setenv CFLAGS -g
+unix% ./configure
+</pre></div>
+</div>
+<p>At this point you need to think about where you want <strong>marx</strong> to be
+installed, and if you want the optional <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> program to also be
+created (<a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> was written for calibration purposes - it is
+not needed by most users).  If you want <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> to be installed, then
+you will also need to have <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/cfitsio.html">cfitsio</a> compiled and installed as detailed
+in the <code class="docutils literal notranslate"><span class="pre">INSTALL</span></code> file.  For simplicity, here it is assumed that <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a>
+will not be installed.</p>
+<p>Assume that you want <strong>marx</strong> installed in its own tree under
+<code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/</span></code>.  This value is known as the
+<em>installation-prefix</em>.  It is important to understand that with
+this choice the resulting <strong>marx</strong> executable will be placed in
+<code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/bin/</span></code>.</p>
+<p>Now run the <code class="docutils literal notranslate"><span class="pre">configure</span></code> script
+specifying this value as the <code class="docutils literal notranslate"><span class="pre">--prefix</span></code> argument:</p>
+<pre class="literal-block">./configure --prefix=/opt/marx/5.5</pre>
+<p>If all has gone well, the last bit of output from the above command
+should resemble:</p>
+<pre class="literal-block">You are compiling MARX with the following compiler configuration:
+   CC = gcc
+      .
+      .
+   MARX parameter files will be installed in /opt/marx/5.5/share/marx/pfiles/.
+
+   To continue the build process, run 'make'.</pre>
+<p>If not, then you may not have the necessary tools installed to compile
+<strong>marx</strong>, or you have an unsupported system.  If you are unable to
+resolve the problem on your own, then contact <a class="reference external" href="mailto:marx-help&#37;&#52;&#48;space&#46;mit&#46;edu">marx-help<span>&#64;</span>space<span>&#46;</span>mit<span>&#46;</span>edu</a>.</p>
+<p>Assuming all has gone well, execute the <code class="docutils literal notranslate"><span class="pre">make</span></code> command:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>make
+</pre></div>
+</div>
+<dl class="simple">
+<dt>(If this step fails and you are unable to resolve the problem, then</dt><dd><p>contact <a class="reference external" href="mailto:marx-help&#37;&#52;&#48;space&#46;mit&#46;edu">marx-help<span>&#64;</span>space<span>&#46;</span>mit<span>&#46;</span>edu</a>.)</p>
+</dd>
+</dl>
+<p>The final step in the installation process is to actually install the
+compiled executables.  If you do not have write permission to the
+installation-prefix directory (<code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version</span></code> in this case),
+then you will need to obtain the appropriate privileges to complete
+the next step.  For example, this may require temporarily becoming the
+<code class="docutils literal notranslate"><span class="pre">root</span></code> user.  Now run:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>make install
+</pre></div>
+</div>
+<p>to complete the installation.</p>
+<p>The install step will create the following directories:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/bin/</span></code></dt><dd><p>Directory where <strong>marx</strong>, <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>, and other <strong>marx</strong> -related executables are placed.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/share/marx/data/</span></code></dt><dd><p>Directory under which the <strong>marx</strong> calibration data files are located.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/share/marx/pfiles/</span></code></dt><dd><p>The parameter files used by <strong>marx</strong> are located here.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/share/doc/marx/</span></code></dt><dd><p>Directory containing <strong>marx</strong> -related documentation.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/lib/</span></code></dt><dd><p>Static versions of libraries distributed with and used by <strong>marx</strong> are put here.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/include/</span></code></dt><dd><p>The C header files of the <strong>marx</strong> libraries are put here.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/lib/marx/</span></code></dt><dd><p>Contains miscellaneous <strong>marx</strong> -related tools.</p>
+</dd>
+</dl>
+<p>As indicated above, the <strong>marx</strong> executable will be copied to <code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/bin/</span></code>.
+In addition, the <strong>marx</strong> installation contains some other tools described in
+<a class="reference internal" href="../Reference/tools.html#tools"><span class="std std-ref">The marx tool suite</span></a>.
+Binary executables for those tools are located in the same directory as <strong>marx</strong>
+itself. Tools that are written as scripts in python, ISIS or IDL can be found
+in <code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/lib/marx/</span></code>.
+Both directories should be added to the user’s <code class="docutils literal notranslate"><span class="pre">PATH</span></code> environment variable.
+For e.g. a tcsh shell user add the following line to your <code class="docutils literal notranslate"><span class="pre">~/.cshrc</span></code> file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>set path = ( /opt/marx/marx-version/bin /opt/marx/marx-version/lib/marx $path )
+</pre></div>
+</div>
+<p>As the above indicates, the <strong>marx</strong> data files will be copied to the
+<code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/share/marx/data/</span></code> directory.  <strong>marx</strong> will
+automatically search this directory for calibration files.  Also note
+that the parameter files will be placed under
+<code class="docutils literal notranslate"><span class="pre">/opt/marx/marx-version/share/marx/pfiles/</span></code>.  As a helpful reminder, this
+location is reported when <strong>marx</strong> is invoked as <code class="docutils literal notranslate"><span class="pre">marx</span> <span class="pre">--help</span></code>.</p>
+<p>The parameter files are <strong>NOT</strong> automatically loaded by <strong>marx</strong> unless the <code class="docutils literal notranslate"><span class="pre">UPARM</span></code> or <code class="docutils literal notranslate"><span class="pre">PFILES</span></code> environment variables are set appropriately.  For this
+reason, it is recommended that the user copy these files to the
+directory where the simulation will be performed.</p>
+</section>
+<section id="apple-s-arm-architecture-m1-m2-chips">
+<h2>Apple’s ARM architecture (M1/M2 chips)<a class="headerlink" href="#apple-s-arm-architecture-m1-m2-chips" title="Link to this heading">¶</a></h2>
+<p>Depending on your setup, it might be necessary to explicitly point to the XCode
+SDK, when using <code class="docutils literal notranslate"><span class="pre">clang</span></code> (or its alias <code class="docutils literal notranslate"><span class="pre">gcc</span></code>) installed through Apple’s Xcode:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%&gt; setenv CFLAGS &quot;-g -I/Library/Developer/CommandLineTools/SDKs/MacOSX11.0.sdk/usr/include&quot;
+</pre></div>
+</div>
+<p>before calling the usual:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>%&gt; ./configure
+%&gt; make
+%&gt; make install
+</pre></div>
+</div>
+</section>
+<section id="special-cases">
+<h2>Special cases<a class="headerlink" href="#special-cases" title="Link to this heading">¶</a></h2>
+<p>For most users, the steps described above are all that is needed. In this section we provide instruction for a few
+special cases that are a little more involved.</p>
+<section id="building-marxrsp">
+<h3>Building marxrsp<a class="headerlink" href="#building-marxrsp" title="Link to this heading">¶</a></h3>
+<p>The above procedure will compile the majority of the programs in the
+<strong>marx</strong> suite. The exceptions are the <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> and <a class="reference internal" href="../Reference/tools.html#rspdump"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">rspdump</span></code></a> tools which
+allows users to work with user provided FITS response matrix file (RMF).
+In order to compile <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> and <a class="reference internal" href="../Reference/tools.html#rspdump"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">rspdump</span></code></a>, you will need to obtain and
+install the CFITSIO library if you do not already have it installed on
+your system. The library can be obtained from the HEASARC web page as <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/cfitsio.html">cfitsio</a>.</p>
+<p>Instructions for installing the library are included with the CFITSIO
+source code and will not be discussed here.</p>
+<p>After installing the CFITSIO library, you must edit the Makefile in the
+<code class="docutils literal notranslate"><span class="pre">marxrsp</span></code> directory to point to the library. If you have the HEASARC
+FTOOLS or LHEASOFT packages installed on your system, you can use the
+CFITSIO library distributed as part of that package. The following
+excerpt from the Makefile indicates the two paths which must be defined
+in order to build the <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool. The <code class="docutils literal notranslate"><span class="pre">CFITSIO_LIB</span></code> and <code class="docutils literal notranslate"><span class="pre">CFITSIO_INC</span></code>
+variables point to the location of the compiled CFITSIO library and
+include files, respectively, and should be modified appropriately for
+your particular system. The sample Makefile reproduced here shows an
+example of building marxrsp using the CFITSIO library installed as part
+of the LHEASOFT package on a machine running Linux.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#---*- sh -*----------------------------------------------------------------</span>
+<span class="c1"># ANSI C compiler.  The default is to use your CC environment variable</span>
+<span class="c1">#---------------------------------------------------------------------------</span>
+<span class="c1">#CC = gcc         # Uncomment this line if you want gcc!!!</span>
+<span class="c1">#CFLAGS = -g</span>
+
+<span class="c1">#---------------------------------------------------------------------------</span>
+<span class="c1"># Where is your CFITSIO library and include file?  CFITSIO is part of IRAF.</span>
+<span class="c1">#---------------------------------------------------------------------------</span>
+<span class="c1"># At MIT, we use:</span>
+<span class="c1">#</span>
+<span class="c1">#CFITSIO_LIB = /nfs/wiwaxia/d4/ASC/lib/$(ARCH)</span>
+<span class="c1">#CFITSIO_INC = /nfs/wiwaxia/d4/ASC/include</span>
+<span class="c1">#</span>
+<span class="c1"># Perhaps one of these combinations will work for you:</span>
+<span class="c1">#</span>
+<span class="c1">#CFITSIO_LIB = /usr/local/include</span>
+<span class="c1">#CFITSIO_INC = /usr/local/lib</span>
+<span class="c1">#</span>
+<span class="c1">#CFITSIO_INC = /usr/local/src/ftools/SunOS_5.5_sparc/include</span>
+<span class="c1">#CFITSIO_LIB = /usr/local/src/ftools/SunOS_5.5_sparc/lib</span>
+<span class="c1">#</span>
+<span class="nv">CFITSIO_INC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>/usr/local/src/lheasoft/Linux_2.2_i586/include
+<span class="nv">CFITSIO_LIB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>/usr/local/src/lheasoft/Linux_2.2_i586/lib
+
+<span class="c1">#---------------------------------------------------------------------------</span>
+<span class="c1"># New versions of CFITSIO require additional networking libraries on some</span>
+<span class="c1"># systems.  The most well known system with this requirement is solaris.</span>
+<span class="c1">#---------------------------------------------------------------------------</span>
+<span class="c1">#NETLIBS = -lsocket -lnsl  # &lt;&lt;&lt;---- Solaris</span>
+<span class="nv">NETLIBS</span><span class="w"> </span><span class="o">=</span><span class="w">                </span><span class="c1"># &lt;&lt;&lt;---- Linux</span>
+
+<span class="c1">#---------------------------------------------------------------------------</span>
+<span class="c1"># There should be no need to modify anything else below this point</span>
+<span class="c1">#---------------------------------------------------------------------------</span>
+</pre></div>
+</div>
+<p>With the appropriate modifications to the marxrsp Makefile completed,
+the tool can now be built. Assuming you are in the main <strong>marx</strong> source
+directory, the commands:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% cd ./marxrsp
+unix% make install
+</pre></div>
+</div>
+<p>will build the marxrsp and rspdump executables and move them to the
+<code class="docutils literal notranslate"><span class="pre">bin</span></code> directory with the other tools in the suite. Note, you do not need
+<a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> to run <strong>marx</strong>  simulations.</p>
+</section>
+<section id="building-marx-on-multiple-architectures">
+<h3>Building <strong>marx</strong> on Multiple Architectures<a class="headerlink" href="#building-marx-on-multiple-architectures" title="Link to this heading">¶</a></h3>
+<p>The <strong>marx</strong> suite can be compiled to support multiple architectures
+using the same source tree. To create <strong>marx</strong> on multiple
+architectures (e.g. if your network has 32 and 64 bit machines), simply define an environment variable called <code class="docutils literal notranslate"><span class="pre">ARCH</span></code> and
+set it to an architecture-dependent value. For example, to build
+a version of for the NeXT platform, one could type:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% setenv ARCH next
+unix% ./configure
+unix% make
+</pre></div>
+</div>
+<p>This sequence will build NeXT executables and place them in the
+“./bin/next” subdirectory. To then compile a Linux version as well, use:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% setenv ARCH linux
+unix% ./configure
+unix% make
+</pre></div>
+</div>
+<p>These binaries will be placed in <code class="docutils literal notranslate"><span class="pre">./bin/linux</span></code>. This process can be
+repeated as needed.</p>
+</section>
+</section>
+<section id="known-bugs-and-limitations">
+<span id="knownbugs"></span><h2>Known Bugs and Limitations<a class="headerlink" href="#known-bugs-and-limitations" title="Link to this heading">¶</a></h2>
+<p>Currently there are no known bugs for installation issues. <strong>marx</strong> is tested on
+MacOSX (clang and gcc compiler) and 64 bit linux (gcc compiler). We expect it
+to work on other POSIX compliant platforms, too, but have not tested this.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Downloading and Installing Marx</a><ul>
+<li><a class="reference internal" href="#the-short-cut">The short-cut</a></li>
+<li><a class="reference internal" href="#the-normal-way">The normal way</a></li>
+<li><a class="reference internal" href="#apple-s-arm-architecture-m1-m2-chips">Apple’s ARM architecture (M1/M2 chips)</a></li>
+<li><a class="reference internal" href="#special-cases">Special cases</a><ul>
+<li><a class="reference internal" href="#building-marxrsp">Building marxrsp</a></li>
+<li><a class="reference internal" href="#building-marx-on-multiple-architectures">Building <strong>marx</strong> on Multiple Architectures</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#known-bugs-and-limitations">Known Bugs and Limitations</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="news.html"
+                          title="previous chapter">Highlights for each version of <strong>marx</strong></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="caveats.html"
+                          title="next chapter">Current caveats for MARX</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="caveats.html" title="Current caveats for MARX"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="news.html" title="Highlights for each version of marx"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" >MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Downloading and Installing Marx</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

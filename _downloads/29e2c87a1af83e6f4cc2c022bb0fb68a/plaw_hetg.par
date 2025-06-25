@@ -1,0 +1,11 @@
+phabs(1)*powerlaw(1)+gauss(1)+gauss(2)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     0              0.8           0      100000  10^22
+  2  powerlaw(1).norm       0     0             0.02           0       1e+10  
+  3  powerlaw(1).PhoIndex   0     0              1.2          -2           9  
+  4  gauss(1).area          0     0           0.0003           0           0  photons/s/cm^2
+  5  gauss(1).center        0     0         1.936103           0           0  A
+  6  gauss(1).sigma         0     0           0.0085       1e-06           1  A
+  7  gauss(2).area          0     0           0.0001           0           0  photons/s/cm^2
+  8  gauss(2).center        0     0         14.61044           0           0  A
+  9  gauss(2).sigma         0     0           0.0085       1e-06           1  A

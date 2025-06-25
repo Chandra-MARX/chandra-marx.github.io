@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating ACIS Pileup with marx &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Simulating Aspect with marx" href="aspect.html" />
+    <link rel="prev" title="Detailed information on MARX" href="docs.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="aspect.html" title="Simulating Aspect with marx"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="docs.html" title="Detailed information on MARX"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" accesskey="U">Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating ACIS Pileup with <strong>marx</strong></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simulating-acis-pileup-with-marx">
+<span id="pileup"></span><h1>Simulating ACIS Pileup with <strong>marx</strong><a class="headerlink" href="#simulating-acis-pileup-with-marx" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><p>Confusion is a word we have invented for an order which is not
+understood.</p>
+<blockquote>
+<div><p>– Henry Miller</p>
+</div></blockquote>
+</div></blockquote>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p>In this section, we will discuss how to use the <a class="reference internal" href="../Reference/tools.html#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a> tool in
+<strong>marx</strong> to simulate the effects on Chandra data of photon pileup in the
+ACIS CCDs. As a post-processing module, the <a class="reference internal" href="../Reference/tools.html#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a> tool is designed to
+work with existing <strong>marx</strong> simulations. Users first create a simulation
+using marx <a class="reference internal" href="../inbrief/simsetup.html#sect-runningmarx"><span class="std std-ref">Running marx simulations</span></a> and then, if necessary, run
+pileup on the results of that simulation to study pileup effects. In
+this manner, users simulating faint or extended sources which are less
+susceptible to pileup can produce <strong>marx</strong> simulations more quickly. We
+will briefly describe the pileup process itself and then proceed to
+outline the use and output of the pileup tool.</p>
+</section>
+<section id="what-is-acis-pileup">
+<h2>What is ACIS Pileup?<a class="headerlink" href="#what-is-acis-pileup" title="Link to this heading">¶</a></h2>
+<p>At some level, all Chandra observations performed with the ACIS imager
+will suffer from the effects of pileup. Pileup occurs when two or more
+photons land in the same pixel location in a given ACIS readout time. In
+this situation, ACIS “detects” a single photon with an energy which is
+roughly the sum of the two component photons. Some simple schematic
+representations of such “piled” photons are shown  below. The
+pileup process can affect ACIS data in a number of ways including:</p>
+<dl class="simple">
+<dt><strong>Photometric Inaccuracy</strong></dt><dd><p>The event detection algorithm cannot distinguish between single,
+large pulse height events and composite, piled events. Consequently,
+the detected count rate will be reduced with respect to the true
+count rate in the absence of pileup.</p>
+</dd>
+<dt><strong>Spectral Distortion</strong></dt><dd><p>By combining multiple incident, photons into a single “detected”
+event with a larger pulse height, pileup effectively “hardens” the
+observed ACIS spectrum.</p>
+</dd>
+<dt><strong>Point Spread Function Distortion</strong></dt><dd><p>The severity of the pileup effect is governed in part by event
+density. Since the core of the PSF has a higher event density than
+the wings, it will be affected to a greater degree. This effect will
+tend to broaden the PSF as the ratio of core to wing events
+decreases.</p>
+</dd>
+<dt><strong>Grade Migration</strong></dt><dd><p>As the degree of pileup increases, the distribution of event grades
+will change. Multiple photon or “piled” events will tend to have
+“bad” grades which include detached corner pixels, such as ASCA
+grades 1,5, and 7. This migration will have repercussions for
+standard data analysis which often begins by discarding such “bad”
+grades.</p>
+</dd>
+</dl>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/schematic_pileup.png"><img alt="Two events (symbolized by red and blue bars in a bar chart) are stacked on top if each other." src="../_images/schematic_pileup.png" style="width: 384.0px; height: 288.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">A schematic representation of a  “piled”  event. In this simple
+illustration, two events (red and blue) are detected in the same location within an
+ACIS frametime. The pulse heights are
+shown here in units of keV. Note that the magnitude of the  “piled”
+distribution is essentially the sum of the two component
+distributions. Hence, instead of detecting two roughly 3 keV photons,
+we would have detected a single 6 keV photon.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="evtsplit">
+<a class="reference internal image-reference" href="../_images/evt_grid.png"><img alt="Schematic representation of a  &quot;split&quot;  event" src="../_images/evt_grid.png" style="width: 384.0px; height: 288.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">A schematic representation of a small portion (8x8 pixels
+square) of a CCD in which two events have been detected.
+The highest amplitude event (blue) is the pixel
+of interest. Since the standard event-detection routine classifies
+events in a 3x3 square pixel neighborhood, rates in all other pixels
+marked in blue must also be considered. In addition, some events
+two pixels away, like the red event, could pile via
+splitting onto the event of interest. In this example, both events
+deposit electrons in more than one pixel - the blue event in two pixels
+and the red event in three. The peak of the blue event has the highest signal
+and this would define the “center” of the 3x3 pixel island that is transmitted
+to the ground. Clearly, the blue event would be assigned too much
+charge, in this case. Thus, the rates in pixels marked in yellow
+must be considered when assessing the pileup rate in the blue event (but
+not all events in this border will actually pile with the blue event; the
+actual number depends on the details of the branching ratios into each
+grade).</span><a class="headerlink" href="#evtsplit" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Chandra observations of bright point sources are the most likely to be
+significantly affected by pileup. Extended or faint sources will be less
+affected although sharp features such as unresolved cores or bright
+knots or filaments could still be vulnerable. Although pileup cannot be
+avoided entirely, a number of techniques can be employed to mitigate its
+effects somewhat. For a more detailed discussion of pileup, the reader
+is referred to <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/acis_pileup.html">acis_pileup</a>.</p>
+</section>
+<section id="overview-of-the-pileup-tool">
+<h2>Overview of the pileup Tool<a class="headerlink" href="#overview-of-the-pileup-tool" title="Link to this heading">¶</a></h2>
+<p>The <a class="reference internal" href="../Reference/tools.html#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a> tool implements the pileup algorithm developed by John Davis
+(MIT). This same algorithm has been implemented into the <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>,
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/">SHERPA</a>, and <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a> spectral fitting packages. While this implementation
+of the pileup algorithm emulates most of the qualitative effects of ACIS
+photon pileup, users should keep in mind that we are still calibrating
+the procedure. The ACIS pileup model is statistical and is not an a
+priori photon-silicon interaction model which generates charge clouds
+and then PHAs per event “island.” The model is valid on-axis for point
+sources for low to moderate pileup. While valid for <strong>qualitative</strong>
+predictions of the effects of pileup on the PSF, it has not been
+verified for image reconstruction. Detailed studies of the effects of
+pileup on the HRMA PSF including comparisons to actual on-orbit data are
+still underway. The model is very good for spectral modeling of light to
+moderately piled point sources. Users should interpret all results
+including the effects of pileup cautiously.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Simulating ACIS Pileup with <strong>marx</strong></a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#what-is-acis-pileup">What is ACIS Pileup?</a></li>
+<li><a class="reference internal" href="#overview-of-the-pileup-tool">Overview of the pileup Tool</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="docs.html"
+                          title="previous chapter">Detailed information on MARX</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="aspect.html"
+                          title="next chapter">Simulating Aspect with <strong>marx</strong></a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="aspect.html" title="Simulating Aspect with marx"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="docs.html" title="Detailed information on MARX"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" >Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating ACIS Pileup with <strong>marx</strong></a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

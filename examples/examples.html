@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Examples of MARX in use &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Simulating a user-defined CCD spectrum with ACIS" href="ACISpowerpileup/powerlaw.html" />
+    <link rel="prev" title="Reporting a problem or issue" href="../inbrief/gettinghelp.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="ACISpowerpileup/powerlaw.html" title="Simulating a user-defined CCD spectrum with ACIS"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../inbrief/gettinghelp.html" title="Reporting a problem or issue"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Examples of MARX in use</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="examples-of-marx-in-use">
+<span id="examples"></span><h1>Examples of MARX in use<a class="headerlink" href="#examples-of-marx-in-use" title="Link to this heading">¶</a></h1>
+<p>This section contains examples of <strong>marx</strong> in use from rather trivial use cases to complex and demanding analysis scripts. Going through these examples is the best way to discover the power of <strong>marx</strong>. They also provide a great starting point for developing your own analysis.</p>
+<p>All of the examples assume
+that you are working in a directory where you have write permission
+and enough disk space for the simulation.  It is also assumed that the
+<strong>marx</strong> executables are on the search path and that the <strong>marx</strong> parameter
+files <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>, <code class="docutils literal notranslate"><span class="pre">marxasp.par</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">marxpileup.par</span></code>) are located in the current directory.  Assuming you installed <strong>marx</strong> as described in <a class="reference internal" href="../inbrief/install.html#installing"><span class="std std-ref">Downloading and Installing Marx</span></a>, the
+latter requirement may be accomplished by running:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx --help
+  .
+  .
+marx parameter files may be found in:
+ /opt/marx5.5/share/marx/pfiles/
+</pre></div>
+</div>
+<p>Simply copy the files from the indicated directory to the current one:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% cp /opt/marx5.5/share/marx/pfiles/*.par .
+</pre></div>
+</div>
+<p>In most examples, <strong>marx</strong> is used together with a spectral analysis program to
+write the input spectrum or to analyze the results. The most
+common programs are <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">Xspec</a>, <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a>, and <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>. For each example, we pick
+one of those programs and provide instructions, but it should be easy to adapt
+the examples for other spectral analysis systems as well.
+(Note that in some installations it can happen that <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> and <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> have conflicts.  In these cases it is
+useful to setup <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> only when needed and open a new terminal after
+that.)</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ACISpowerpileup/powerlaw.html">Simulating a user-defined CCD spectrum with ACIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ACISpowerpileup/powerlaw.html#simulating-pile-up-in-an-acis-ccd-spectrum">Simulating pile-up in an ACIS CCD spectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aped/aped.html">Simulating a thermal plasma with the HETGS grating</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hetgplaw/hetgplaw.html">HETG simulation of an extended source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LETGpow/letgplaw.html">Simulating an LETG/ACIS-S observation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="marxcat/marxcat.html">Simulating two overlapping sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="background/background.html">Including background in a <strong>marx</strong> simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simobs/simobs.html">Replicating a Chandra Observation / Using ChaRT or SAOTrace</a></li>
+</ul>
+</div>
+<p>Further examples of <strong>marx</strong> use can be found on the <a class="reference external" href="http://cxc.harvard.edu/ciao/threads/all.html">CIAO thread
+pages</a>:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://cxc.harvard.edu/ciao/threads/marx/">Using MARX to Create an Event File from ChaRT
+Rays</a></p></li>
+<li><p><a class="reference external" href="http://cxc.harvard.edu/sherpa/threads/marx/">Creating an Input Spectrum for Running MARX Simulations</a></p></li>
+<li><p><a class="reference external" href="http://cxc.harvard.edu/ciao/threads/marx_sim/">Using MARX to Simulate an Existing Observation</a></p></li>
+<li><p><a class="reference external" href="http://cxc.harvard.edu/ciao/threads/marx_unobs_sim/">Using MARX to Simulate a Planned
+Observation</a></p></li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../inbrief/gettinghelp.html"
+                          title="previous chapter">Reporting a problem or issue</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="ACISpowerpileup/powerlaw.html"
+                          title="next chapter">Simulating a user-defined CCD spectrum with ACIS</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="ACISpowerpileup/powerlaw.html" title="Simulating a user-defined CCD spectrum with ACIS"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../inbrief/gettinghelp.html" title="Reporting a problem or issue"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Examples of MARX in use</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

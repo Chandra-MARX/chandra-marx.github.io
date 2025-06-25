@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating Aspect with marx &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using Response Matrices with marx" href="rsp.html" />
+    <link rel="prev" title="Simulating ACIS Pileup with marx" href="pileup.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="rsp.html" title="Using Response Matrices with marx"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pileup.html" title="Simulating ACIS Pileup with marx"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" accesskey="U">Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating Aspect with <strong>marx</strong></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simulating-aspect-with-marx">
+<span id="simulatingaspect"></span><h1>Simulating Aspect with <strong>marx</strong><a class="headerlink" href="#simulating-aspect-with-marx" title="Link to this heading">¶</a></h1>
+<blockquote>
+<div><p>Motion or change, and identity or rest, are the first and second
+secrets of nature.</p>
+<blockquote>
+<div><p>– Ralph Waldo Emerson</p>
+</div></blockquote>
+</div></blockquote>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">¶</a></h2>
+<p>In the course of a normal science observation, the Chandra line-of-sight
+pointing position on the sky moves. This “dither” motion serves several
+purposes including sub-sampling of the point spread function as well as
+averaging over uncertainties in quantum efficiency from detector element
+to element. In the case of the HRC MCPs, it also evenly distributes the
+dosage received over many microchannel pores extending the life of the
+detector. Typically this dither motion will follow a Lissajous pattern
+over an area up to 20 arcsec in size and is referred to as Normal Point
+Mode (NPM) (<a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap5.html">http://cxc.harvard.edu/proposer/POG/html/chap5.html</a>). The Chandra
+Aspect camera system provides pointing information over the course of
+this dither motion and, when processed through the CXCDS Aspect
+pipeline, allows the effects of dither to be removed from the final
+image. <strong>marx</strong> provides the capability to include the effects of
+dither motion in Chandra simulations.</p>
+<p>The net result of dither motion is that the image of a given source will
+move in the Chandra focal plane as a function of time. When all photons
+from the observation are combined, the resulting image will be blurred
+in the Focal Plane (FP) coordinate systems. These system corresponds to
+the CHIP, DET, or TDET columns in the FITS events file. The CXCDS Level
+1 pipeline corrects for this blurring and produces “aspect–corrected”
+Sky pixel coordinates. These coordinates appear in the FITS events file
+as the X and Y columns. <strong>marx</strong> computes a simple approximation to
+the Level 1 pipeline aspect correction. For a more detailed discussion
+of these coordinate systems, the user is referred to
+<a class="reference external" href="http://cxc.harvard.edu/contrib/jcm/ncoords.ps">http://cxc.harvard.edu/contrib/jcm/ncoords.ps</a>.</p>
+<p>If dither is selected for the simulation, images created from the CHIP,
+DET, or TDET pixel positions will reflect the motion of the Chandra
+line-of-sight. <strong>marx</strong> also emulates the aspect pipeline and calculates
+aspect-corrected Sky <code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code> values. These sky pixel values are written
+to the standard output directory specified by the <a class="reference internal" href="../inbrief/simsetup.html#parameter-OutputDir"><code class="xref std std-par docutils literal notranslate"><span class="pre">OutputDir</span></code></a> parameter in
+the native binary format files <code class="docutils literal notranslate"><span class="pre">sky_ra.dat</span></code> and <code class="docutils literal notranslate"><span class="pre">sky_dec.dat</span></code>. If the
+<a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> post-processing tool is used, the aspected-corrected Sky pixel
+values are written to the FITS events file in the <code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code> columns. For
+simulations with no dither, the FP and Sky coordinate positions are
+equivalent.</p>
+<p>For actual Chandra flight data, residual errors in the reconstruction
+are expected to add a “blurring” to detected photon positions which is
+essentially Gaussian. This is simulated by <strong>marx</strong> through
+the use of the <a class="reference internal" href="#parameter-AspectBlur"><code class="xref std std-par docutils literal notranslate"><span class="pre">AspectBlur</span></code></a> parameter, which has a default value of 0.07
+arcsec. The detector pixelization and randomization blurs are
+simulated by <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>, where the user may specify several types of
+pixel randomization using its <code class="docutils literal notranslate"><span class="pre">--pixadj</span></code> option.</p>
+<p><strong>marx</strong> provides two options for simulating dither motion. The
+choice of dither model is determined by the value of the <a class="reference internal" href="#parameter-DitherModel"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherModel</span></code></a>
+parameter. The two models are discussed individually below. By default
+<code class="docutils literal notranslate"><span class="pre">Dithermodel=INTERNAL</span></code> and dither motion is included. The following parameter
+in <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> controls which type of dither model is used:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherModel">
+<span class="sig-name descname"><span class="pre">DitherModel</span></span><a class="headerlink" href="#parameter-DitherModel" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">INTERNAL</span></code>) Dither Model [<cite>NONE</cite>, <cite>INTERNAL</cite>, <cite>FILE</cite>]</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-AspectBlur">
+<span class="sig-name descname"><span class="pre">AspectBlur</span></span><a class="headerlink" href="#parameter-AspectBlur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.07</span></code>) Uncertainty of the Aspect reconstruction (sigma - arcsec).
+Number taken from <a class="reference external" href="http://cxc.harvard.edu/cal/ASPECT/img_recon/report.html">http://cxc.harvard.edu/cal/ASPECT/img_recon/report.html</a>
+(version: 06/29/11).</p>
+</dd></dl>
+
+<figure class="align-center" id="id1">
+<img alt="Example of simulation with dither enabled" src="../_images/dither_combo.png" />
+<figcaption>
+<p><span class="caption-text">Simulation showing the effects of the internal dither model in
+<strong>marx</strong>. The panel on the left shows an image of a typical <strong>marx</strong> point
+source simulation with no dither included in Focal Plane (FP)
+coordinates. The right panel shows the same simulation
+with <strong>marx</strong> INTERNAL dither mode turned on. Note that
+in Sky <code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code> coordinates the images would both
+resemble point sources due to the aspect correction.
+The color scales have been adjusted and are not identical in the
+two panels.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="marx-internal-dither-model">
+<h2><strong>marx</strong> Internal Dither Model<a class="headerlink" href="#marx-internal-dither-model" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> provides an emulation of the NPM Lissajous dither pattern.
+This internal model is selected by setting <code class="docutils literal notranslate"><span class="pre">DitherModel=INTERNAL</span></code>. The
+form of the dither pattern is determined by the amplitude, phase and
+period for both the RA and DEC axes. <strong>marx</strong> also includes the ability
+to “dither” the roll angle of the spacecraft during the simulation. In
+general, the roll angle of Chandra during a science observation will not
+vary; however, there may prove to be some small variations and this
+capability allows their effects to be studied.</p>
+<p>When using the internal model, the deviations applied to the position of
+the line–of–sight over the course of the simulation are calculated using
+the following expressions:</p>
+<div class="math notranslate nohighlight">
+\[\Delta Pos = A  ~\sin \biggl(\frac{2 \pi t}{P} + Phase \biggr)\]</div>
+<div class="math notranslate nohighlight">
+\[\theta = \theta_0 + A  ~\sin \biggl(\frac{2 \pi t}{P} + Phase \biggr)\]</div>
+<p>The first equation corresponds the deviations along the RA and DEC
+axes, while the second gives the expression for the roll angle
+deviation. In both equations, <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(P\)</span> correspond to the
+amplitude and period of the variations and <span class="math notranslate nohighlight">\(t\)</span> is time.
+<span class="math notranslate nohighlight">\(\theta_0\)</span> represents the nominal roll angle
+of the simulation.</p>
+<p>Each of these parameters is controlled by an entry in the marx.par
+parameter file. An example of the effects of dither on a simulated
+ACIS-I point source observation is shown in <a class="reference internal" href="#example-of-a-dither-file">Example of a dither file</a>. The
+images are displayed in Focal Plane (FP) coordinates.</p>
+<p>The <a class="reference internal" href="../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> tool will create an ASPSOL file containing the aspect motion
+for a simulation which used the <strong>marx</strong> internal dither model. This
+ASPSOL file can be used in conjunction with normal <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tool <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/asphist.html">asphist</a> to
+produce an aspect histogram file. See <a class="reference internal" href="../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> for more details.</p>
+<p>Set <a class="reference internal" href="#parameter-DitherModel"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherModel=INTERNAL</span></code></a> and use the parameters described in <a class="reference internal" href="../Reference/othermarxpars.html#sect-internalditherpars"><span class="std std-ref">Dither/Aspect Parameters</span></a> in
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> to control the internal dither model.</p>
+<figure class="align-center" id="example-of-a-dither-file">
+<img alt="Example of contents of a :marxtool:`marxasp` ASPSOL file" src="../_images/fig_asol.png" />
+<figcaption>
+<p><span class="caption-text">The variation in the declination of the simulated Chandra
+aimpoint with time as encoded in an ASPSOL file
+produced using <a class="reference internal" href="../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a>.</span><a class="headerlink" href="#example-of-a-dither-file" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="aspect-file-mode">
+<h2>Aspect File Mode<a class="headerlink" href="#aspect-file-mode" title="Link to this heading">¶</a></h2>
+<p>In addition to its internal dither calculation mode, <strong>marx</strong> can
+generate simulations using aspect solution files created by the CXCDS
+aspect pipeline. For each observation, the CXCDS produces an aspect
+solution giving the Chandra pointing as a function of time. These files
+are FITS binary tables of the format described in in the table below
+(CXC ASPSOL ICD, Rev 2.4). The ASPSOL (or PCAD) files for a given
+Chandra observation can be retrieved from the CXC Archive.
+Set <a class="reference internal" href="#parameter-DitherModel"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherModel=FILE</span></code></a> and the file to
+be used is determined with the DitherFile parameter:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherFile">
+<span class="sig-name descname"><span class="pre">DitherFile</span></span><a class="headerlink" href="#parameter-DitherFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">obsid_105/data/asol1.fits</span></code>) ASPSOL File</p>
+</dd></dl>
+
+<p>If the input file
+is not a valid ASPSOL file, <strong>marx</strong> will exit with an error message.
+The time interval covered by the ASPSOL file must equal or exceed the
+requested exposure time of the simulation. If the end of the ASPSOL file
+is reached before the requested exposure time, <strong>marx</strong> will truncate
+the simulation at that point.</p>
+<p>For reference, the following table lists the columns in an ASPSOL file:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Comment</p></th>
+<th class="head"><p>Units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>time</p></td>
+<td><p>double</p></td>
+<td><p>Time</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>ra</p></td>
+<td><p>double</p></td>
+<td><p>RA of MNC frame (x-axis)</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-even"><td><p>dec</p></td>
+<td><p>double</p></td>
+<td><p>DEC of MNC frame (x-axis)</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-odd"><td><p>roll</p></td>
+<td><p>double</p></td>
+<td><p>ROLL of MNC frame</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-even"><td><p>ra_err</p></td>
+<td><p>float</p></td>
+<td><p>Uncertainty in RA</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-odd"><td><p>dec_err</p></td>
+<td><p>float</p></td>
+<td><p>Uncertainty in DEC</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-even"><td><p>roll_err</p></td>
+<td><p>float</p></td>
+<td><p>Uncertainty in ROLL</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-odd"><td><p>dy</p></td>
+<td><p>float</p></td>
+<td><p>dY of STF frame - FC frame</p></td>
+<td><p>mm</p></td>
+</tr>
+<tr class="row-even"><td><p>dz</p></td>
+<td><p>float</p></td>
+<td><p>dZ of STF frame - FC frame</p></td>
+<td><p>mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>dtheta</p></td>
+<td><p>float</p></td>
+<td><p>dTHETA of STF frame - FC frame</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-even"><td><p>dy_err</p></td>
+<td><p>float</p></td>
+<td><p>Uncertainty in dY</p></td>
+<td><p>mm</p></td>
+</tr>
+<tr class="row-odd"><td><p>dz_err</p></td>
+<td><p>float</p></td>
+<td><p>Uncertainty in dZ</p></td>
+<td><p>mm</p></td>
+</tr>
+<tr class="row-even"><td><p>dtheta_err</p></td>
+<td><p>float</p></td>
+<td><p>Uncertainty in dTHETA</p></td>
+<td><p>deg</p></td>
+</tr>
+<tr class="row-odd"><td><p>q_att</p></td>
+<td><p>double</p></td>
+<td><p>S/C attitude quaternion</p></td>
+<td><p>–</p></td>
+</tr>
+<tr class="row-even"><td><p>roll_bias</p></td>
+<td><p>float</p></td>
+<td><p>Roll bias rate</p></td>
+<td><p>deg/s</p></td>
+</tr>
+<tr class="row-odd"><td><p>pitch_bias</p></td>
+<td><p>float</p></td>
+<td><p>Pitch bias rate</p></td>
+<td><p>deg/s</p></td>
+</tr>
+<tr class="row-even"><td><p>yaw_bias</p></td>
+<td><p>float</p></td>
+<td><p>Yaw bias rate</p></td>
+<td><p>deg/s</p></td>
+</tr>
+<tr class="row-odd"><td><p>roll_bias_err</p></td>
+<td><p>float</p></td>
+<td><p>Roll bias rate error</p></td>
+<td><p>deg/s</p></td>
+</tr>
+<tr class="row-even"><td><p>pitch_bias_err</p></td>
+<td><p>float</p></td>
+<td><p>Pitch bias rate error</p></td>
+<td><p>deg/s</p></td>
+</tr>
+<tr class="row-odd"><td><p>yaw_bias_err</p></td>
+<td><p>float</p></td>
+<td><p>Yaw bias rate error</p></td>
+<td><p>deg/s</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Simulating Aspect with <strong>marx</strong></a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#marx-internal-dither-model"><strong>marx</strong> Internal Dither Model</a></li>
+<li><a class="reference internal" href="#aspect-file-mode">Aspect File Mode</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="pileup.html"
+                          title="previous chapter">Simulating ACIS Pileup with <strong>marx</strong></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="rsp.html"
+                          title="next chapter">Using Response Matrices with <strong>marx</strong></a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="rsp.html" title="Using Response Matrices with marx"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pileup.html" title="Simulating ACIS Pileup with marx"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" >Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating Aspect with <strong>marx</strong></a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

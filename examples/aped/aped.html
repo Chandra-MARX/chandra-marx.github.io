@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating a thermal plasma with the HETGS grating &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="HETG simulation of an extended source" href="../hetgplaw/hetgplaw.html" />
+    <link rel="prev" title="Simulating a user-defined CCD spectrum with ACIS" href="../ACISpowerpileup/powerlaw.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../hetgplaw/hetgplaw.html" title="HETG simulation of an extended source"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../ACISpowerpileup/powerlaw.html" title="Simulating a user-defined CCD spectrum with ACIS"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating a thermal plasma with the HETGS grating</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simulating-a-thermal-plasma-with-the-hetgs-grating">
+<span id="sect-ex-aped"></span><h1>Simulating a thermal plasma with the HETGS grating<a class="headerlink" href="#simulating-a-thermal-plasma-with-the-hetgs-grating" title="Link to this heading">¶</a></h1>
+<p>The purpose of this example is to show how to use <strong>marx</strong> to simulate
+an HETG grating spectrum of a star whose spectrum is represented by an
+<a class="reference external" href="http://www.atomdb.org">APEC</a>  model.</p>
+<section id="creating-the-spectral-file-for-marx">
+<h2>Creating the spectral file for <strong>marx</strong><a class="headerlink" href="#creating-the-spectral-file-for-marx" title="Link to this heading">¶</a></h2>
+<p>As in <a class="reference internal" href="../ACISpowerpileup/powerlaw.html#sect-ex-acisccd"><span class="std std-ref">Simulating a user-defined CCD spectrum with ACIS</span></a>, we will use
+<a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> again to generate the spectral file from the
+parameter file describing the model.  But in this case, the plasma
+model must be created before <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> can compute the model flux. So, the
+idea is to put the definition of the model into a file, which not only defines the model but also
+creates the parameter file that <a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> will load.
+The contents of file <a class="reference download internal" download="" href="../../_downloads/502ddc22f723e1970b648fc5f48221e5/apedfun.sl"><code class="xref download docutils literal notranslate"><span class="pre">apedfun.sl</span></code></a> that defines the model is:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># ISIS file defining spetral model
+plasma(aped);
+define create_aped_model ()
+{
+   variable p = default_plasma_state ();
+   p.temperature = [9.7e7, 3.2e7];
+   p.norm = [ 0.016, 0.0156];
+   p.elem = [Fe, Ne];
+   p.elem_abund = [ 0.2, 2 ];
+
+   create_aped_fun (&quot;Aped&quot;, p);
+   fit_fun(&quot;Aped(1)&quot;);
+}
+
+create_aped_model ();
+save_par (&quot;aped.p&quot;);
+</pre></div>
+</div>
+<p>Then the <a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> script may be used to create the spectral file via:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>marxflux --script apedfun.sl -l &#39;[1:30:#16384]&#39; aped.p apedflux.tbl
+</pre></div>
+</div>
+<p>Here, the <code class="docutils literal notranslate"><span class="pre">--script</span> <span class="pre">apedfun.sl</span></code> arguments instruct <a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> to
+execute the <code class="docutils literal notranslate"><span class="pre">apedfun.sl</span></code> file.  The <code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">'[1:30:#16384]'</span></code>
+parameters indicate that a 16384 point wavelength grid running from
+1 to 30 angstroms is to be used for the spectrum - <a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> will
+convert this to energy units.  A plot of the spectrum in
+<a class="reference download internal" download="" href="../../_downloads/7c2fa39c12e3f75514515914c1e03377/apedflux.tbl"><code class="xref download docutils literal notranslate"><span class="pre">apedflux.tbl</span></code></a> is shown below.</p>
+<figure class="align-center" id="id1">
+<img alt="An emission line spectrum" src="../../_images/apedflux.png" />
+<figcaption>
+<p><span class="caption-text">Plot of the spectrum</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="running-marx">
+<h2>Running marx<a class="headerlink" href="#running-marx" title="Link to this heading">¶</a></h2>
+<p>The next step is to run <strong>marx</strong> in the desired configuration.  For this
+example, ACIS-S and the HETG are used:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;apedflux.tbl&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">80000</span><span class="w"> </span><span class="nv">OutputDir</span><span class="o">=</span>aped<span class="w"> </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">GratingType</span><span class="o">=</span><span class="s2">&quot;HETG&quot;</span><span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span>
+</pre></div>
+</div>
+<p>This will run the simulation and place the results in a subdirectory
+called <code class="docutils literal notranslate"><span class="pre">aped</span></code>.  The results may be converted to a standard Chandra
+level-2 fits file by the <a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> program:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx2fits<span class="w"> </span>aped<span class="w"> </span>aped_evt2.fits
+</pre></div>
+</div>
+<p>The resulting fits file <code class="docutils literal notranslate"><span class="pre">aped_evt2.fits</span></code> may be further processed
+with standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools, as described below.  As some of these tools
+require the aspect history, the <a class="reference internal" href="../../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> program will be used to
+create an aspect solution file that matches the simulation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;aped&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;aped_asol1.fits&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="creating-a-type-ii-pha-file">
+<h2>Creating a type-II PHA file<a class="headerlink" href="#creating-a-type-ii-pha-file" title="Link to this heading">¶</a></h2>
+<p>For a Chandra grating observation, the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tgextract.html">tgextract</a> tool
+may used to create a type-II PHA file.  Before this can be done, an
+extraction region mask file must be created using
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tg_create_mask.html">tg_create_mask</a>, followed by order resolution using
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tg_resolve_events.html">tg_resolve_events</a>.  The first step is to determine the
+source position, which is used by
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tg_create_mask.html">tg_create_mask</a>.  There are many ways to do this; the easiest might be
+to open the event file in <a class="reference external" href="http://ds9.si.edu/">ds9</a>, put a circles on the source
+position and use the ds9 functions to center it. Another way would be to use
+the <em>find zero-order</em> algorithm of
+<a class="reference external" href="http://space.mit.edu/cxc/analysis/findzo/">findzo</a> ,
+which is robust enough to work on heavily piled-up sources with read-out
+streaks. For this particular example, the
+position of the zeroth order in sky coordinates is (4017.88, 4141.43).</p>
+<p>The following Bourne shell script runs the above set of tools to
+create a PHA2 file called <code class="docutils literal notranslate"><span class="pre">aped_pha2.fits</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;aped_evt2.fits&quot;</span>
+<span class="nv">evt1afile</span><span class="o">=</span><span class="s2">&quot;aped_evt1a.fits&quot;</span>
+<span class="nv">reg1afile</span><span class="o">=</span><span class="s2">&quot;aped_reg1a.fits&quot;</span>
+<span class="nv">asol1file</span><span class="o">=</span><span class="s2">&quot;aped_asol1.fits&quot;</span>
+<span class="nv">pha2file</span><span class="o">=</span><span class="s2">&quot;aped_pha2.fits&quot;</span>
+
+<span class="nv">X</span><span class="o">=</span><span class="m">4017</span>.88<span class="p">;</span><span class="w">    </span><span class="c1"># determined by findzo</span>
+<span class="nv">Y</span><span class="o">=</span><span class="m">4141</span>.43<span class="p">;</span><span class="w">    </span><span class="c1"># determined by findzo</span>
+
+tg_create_mask<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$reg1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">use_user_pars</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">last_source_toread</span><span class="o">=</span>A<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">sA_id</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">sA_zero_x</span><span class="o">=</span><span class="nv">$X</span><span class="w"> </span><span class="nv">sA_zero_y</span><span class="o">=</span><span class="nv">$Y</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">grating_obs</span><span class="o">=</span>header_value<span class="w"> </span>
+
+tg_resolve_events<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evt1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$reg1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">acaofffile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asol1file</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">osipfile</span><span class="o">=</span>CALDB<span class="w"> </span><span class="nv">verbose</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+tgextract<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evt1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+</pre></div>
+</div>
+<p>An important by-product of this script is the <code class="docutils literal notranslate"><span class="pre">evt1a</span></code> file, which
+includes columns for the computed values of the wavelengths and orders
+of the diffracted events.  In fact, <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tgextract.html">tgextract</a> makes use of
+those columns to create the PHA2.</p>
+<p>The resulting event file may be loaded into <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> and displayed using</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>isis&gt; load_data (&quot;aped_pha2.fits&quot;);
+isis&gt; list_data;
+</pre></div>
+</div>
+<p>with the result:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Current Spectrum List:
+ id    instrument part/m  src    use/nbins   A   R     totcts   exp(ksec)  target
+  1     HETG-ACIS  heg-1   1    8192/ 8192   -   -  1.3249e+04    78.988  POINT
+file:  aped_pha2.fits
+  2     HETG-ACIS  heg+1   1    8192/ 8192   -   -  1.1891e+04    78.988  POINT
+file:  aped_pha2.fits
+  3     HETG-ACIS  meg-1   1    8192/ 8192   -   -  2.6507e+04    78.988  POINT
+file:  aped_pha2.fits
+  4     HETG-ACIS  meg+1   1    8192/ 8192   -   -  2.6388e+04    78.988  POINT
+file:  aped_pha2.fits
+</pre></div>
+</div>
+<p>A plot of the MEG-1 spectrum, which corresponds to <code class="docutils literal notranslate"><span class="pre">id=3</span></code> in the
+above list may be created using:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>load_data (&quot;aped_pha2.fits&quot;);
+xrange (1, 25);
+plot_open(&quot;apedmeg1.ps/CPS&quot;);
+group_data (3, 2);
+plot_data (3);
+plot_close ();
+</pre></div>
+</div>
+<figure class="align-center" id="id2">
+<img alt="../../_images/apedmeg1.png" src="../../_images/apedmeg1.png" />
+<figcaption>
+<p><span class="caption-text">Plot of the MEG-1 counts spectrum</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>In making the above plot, the <code class="docutils literal notranslate"><span class="pre">group_data</span></code> function was used to
+rebin the data by combining adjacent wavelength channels.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Simulating a thermal plasma with the HETGS grating</a><ul>
+<li><a class="reference internal" href="#creating-the-spectral-file-for-marx">Creating the spectral file for <strong>marx</strong></a></li>
+<li><a class="reference internal" href="#running-marx">Running marx</a></li>
+<li><a class="reference internal" href="#creating-a-type-ii-pha-file">Creating a type-II PHA file</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../ACISpowerpileup/powerlaw.html"
+                          title="previous chapter">Simulating a user-defined CCD spectrum with ACIS</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../hetgplaw/hetgplaw.html"
+                          title="next chapter">HETG simulation of an extended source</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../hetgplaw/hetgplaw.html" title="HETG simulation of an extended source"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../ACISpowerpileup/powerlaw.html" title="Simulating a user-defined CCD spectrum with ACIS"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating a thermal plasma with the HETGS grating</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The spectrum and the spatial shape of the X-ray source &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The marx Models for the Spacecraft" href="hardwaremodel.html" />
+    <link rel="prev" title="Using marx with SAOSAC" href="saosac.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="hardwaremodel.html" title="The marx Models for the Spacecraft"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="saosac.html" title="Using marx with SAOSAC"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" accesskey="U">Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The spectrum and the spatial shape of the X-ray source</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="the-spectrum-and-the-spatial-shape-of-the-x-ray-source">
+<span id="sect-sourcemodels"></span><h1>The spectrum and the spatial shape of the X-ray source<a class="headerlink" href="#the-spectrum-and-the-spatial-shape-of-the-x-ray-source" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> provides support for both extended and point sources, which can
+be either on or off–axis. The sources can have a flat energy spectrum or
+they can use an energy spectrum supplied by the user and in the next section we
+describe those options. Then, we explain the different models for the spatial
+distribution that these source can have on the sky.
+The following sources are currently available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">POINT</span></code>: Point Source</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GAUSS</span></code>: Radially symmetric Gaussian</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BETA</span></code>: Cluster Beta model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISK</span></code>: Disk or annulus (e.g. SN remnant)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LINE</span></code>: Straight line</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IMAGE</span></code>: Input from a FITS image file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SAOSAC</span></code>: Input from an SAOSAC FITS rayfile</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RAYFILE</span></code>: Input from a <strong>marx</strong> rayfile</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SIMPUT</span></code>: Input from a fits file following the <a class="reference external" href="http://hea-www.harvard.edu/heasarc/formats/simput-1.1.0.pdf">SIMPUT standard</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">USER</span></code>: Dynamically linked user–supplied model</p></li>
+</ul>
+<p>First, it is important
+to have an understanding of what a source means in the context of
+<strong>marx</strong>. It is particularly important to understand how
+<strong>marx</strong> interacts with a source model for the proper implementation of
+a user–defined source. As far as <strong>marx</strong> is concerned, a source is
+characterized by the distribution of rays in energy, time, and direction
+that it produces at the entrance aperture of the telescope. Implicit in
+this characterization is the assumption that the source is sufficiently
+far away that the flux does not vary with position across the telescope.</p>
+<p>To be more precise, let</p>
+<div class="math notranslate nohighlight">
+\[F(t,E,{\hat{p}},{\vec{x}}) ({\hat{p}}\cdot{\mbox{d}\vec{A}\;}) {\mbox{d}\Omega\;} {\mbox{d}E\;} {\mbox{d}t\;}\]</div>
+<p>denote the number of rays with energy between <span class="math notranslate nohighlight">\(E\)</span> and
+<span class="math notranslate nohighlight">\(E + dE\)</span>, and whose directions lie in a solid angle
+<span class="math notranslate nohighlight">\(d\Omega\)</span> about the direction <span class="math notranslate nohighlight">\({\hat{p}}\)</span>, crossing an area
+element <span class="math notranslate nohighlight">\({\mbox{d}\vec{A}\;}\)</span> at <span class="math notranslate nohighlight">\({\vec{x}}\)</span> during the time
+<span class="math notranslate nohighlight">\(dt\)</span>. That is, <span class="math notranslate nohighlight">\(F(t,E,{\hat{p}},{\vec{x}})\)</span> is a space-time
+dependent flux density. If the source is very far away, as is the case
+for objects of astrophysical interest, the spatial dependence of the
+flux density may be ignored when <span class="math notranslate nohighlight">\({\vec{x}}\)</span> refers to points near
+the telescope. For this reason, <span class="math notranslate nohighlight">\(F\)</span> will be assumed to be
+independent of <span class="math notranslate nohighlight">\({\vec{x}}\)</span>. Similarly, since the angular
+acceptance of the telescope is very small (on the order of arc-minutes),
+to first order we need only consider area elements
+<span class="math notranslate nohighlight">\({\mbox{d}\vec{A}\;}\)</span> whose normals are in the direction of the
+source. Hence, <span class="math notranslate nohighlight">\({\hat{p}}\cdot{\mbox{d}\vec{A}\;}\)</span> will simply be
+written as <span class="math notranslate nohighlight">\({\mbox{d}A\;}\)</span>.</p>
+<p>We can consider various classes of source models according to whether or
+not <span class="math notranslate nohighlight">\(F\)</span> factors. For example, all <strong>marx</strong> sources (with the
+exception of <code class="docutils literal notranslate"><span class="pre">USER</span></code> sources) produce fluxes that are time-independent
+with an energy spectrum that is uncorrelated with the direction of the
+flux (see <a class="reference internal" href="#user-source">USER Source</a> for more information about the
+<code class="docutils literal notranslate"><span class="pre">USER</span></code> source). For the rest of this section, we will only consider
+the class of models for which <span class="math notranslate nohighlight">\(F\)</span> can be written</p>
+<div class="math notranslate nohighlight">
+\[F(t,E,{\hat{p}}) = f(t) \cdot f_E(E) \cdot f_p({\hat{p}}).\]</div>
+<p>When such a factorization is possible, it will be assumed that
+<span class="math notranslate nohighlight">\(f_E(E)\)</span> and <span class="math notranslate nohighlight">\(f_p({\hat{p}})\)</span> are normalized, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[1 = \int_{\Omega} {\mbox{d}\Omega\;} f_p({\hat{p}}),\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[1 = \int{\mbox{d}E\;} f_E(E) .\]</div>
+<p>With this normalization,</p>
+<div class="math notranslate nohighlight">
+\[f(t) = \int {\mbox{d}E\;} \int_{\Omega} {\mbox{d}\Omega\;} F(t, E, {\hat{p}})\]</div>
+<p>is simply the total flux, which can depend upon time. In the following,
+we shall call <span class="math notranslate nohighlight">\(f_E\)</span> the <em>energy spectrum</em>, and <span class="math notranslate nohighlight">\(f_p\)</span> the
+<em>angular distribution</em> of the source.</p>
+<section id="spectrum-of-the-simulated-x-ray-source">
+<h2>Spectrum of the simulated X-ray source<a class="headerlink" href="#spectrum-of-the-simulated-x-ray-source" title="Link to this heading">¶</a></h2>
+<p>In the <strong>marx</strong> parameter file, <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>, the parameter
+<a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a> is used to specify the function <span class="math notranslate nohighlight">\(f_E\)</span> for the
+following source types: <code class="docutils literal notranslate"><span class="pre">&quot;POINT&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;LINE&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;GAUSS&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;BETA&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;DISK&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;IMAGE&quot;</span></code> (the other source have a source specific way to
+input the energy, e.g. for a <code class="docutils literal notranslate"><span class="pre">&quot;SAOSAC&quot;</span></code> source the energy of each ray is
+already included in the ray file).</p>
+<p>Currently,
+<span class="math notranslate nohighlight">\(f_E\)</span> can only be a <code class="docutils literal notranslate"><span class="pre">FLAT</span></code> spectrum or a <code class="docutils literal notranslate"><span class="pre">FILE</span></code> spectrum.
+Similarly, when <span class="math notranslate nohighlight">\(f(t)\)</span> is time-independent, as it for all
+<strong>marx</strong> sources in this class, then its value is specified by the
+<a class="reference internal" href="#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameter. For simulations with <a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType=&quot;FLAT&quot;</span></code></a>, the
+function <span class="math notranslate nohighlight">\(f_E\)</span> is assumed to be constant over the specified energy
+range with a normalization given by <a class="reference internal" href="#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a>. Alternatively, the FILE
+type will use a tabulated spectral energy distribution read from an
+external ASCII file. The following parameters describe the source spectrum:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SpectrumType">
+<span class="sig-name descname"><span class="pre">SpectrumType</span></span><a class="headerlink" href="#parameter-SpectrumType" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">FLAT</span></code>) Select spectrum type. Can be <code class="docutils literal notranslate"><span class="pre">FLAT</span></code> or <code class="docutils literal notranslate"><span class="pre">FILE</span></code>.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SourceFlux">
+<span class="sig-name descname"><span class="pre">SourceFlux</span></span><a class="headerlink" href="#parameter-SourceFlux" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.003</span></code>) Incoming ray flux (photons/sec/cm2). For
+<a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType=&quot;FLAT&quot;</span></code></a> this number must be positive. If
+<a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType=&quot;FILE&quot;</span></code></a> this number can be positive to renormalize the
+spectrum file to the given source flux. If it is negative, then the
+normalization from the <a class="reference internal" href="#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a> will be used.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SpectrumFile">
+<span class="sig-name descname"><span class="pre">SpectrumFile</span></span><a class="headerlink" href="#parameter-SpectrumFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">flux.dat</span></code>) Input spectrum filename (only used if
+<a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType=&quot;FILE&quot;</span></code></a>). The file has to consist of two columns of data
+with no header line. The first column contains the energy of the upper bin
+edge in keV, the second the flux density in photons/s/cm^2/keV in that bin
+(the flux in the first row is ignored, because there is no row before
+which would define the lower energy edge of the bin).
+Various tools exist to help in generating this file:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> can be used to generate a file with the right format
+from an <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> model,</p></li>
+<li><p><a class="reference internal" href="../Reference/tools.html#xspec2marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">xspec2marx</span></code></a> helps with converting from
+<a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a> output,</p></li>
+<li><p>and there are also instructions how to generate a file
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/threads/marx/">from observations with Sherpa</a> or <a class="reference internal" href="../examples/LETGpow/letgplaw.html#creating-sherpa-spectrum"><span class="std std-ref">Creating an input spectrum from a Sherpa model</span></a>.</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MinEnergy">
+<span class="sig-name descname"><span class="pre">MinEnergy</span></span><a class="headerlink" href="#parameter-MinEnergy" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.775</span></code>) MIN ray energy in keV (only used if <a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType=&quot;FLAT&quot;</span></code></a>)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MaxEnergy">
+<span class="sig-name descname"><span class="pre">MaxEnergy</span></span><a class="headerlink" href="#parameter-MaxEnergy" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.775</span></code>) MAX ray energy in keV (only used if <a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType=&quot;FLAT&quot;</span></code></a>)</p>
+</dd></dl>
+
+</section>
+<section id="spatial-distribution-of-the-simulated-source">
+<h2>Spatial distribution of the simulated source<a class="headerlink" href="#spatial-distribution-of-the-simulated-source" title="Link to this heading">¶</a></h2>
+<p>The distribution function <span class="math notranslate nohighlight">\(f_p({\hat{p}})\)</span> characterizes the
+angular distribution of the flux and, hence, the angular distribution of
+the source. The nominal aimpoint of the observation (given by <a class="reference internal" href="../inbrief/simsetup.html#parameter-RA_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">RA_Nom</span></code></a> and
+<a class="reference internal" href="../inbrief/simsetup.html#parameter-Dec_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">Dec_Nom</span></code></a>) can differ from the source position (given by <a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a>
+and <a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a>) to simulate off-axis sources.</p>
+<p>By convention, <span class="math notranslate nohighlight">\(f_p({\hat{p}})\)</span> is assumed to be normalized to
+unity, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[1 = \int_{0}^{\pi} \sin\theta {\mbox{d}\theta\;}
+      \int_0^{2\pi} d{\phi} f_p(\theta, \phi) ,\]</div>
+<p>where <span class="math notranslate nohighlight">\({\hat{p}}\)</span> has been expressed in spherical coordinates. For
+an azimuthally symmetric source, <span class="math notranslate nohighlight">\(f_p\)</span> is independent of
+<span class="math notranslate nohighlight">\(\phi\)</span> and the normalization condition reduces to</p>
+<div class="math notranslate nohighlight">
+\[1 = 2\pi \int_{0}^{\pi} {\mbox{d}\theta\;} \sin\theta  f_p(\theta) .\]</div>
+<p>In <strong>marx</strong> the following parameter selects model for the spatial distribution of the source:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SourceType">
+<span class="sig-name descname"><span class="pre">SourceType</span></span><a class="headerlink" href="#parameter-SourceType" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">POINT</span></code>) The following values are allowed: <code class="docutils literal notranslate"><span class="pre">&quot;POINT&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;LINE&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;GAUSS&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;BETA&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;DISK&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;IMAGE&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;SAOSAC&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;RAYFILE&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;SIMPUT&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;USER&quot;</span></code>. Depending on the source model chosen,
+further parameters (such as the radius of the disk) may be required.</p>
+</dd></dl>
+
+<p>Each availble model is now described in more detail.</p>
+<section id="point-source">
+<span id="sect-models-point"></span><span id="index-0"></span><h3>POINT Source<a class="headerlink" href="#point-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">POINT</span></code> source corresponds to an angular distribution function
+given by</p>
+<div class="math notranslate nohighlight">
+\[f_p(\theta, \phi) = \frac{1}{2\pi} \delta (\phi)
+      \delta(1 - \cos \theta)\]</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">POINT</span></code> source requires no further parameter to specify the spatial distribution.</p>
+</section>
+<section id="line-source">
+<span id="index-1"></span><h3>LINE Source<a class="headerlink" href="#line-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">LINE</span></code> source corresponds to an angular distribution function
+given by</p>
+<div class="math notranslate nohighlight">
+\[f_p(\theta, \phi) = \frac{1}{\theta_0\theta}\cdot
+     \frac{1}{2} \big[\delta(\phi - \phi_0)
+          + \delta(\phi - \phi_0 - \pi) \big]\]</div>
+<p>for <span class="math notranslate nohighlight">\(\theta &lt; \theta_0\)</span> and zero otherwise.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-LinePhi">
+<span class="sig-name descname"><span class="pre">S-LinePhi</span></span><a class="headerlink" href="#parameter-S-LinePhi" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Line source orientation angle  <span class="math notranslate nohighlight">\(\phi_0\)</span> (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-LineTheta">
+<span class="sig-name descname"><span class="pre">S-LineTheta</span></span><a class="headerlink" href="#parameter-S-LineTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1800</span></code>) Line source length <span class="math notranslate nohighlight">\(\theta_0\)</span> (arcsec)</p>
+</dd></dl>
+
+</section>
+<section id="gauss-source">
+<span id="index-2"></span><h3>GAUSS Source<a class="headerlink" href="#gauss-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">GAUSS</span></code> source corresponds to an angular distribution function
+given by</p>
+<div class="math notranslate nohighlight">
+\[f_p(\theta, \phi) = \frac{1}{\pi} e^{-\theta^2/\theta_0^2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\theta_0\)</span> determines the width of the Gaussian
+distribution:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-GaussSigma">
+<span class="sig-name descname"><span class="pre">S-GaussSigma</span></span><a class="headerlink" href="#parameter-S-GaussSigma" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">60</span></code>) gauss source sigma (arcsec)</p>
+</dd></dl>
+
+</section>
+<section id="beta-source">
+<span id="index-3"></span><h3>BETA Source<a class="headerlink" href="#beta-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">BETA</span></code> source corresponds to an angular distribution function
+given by</p>
+<div class="math notranslate nohighlight">
+\[f_p(\theta, \phi) = \frac{1}{2\pi}
+    \cdot
+      \frac{6}{\theta_c}(\beta - \frac{1}{2})
+      \big[ 1 + (\frac{\theta}{\theta_c})^2 \big]^{-3\beta + \frac{1}{2}}.\]</div>
+<p>This distribution is used to model galaxy clusters.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-BetaCoreRadius">
+<span class="sig-name descname"><span class="pre">S-BetaCoreRadius</span></span><a class="headerlink" href="#parameter-S-BetaCoreRadius" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10</span></code>) Core radius <span class="math notranslate nohighlight">\(\theta_c\)</span> (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-BetaBeta">
+<span class="sig-name descname"><span class="pre">S-BetaBeta</span></span><a class="headerlink" href="#parameter-S-BetaBeta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.7</span></code>) <span class="math notranslate nohighlight">\(\beta\)</span> value</p>
+</dd></dl>
+
+</section>
+<section id="disk-source">
+<span id="sect-models-disk"></span><span id="index-4"></span><h3>DISK Source<a class="headerlink" href="#disk-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">DISK</span></code> source corresponds to an angular distribution function
+given by</p>
+<div class="math notranslate nohighlight">
+\[f_p(\theta, \phi) = \frac{1}{2\pi}
+       \cdot \frac{2}{\theta_1^2 - \theta_0^2}\]</div>
+<p>for <span class="math notranslate nohighlight">\(\theta_0 &lt;= \theta &lt; \theta_1\)</span>. Outside this region, it is
+zero. This source actually generates a ring structure and is
+useful for modeling a supernova remnant.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-DiskTheta0">
+<span class="sig-name descname"><span class="pre">S-DiskTheta0</span></span><a class="headerlink" href="#parameter-S-DiskTheta0" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Min disk <span class="math notranslate nohighlight">\(\theta_0\)</span> (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-DiskTheta1">
+<span class="sig-name descname"><span class="pre">S-DiskTheta1</span></span><a class="headerlink" href="#parameter-S-DiskTheta1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">60</span></code>) Max disk <span class="math notranslate nohighlight">\(\theta_1\)</span> (arcsec)</p>
+</dd></dl>
+
+</section>
+<section id="image-source">
+<span id="sect-imagesource"></span><span id="index-5"></span><h3>IMAGE Source<a class="headerlink" href="#image-source" title="Link to this heading">¶</a></h3>
+<p>This option creates photons distributed on the sky according to an input image.
+The probability that a ray starts at a given position is proportional to the pixel value at this point.
+Within a pixel, the position is randomized.
+<strong>marx</strong> inspects the header of the file for a WCS specification and extracts the pixel scale.
+However, it does <strong>not</strong> extract the position or orientation on the sky.
+<strong>marx</strong> will just assume that the image is centered on the optical axis and that the axes directions
+are aligned with the detector axes.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-ImageFile">
+<span class="sig-name descname"><span class="pre">S-ImageFile</span></span><a class="headerlink" href="#parameter-S-ImageFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">image.fits</span></code>) fits filename for IMAGE source</p>
+</dd></dl>
+
+</section>
+<section id="saosac-source">
+<span id="index-6"></span><h3>SAOSAC Source<a class="headerlink" href="#saosac-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">SAOSAC</span></code> source allows SAOSAC raytrace files to be used as input for <strong>marx</strong>. SAOSAC is a high-fidelity raytracer
+for the Chandra mirrors, with a much higher level of detail than the module supplied with <strong>marx</strong>.
+Only in very rare cases is this needed for the end-user. More details can be found in <a class="reference internal" href="saosac.html#saosac"><span class="std std-ref">Using marx with SAOSAC</span></a>.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SAOSACFile">
+<span class="sig-name descname"><span class="pre">SAOSACFile</span></span><a class="headerlink" href="#parameter-SAOSACFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">saosac.fits</span></code>) marx input source/output ray filename</p>
+</dd></dl>
+
+</section>
+<section id="rayfile-source">
+<span id="index-7"></span><h3>RAYFILE Source<a class="headerlink" href="#rayfile-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">RAYFILE</span></code> source can be used to dublicate the source properties of a previous <strong>marx</strong> simulation.
+Using this as a source keeps the photon properties energy and position
+as specified in the ray file.
+Thus, the <em>source</em> properties are identical to those used to
+generate the original ray file, but the <em>Chandra response</em> to them might be
+different, e.g. if a different detector or dither is chosen.
+Rayfiles are produced by setting <a class="reference internal" href="../Reference/othermarxpars.html#parameter-DumpToRayFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">DumpToRayFile=yes</span></code></a>.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-RayFile">
+<span class="sig-name descname"><span class="pre">RayFile</span></span><a class="headerlink" href="#parameter-RayFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">marx.output</span></code>) marx input source/output ray filename</p>
+</dd></dl>
+
+</section>
+<section id="simput-source">
+<span id="index-8"></span><h3>SIMPUT Source<a class="headerlink" href="#simput-source" title="Link to this heading">¶</a></h3>
+<p><strong>marx</strong> supports the <a class="reference external" href="http://hea-www.harvard.edu/heasarc/formats/simput-1.1.0.pdf">SIMPUT standard</a>, which is a fits based
+description of sources, that allows a large number of sources with different
+spectra, light curves, and shapes on the sky. This file format is supported by a
+number of other simulators (e.g. for ATHENA), so integrating it in <strong>marx</strong>
+allows users to use the same source specification for different X-ray missions.
+The support in <strong>marx</strong> is through the <a class="reference external" href="http://www.sternwarte.uni-erlangen.de/research/sixte/simulation.php">SIMPUT code</a> which needs to be installed
+separately and is linked dynamically at runtime if <a class="reference internal" href="#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType=&quot;SIMPUT&quot;</span></code></a>.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-SIMPUT-Source">
+<span class="sig-name descname"><span class="pre">S-SIMPUT-Source</span></span><a class="headerlink" href="#parameter-S-SIMPUT-Source" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">CDFS_cat_galaxies.fits</span></code>) Filename of SIMPUT Catalog</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-S-SIMPUT-Library">
+<span class="sig-name descname"><span class="pre">S-SIMPUT-Library</span></span><a class="headerlink" href="#parameter-S-SIMPUT-Library" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">/melkor/d1/guenther/soft/simput/lib/libsimput.so</span></code>) Path to dynamically linked file libsimput.so</p>
+</dd></dl>
+
+</section>
+<section id="user-source">
+<span id="sect-usersource"></span><span id="index-9"></span><h3>USER Source<a class="headerlink" href="#user-source" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">USER</span></code> source is the most versatile of the <strong>marx</strong> sources. With
+a user–defined source, each ray may be given an independent energy,
+time, and direction. This flexibility means that one does not need to
+require that the flux density factorize as was assumed for the other
+<strong>marx</strong> sources. Using a <code class="docutils literal notranslate"><span class="pre">USER</span></code> source model, sources whose spectrum
+changes with time, complex extended objects, etc. can be simulated.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-UserSourceFile">
+<span class="sig-name descname"><span class="pre">UserSourceFile</span></span><a class="headerlink" href="#parameter-UserSourceFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">../doc/examples/user-source/pnts.so</span></code>) dynamically linked source filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-UserSourceArgs">
+<span class="sig-name descname"><span class="pre">UserSourceArgs</span></span><a class="headerlink" href="#parameter-UserSourceArgs" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">pnts.dat</span></code>) user source parameter</p>
+</dd></dl>
+
+<p>A user-defined source model must be created by the user using a language
+such as C and then compiled as a shared object. During run-time,
+<strong>marx</strong> will dynamically link to this shared object and use it to
+generate rays.
+It is important to understand that creating a user-defined source
+does not mean that <strong>marx</strong>  must be recompiled. If that were the case,
+then there would be no value to a user-defined source.</p>
+<p>We include several examples in the <code class="docutils literal notranslate"><span class="pre">marx/doc/examples/user-source/</span></code> directory
+in the <strong>marx</strong> distribution. Some of the examples might be useful as-is, e.g. a
+source that samples photons from an input event list. Other examples are meant
+to show you how <code class="docutils literal notranslate"><span class="pre">USER</span></code> sources can be programmed. If you write a user source
+that you are willing to share with others, please contact <a class="reference external" href="mailto:marx-help&#37;&#52;&#48;space&#46;mit&#46;edu">marx-help<span>&#64;</span>space<span>&#46;</span>mit<span>&#46;</span>edu</a>.</p>
+<p>Creating a <code class="docutils literal notranslate"><span class="pre">USER</span></code> source is relatively simple and is best accomplished
+using the C programming language. The C source file must define three
+functions that <strong>marx</strong> will call during run-time:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>user_open_source
+user_close_source
+user_create_ray
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">user_open_source</span></code> function will be called by <strong>marx</strong>  before any
+rays are generated. The purpose of this function is to initialize any
+data structures required by the <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> function. The
+<code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> function will be called one time for each ray
+generated. The purpose of this routine is to assign an energy, time, and
+direction to a ray. Finally, the <code class="docutils literal notranslate"><span class="pre">user_close_source</span></code> function will be
+called when <strong>marx</strong>  has finished processing rays. Each of these
+functions are described in more detail below.</p>
+<section id="user-open-source">
+<h4>user_open_source<a class="headerlink" href="#user-open-source" title="Link to this heading">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">user_open_source</span></code> function has the prototype:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">user_open_source</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">area</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosx</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosy</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosz</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The value of the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> parameter <a class="reference internal" href="#parameter-UserSourceArgs"><code class="xref std std-par docutils literal notranslate"><span class="pre">UserSourceArgs</span></code></a> will be
+broken into an array of whitespace separated strings and passed to
+<code class="docutils literal notranslate"><span class="pre">user_open_source</span></code> via the <code class="docutils literal notranslate"><span class="pre">argv</span></code> parameter. The parameter <code class="docutils literal notranslate"><span class="pre">argc</span></code>
+indicates the number of such strings. The actual meaning of these
+strings will depend upon the details of the user-defined source. For
+example, if the user-defined source needs to read an external data file,
+the parameter can represent the name of the data file.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">area</span></code> parameter specifies the area in cm<span class="math notranslate nohighlight">\(^2\)</span> of the
+entrance aperture of the mirror. Knowledge of this value is necessary to
+compute the time interval between rays since the incoming flux must be
+multiplied by this value to generate the total incoming photon rate.</p>
+<p>The other three parameters <code class="docutils literal notranslate"><span class="pre">cosx</span></code>, <code class="docutils literal notranslate"><span class="pre">cosy</span></code>, and <code class="docutils literal notranslate"><span class="pre">cosz</span></code> are the
+direction cosines of a ray from a reference point on the source to the
+origin of the <strong>marx</strong>  coordinate system. These numbers are derived
+from the <strong>marx</strong>  parameter file <a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a> and
+<a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a> parameters. For an on axis source, <code class="docutils literal notranslate"><span class="pre">cosy</span></code> and
+<code class="docutils literal notranslate"><span class="pre">cosz</span></code> will be set to zero, but <code class="docutils literal notranslate"><span class="pre">cosx</span></code> will be set to <code class="docutils literal notranslate"><span class="pre">-1</span></code>. If the
+reference point of the user defined source is always on axis, these
+parameters may be ignored and the actual parameter values for
+<a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a> and <a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a> will have no affect on the rays
+generated by source. However, if one would like to position the source
+off-axis via the <a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a> and <a class="reference internal" href="../inbrief/simsetup.html#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a> parameters, the values
+of the direction cosines will need to be taken into account. An example
+of this is presented below.</p>
+<p>Upon success, <code class="docutils literal notranslate"><span class="pre">user_open_source</span></code> must return <code class="docutils literal notranslate"><span class="pre">0</span></code>. If for any reason
+it fails, e.g, unable to open a file, it must return <code class="docutils literal notranslate"><span class="pre">-1</span></code>.</p>
+<p>The simplest example of <code class="docutils literal notranslate"><span class="pre">user_open_source</span></code> is one which does nothing:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">user_open_source</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosx</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosy</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosz</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">   </span><span class="cm">/* Success */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="user-close-source">
+<h4>user_close_source<a class="headerlink" href="#user-close-source" title="Link to this heading">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">user_close_source</span></code> function has the prototype:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">user_close_source</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Its purpose is to free up any resources acquired by the source. For
+example, if the source dynamically allocated memory,
+<code class="docutils literal notranslate"><span class="pre">user_close_source</span></code> should deallocate it.</p>
+</section>
+<section id="user-create-ray">
+<h4>user_create_ray<a class="headerlink" href="#user-create-ray" title="Link to this heading">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> function is the function that actually defines
+the source by endowing each ray with a direction, energy, and time. It
+has the following prototype:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">user_create_ray</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">energy</span><span class="p">,</span>
+<span class="w">                     </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">cosx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">cosy</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">cosz</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Since the purpose of this routine is to assign a ray an energy, time, and
+direction, the parameters are actually pointer types and the requested
+information is passed back to the calling routine via the parameter
+list. Before <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> is called, <strong>marx</strong> uses the <a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a>
+in <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> to assign an energy. This allows user sources to assign a ray
+direction depending on this energy, but it has the downside that the definition
+of <a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a> has to be valid even if <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> assigns an
+energy for the ray itself.  Except for the energy, the ray is completely
+undefined prior to calling <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">delta_t</span></code> parameter is used to give the ray a time-stamp. Actually
+it does not refer directly to the absolute time of the ray; rather, its
+value should refer to the time since the last ray was generated. For
+example, if a ray is generated every second,</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="o">*</span><span class="n">delta_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>should be used. If <code class="docutils literal notranslate"><span class="pre">*delta_t</span></code> is set to <code class="docutils literal notranslate"><span class="pre">-1.0</span></code>, then <strong>marx</strong>  will
+generate the time based on the <a class="reference internal" href="#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameter. Otherwise, the
+value should be set in a manner consistent with the flux and the
+geometric area of the mirror. The meaning of the parameters that specify the
+direction cosines should be rather clear.</p>
+</section>
+<section id="compiling-a-user-defined-source">
+<h4>Compiling a User-Defined Source<a class="headerlink" href="#compiling-a-user-defined-source" title="Link to this heading">¶</a></h4>
+<p>The procedure for compiling a user-defined source as a shared object
+will depend upon the operating system. For details, consult you compiler
+and linker manual. For the purposes of this section, it is assumed that
+the file containing the code for the user-defined source is called
+<code class="docutils literal notranslate"><span class="pre">mysource.c</span></code>. This may be compiled as a shared object under <strong>Linux</strong>
+using <code class="docutils literal notranslate"><span class="pre">gcc</span></code> via the command:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">gcc</span><span class="w"> </span><span class="o">-</span><span class="n">shared</span><span class="w"> </span><span class="n">mysource</span><span class="p">.</span><span class="n">c</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">mysource</span><span class="p">.</span><span class="n">so</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">mysource.c</span></code> requires other libraries, they should also be included
+on the command line. The syntax is slightly different under <strong>Solaris</strong>:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">cc</span><span class="w"> </span><span class="o">-</span><span class="n">G</span><span class="w"> </span><span class="n">mysource</span><span class="p">.</span><span class="n">c</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">mysource</span><span class="p">.</span><span class="n">so</span>
+</pre></div>
+</div>
+<p>To actually use the source in <strong>marx</strong> , set the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> parameter
+<a class="reference internal" href="#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType</span></code></a> to <code class="docutils literal notranslate"><span class="pre">&quot;USER&quot;</span></code> and also set the parameter <a class="reference internal" href="#parameter-UserSourceFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">UserSourceFile</span></code></a>
+to point to the full absolute filename for <code class="docutils literal notranslate"><span class="pre">mysource.so</span></code>. It is
+usually necessary to use an absolute filename because of the way the
+dynamic linker searches for shared objects. Finally, set the parameter
+<a class="reference internal" href="#parameter-UserSourceArgs"><code class="xref std std-par docutils literal notranslate"><span class="pre">UserSourceArgs</span></code></a> to a value that is appropriate to your source.</p>
+<p>If running <code class="docutils literal notranslate"><span class="pre">marx</span></code> using your dynamically linked source causes it to
+crash, do not assume that the bug is in <strong>marx</strong> . Rather, it is most
+likely a bug in your code. Make sure that the interface routines are
+properly prototyped and that the routines return the proper values to
+<strong>marx</strong> . If you use dynamic memory allocation, check the return status
+of routines such as <code class="docutils literal notranslate"><span class="pre">malloc</span></code>. Finally, look at the examples provided
+with the <strong>marx</strong>  distribution and try to run those.</p>
+</section>
+<section id="examples-of-user-defined-sources">
+<h4>Examples of User-Defined Sources<a class="headerlink" href="#examples-of-user-defined-sources" title="Link to this heading">¶</a></h4>
+<p>The simplest source is that of a point source. Although <strong>marx</strong>
+already provides built-in support for this source, it is instructive to
+write it as a user-defined source. Here is the complete C code for such
+a source:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Source_CosX</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Source_CosY</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Source_CosZ</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">user_open_source</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">area</span><span class="p">,</span>
+<span class="w">                      </span><span class="kt">double</span><span class="w"> </span><span class="n">cosx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">cosy</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">cosz</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="n">Source_CosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cosx</span><span class="p">;</span>
+<span class="w">   </span><span class="n">Source_CosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cosy</span><span class="p">;</span>
+<span class="w">   </span><span class="n">Source_CosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cosz</span><span class="p">;</span>
+<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">user_close_source</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">user_create_ray</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">delta_t</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">energy</span><span class="p">,</span>
+<span class="w">                     </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">cosx</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">cosy</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">cosz</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="o">*</span><span class="n">cosx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Source_CosX</span><span class="p">;</span>
+<span class="w">   </span><span class="o">*</span><span class="n">cosy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Source_CosY</span><span class="p">;</span>
+<span class="w">   </span><span class="o">*</span><span class="n">cosz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Source_CosZ</span><span class="p">;</span>
+
+<span class="w">   </span><span class="o">*</span><span class="n">delta_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">;</span>
+<span class="w">   </span><span class="o">*</span><span class="n">energy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">-1.0</span><span class="p">;</span>
+
+<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>First of all, note that <code class="docutils literal notranslate"><span class="pre">energy</span></code> and <code class="docutils literal notranslate"><span class="pre">delta_t</span></code> have been set equal
+to <code class="docutils literal notranslate"><span class="pre">-1.0</span></code> in <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code>. This indicates to <strong>marx</strong>  that it
+should compute the time and energy of the ray via the <a class="reference internal" href="#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a>
+and <a class="reference internal" href="#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameters. For this reason, the <code class="docutils literal notranslate"><span class="pre">area</span></code> parameter
+was not used by <code class="docutils literal notranslate"><span class="pre">user_open_source</span></code>. Since the direction cosines passed
+to <code class="docutils literal notranslate"><span class="pre">user_open_source</span></code> refers to the vector from the position of the
+source to the origin where the telescope is located, those values were
+saved and used in <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code>.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The spectrum and the spatial shape of the X-ray source</a><ul>
+<li><a class="reference internal" href="#spectrum-of-the-simulated-x-ray-source">Spectrum of the simulated X-ray source</a></li>
+<li><a class="reference internal" href="#spatial-distribution-of-the-simulated-source">Spatial distribution of the simulated source</a><ul>
+<li><a class="reference internal" href="#point-source">POINT Source</a></li>
+<li><a class="reference internal" href="#line-source">LINE Source</a></li>
+<li><a class="reference internal" href="#gauss-source">GAUSS Source</a></li>
+<li><a class="reference internal" href="#beta-source">BETA Source</a></li>
+<li><a class="reference internal" href="#disk-source">DISK Source</a></li>
+<li><a class="reference internal" href="#image-source">IMAGE Source</a></li>
+<li><a class="reference internal" href="#saosac-source">SAOSAC Source</a></li>
+<li><a class="reference internal" href="#rayfile-source">RAYFILE Source</a></li>
+<li><a class="reference internal" href="#simput-source">SIMPUT Source</a></li>
+<li><a class="reference internal" href="#user-source">USER Source</a><ul>
+<li><a class="reference internal" href="#user-open-source">user_open_source</a></li>
+<li><a class="reference internal" href="#user-close-source">user_close_source</a></li>
+<li><a class="reference internal" href="#user-create-ray">user_create_ray</a></li>
+<li><a class="reference internal" href="#compiling-a-user-defined-source">Compiling a User-Defined Source</a></li>
+<li><a class="reference internal" href="#examples-of-user-defined-sources">Examples of User-Defined Sources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="saosac.html"
+                          title="previous chapter">Using <strong>marx</strong> with SAOSAC</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="hardwaremodel.html"
+                          title="next chapter">The <strong>marx</strong> Models for the Spacecraft</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="hardwaremodel.html" title="The marx Models for the Spacecraft"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="saosac.html" title="Using marx with SAOSAC"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" >Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The spectrum and the spatial shape of the X-ray source</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

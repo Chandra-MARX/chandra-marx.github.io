@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Running marx simulations &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reporting a problem or issue" href="gettinghelp.html" />
+    <link rel="prev" title="Current caveats for MARX" href="caveats.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="gettinghelp.html" title="Reporting a problem or issue"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="caveats.html" title="Current caveats for MARX"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" accesskey="U">MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Running <strong>marx</strong> simulations</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="running-marx-simulations">
+<span id="sect-runningmarx"></span><h1>Running <strong>marx</strong> simulations<a class="headerlink" href="#running-marx-simulations" title="Link to this heading">¶</a></h1>
+<section id="the-marx-parameter-file">
+<h2>The <strong>marx</strong> Parameter File<a class="headerlink" href="#the-marx-parameter-file" title="Link to this heading">¶</a></h2>
+<p>The details of a given simulation are controlled by the <strong>marx</strong> parameter
+file <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>.  This file currently contains about 270 different
+parameters which determine everything from the exposure time to the
+level of scattering off the HRMA surface.
+Fortunately, only about 30 of these parameters need ever be (or in fact
+should ever be) modified under most conceivable circumstances.
+In practice, most typical science simulations can be defined and
+controlled with less than 10.
+Template <strong>marx</strong> parameter files are included as part of the distribution
+and can be found in the top level of the source directory.
+The tool <a class="reference internal" href="../Reference/tools.html#plist"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">plist</span></code></a> can be used to print the contents
+of <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> in a more readable format while <a class="reference internal" href="../Reference/tools.html#pset"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">pset</span></code></a> can
+be used to set the values of specific parameters.</p>
+<p><strong>marx</strong> utilizes an PROS/IRAF–style parameter interface.  By default, <strong>marx</strong>
+will search for <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> in the directories specified by the
+<span class="target" id="index-0"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">PFILES</span></code> and <span class="target" id="index-1"></span><code class="xref std std-envvar docutils literal notranslate"><span class="pre">UPARM</span></code> environment variables. The first version of
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> found will be used. If a valid parameter file is not
+found in either of these locations, the current directory will be
+searched. The tool <a class="reference internal" href="../Reference/tools.html#pwhich"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">pwhich</span></code></a> can be used to check the current
+parameter file search path.</p>
+<p><strong>marx</strong> will also assume that the relevant parameter file is named
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code>.  An alternative parameter file may be specified by
+prefixing the file name with <code class="docutils literal notranslate"><span class="pre">&#64;&#64;</span></code> and using the resulting expression
+as argument on the command line, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx  @@/home/user/simulations/marx_cluster.par
+</pre></div>
+</div>
+<p>The path to the desired parameter file need not be absolute.</p>
+<p>Any <strong>marx</strong> parameters may be set on the command line via the syntax:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx PARAMETER-NAME=VALUE PARAMETER-NAME=VALUE ...
+</pre></div>
+</div>
+<p>The program will prompt for a parameter’s value if VALUE is not
+specified, e.g.,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx DetectorType=
+Reading HRMA optical constants:
+        /usr/local/src/marx_5.1.0-dist/marx/data/iridium.dat
+Range error occurred while looking at parameter DetectorType.
+Select detector type (HRC-S|ACIS-S|HRC-I|ACIS-I|NONE)[]:
+</pre></div>
+</div>
+<p>Note that there must be <strong>no</strong> whitespace surrounding the <code class="docutils literal notranslate"><span class="pre">=</span></code> sign
+and <strong>marx</strong> parameters are case sensitive.
+In the next few sections, we will discuss the various essential
+parameters the user must adjust to produce a <strong>marx</strong> simulation.</p>
+</section>
+<section id="simulation-control">
+<h2>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">¶</a></h2>
+<p>By “simulation control”, we specifically refer to any necessary
+parameter choices which define the execution of the simulation and
+are not instrument or source related. These include such things
+as length of exposure, timed versus ray generation execution,
+and output location and format.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-RandomSeed">
+<span class="sig-name descname"><span class="pre">RandomSeed</span></span><a class="headerlink" href="#parameter-RandomSeed" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-1</span></code>) <strong>marx</strong> is a Monte-Carlo simulation program, where all parameters (e.g. the
+energy or position of a photon, the scattering of a mirror or the
+diffraction in a grating) are drawn from a distribution of possible
+outcomes by means of a random number. This means that two <strong>marx</strong> simulations with the same input
+parameters will give different results, unless they use the same sequence of
+random numbers. Set this parameter to a positive number to
+obtain the same sequence of random numbers. The default is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, which
+sets the starting number of the random number generator to the current time
+when the simulation is run.</p>
+</dd></dl>
+
+<section id="exposure-time">
+<h3>Exposure Time<a class="headerlink" href="#exposure-time" title="Link to this heading">¶</a></h3>
+<p><strong>marx</strong> simulations can be run either in <em>ray generation mode</em> or in
+<em>timed exposure mode</em>. Timed exposure mode is probably the simulation
+method most users will employ most of the time.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ExposureTime">
+<span class="sig-name descname"><span class="pre">ExposureTime</span></span><a class="headerlink" href="#parameter-ExposureTime" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10000</span></code>) This parameter is used to specify the total integration time in seconds:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx ExposureTime=10000 ...
+</pre></div>
+</div>
+<p>would generate a 10 ksec simulation. <strong>marx</strong> will accumulate photons
+until the indicated integration time is reached.
+<strong>This mode takes precedence over ray generation mode.
+If the ExposureTime parameter is set to any positive,
+non-zero value, the simulation will be run in timed exposure mode.</strong>
+Users wishing to run simulations in ray generation mode, should set
+<code class="docutils literal notranslate"><span class="pre">ExposureTime=0</span></code>.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-NumRays">
+<span class="sig-name descname"><span class="pre">NumRays</span></span><a class="headerlink" href="#parameter-NumRays" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1000000</span></code>) This parameter sets the number of rays <em>generated</em>
+in <em>ray generation mode</em>. Note that some rays may be absorbed or
+scattered outside of the detector, so the <em>detected</em> number of rays will in
+general be lower than <code class="docutils literal notranslate"><span class="pre">NumRays</span></code>. To specify the number of <em>detected</em> rays,
+set <code class="docutils literal notranslate"><span class="pre">NumRays</span></code> to a negative number. An example for this case is given in
+<a class="reference internal" href="../examples/LETGpow/letgplaw.html#sect-ex-letgplaw"><span class="std std-ref">Simulating an LETG/ACIS-S observation</span></a>.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-TStart">
+<span class="sig-name descname"><span class="pre">TStart</span></span><a class="headerlink" href="#parameter-TStart" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2009.5</span></code>) The sets the time of the observation, e.g. <code class="docutils literal notranslate"><span class="pre">2014.5</span></code> would be the first of
+July 2014. Some of the calibration files contain a time dependence, e.g. the
+ACIS detector contamination increases with time. Set this parameter to the
+time of the observation to reproduce a specific dataset or to the current
+year for proposal planning.</p>
+<p>All numbers below <code class="docutils literal notranslate"><span class="pre">2100</span></code> (when we expect Chandra’s orbit to become unstable) are
+interpreted as years, all numbers above that are interpreted as
+“seconds since 1998.0” (the time system of the spacecraft clock).</p>
+</dd></dl>
+
+</section>
+<section id="output-directory">
+<h3>Output Directory<a class="headerlink" href="#output-directory" title="Link to this heading">¶</a></h3>
+<p>Depending on the particular instrument configuration chosen,
+<strong>marx</strong> will produce different sets of binary output data files.
+By default all available information is saved.
+<a class="reference internal" href="../Reference/othermarxpars.html#parameter-OutputVectors"><code class="xref std std-par docutils literal notranslate"><span class="pre">OutputVectors</span></code></a> can modify this, but we recommend not to change this.</p>
+<p>In addition to the binary vectors containing the detected event
+properties, <strong>marx</strong> also creates an <code class="docutils literal notranslate"><span class="pre">obs.par</span></code> file in the output
+directory. The file contains header information about the simulation
+which <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> uses in the creation of the FITS Level 1 event
+file. This file should <em>not</em> be modified.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-OutputDir">
+<span class="sig-name descname"><span class="pre">OutputDir</span></span><a class="headerlink" href="#parameter-OutputDir" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">point</span></code>) This parameter specifies the directory where <strong>marx</strong> output is written.
+If the directory specified does not exist, <strong>marx</strong> will create it.
+Alternatively, if the specified directory does exist, its
+contents will be overwritten. In addition to the output photon
+vectors, <strong>marx</strong> also copies the current version of the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>
+parameter file to the output directory.
+Note, if the value of <code class="docutils literal notranslate"><span class="pre">OutputDir</span></code> corresponds to the current
+directory and the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> controlling the simulation resides
+in this directory, <strong>marx</strong> will abort with an error message.
+Output from a <strong>marx</strong> run can be directed to the current directory,
+but only if the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> file is in another location.
+This behavior prevents corruption of the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> file.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="instrument-configuration">
+<h2>Instrument Configuration<a class="headerlink" href="#instrument-configuration" title="Link to this heading">¶</a></h2>
+<p>These parameters control the science instruments which are
+to be used in the simulation as well as which of <strong>marx</strong> mirror models to use.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorType">
+<span class="sig-name descname"><span class="pre">MirrorType</span></span><a class="headerlink" href="#parameter-MirrorType" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">HRMA</span></code>) This parameter can be one of three values: <code class="docutils literal notranslate"><span class="pre">HRMA</span></code>, <code class="docutils literal notranslate"><span class="pre">EA-MIRROR</span></code>, or <code class="docutils literal notranslate"><span class="pre">FLATFIELD</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">HRMA</span></code> model is a full raytrace using an accurate physical model of the
+HRMA’s parabolic and hyperbolic components. Mode details can be found in
+<a class="reference internal" href="../indetail/hardwaremodel.html#sect-hrma"><span class="std std-ref">HRMA model</span></a>. <code class="docutils literal notranslate"><span class="pre">EA-MIRROR</span></code> model is a simpler
+model based on a thin–lens approximation and using tabulated
+effective area and point spread function data. This simple model is of historical interest only
+and is no longer accurate or supported. This option should <em>not</em>
+be selected.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">MirrorType=FLATFIELD</span></code>, <strong>marx</strong> will propagate rays to a specified
+rectangular region in the focal plane parallel to the optical axis.
+No HRMA vignetting or scattering is applied.
+The size of the rectangular region which is illuminated is controlled
+by the parameters listed in <a class="reference internal" href="../Reference/othermarxpars.html#sect-flatfieldparameters"><span class="std std-ref">Flat Field Model Parameters</span></a>.
+Although useful for simulating detector instrumental backgrounds
+as well as debugging focal plane geometries, simulations
+created with the <code class="docutils literal notranslate"><span class="pre">FLATFIELD</span></code> model can <em>not</em> be combined
+with standard <strong>marx</strong> simulations employing the default
+<code class="docutils literal notranslate"><span class="pre">MirrorType=HRMA</span></code> option.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-GratingType">
+<span class="sig-name descname"><span class="pre">GratingType</span></span><a class="headerlink" href="#parameter-GratingType" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">HETG</span></code>) This parameter can be one of three options: <code class="docutils literal notranslate"><span class="pre">HETG</span></code>, <code class="docutils literal notranslate"><span class="pre">LETG</span></code>, or <code class="docutils literal notranslate"><span class="pre">NONE</span></code>.
+Chandra carries two sets of diffraction gratings: the Low Energy
+Transmission Grating (LETG) and the High Energy Transmission Grating
+(HETG) (see <a class="reference internal" href="../indetail/hardwaremodel.html#grating-modules"><span class="std std-ref">Grating Modules</span></a> for a full description).
+The performance of either instrument can be simulated
+using this parameter.
+Imaging observations can be simulated by setting
+<code class="docutils literal notranslate"><span class="pre">GratingType=NONE</span></code>.</p>
+<p>The grating efficiency models in <strong>marx</strong> currently rely on
+a set of efficiency tables provided by the HETG and LETG IPI teams.
+These tables include grating efficiencies for orders -11 to 11
+for the HETG and for the LETG, orders from -25 to 25.</p>
+<p>An additional parameter has been added to allow the user to
+disable the grating efficiency calculation.
+If the parameter <a class="reference internal" href="../indetail/hardwaremodel.html#parameter-Use_Unit_Efficiencies"><code class="xref std std-par docutils literal notranslate"><span class="pre">Use_Unit_Efficiencies=yes</span></code></a>, rays which
+intersect the HETG or LETG will still be diffracted but no
+efficiency filter will be applied. Hence all orders will have
+an equal probability of being populated.</p>
+</dd></dl>
+
+<section id="focal-plane-detectors">
+<h3>Focal plane detectors<a class="headerlink" href="#focal-plane-detectors" title="Link to this heading">¶</a></h3>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DetectorType">
+<span class="sig-name descname"><span class="pre">DetectorType</span></span><a class="headerlink" href="#parameter-DetectorType" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">ACIS-S</span></code>) The user has the choice of all four Chandra focal plane
+detectors including the <code class="docutils literal notranslate"><span class="pre">ACIS-I</span></code>, <code class="docutils literal notranslate"><span class="pre">ACIS-S</span></code>, <code class="docutils literal notranslate"><span class="pre">HRC-I</span></code> and <code class="docutils literal notranslate"><span class="pre">HRC-S</span></code>,
+see <a class="reference internal" href="../indetail/hardwaremodel.html#sect-detectormodel"><span class="std std-ref">Detector Models</span></a>.
+<code class="docutils literal notranslate"><span class="pre">DetectorType</span></code> can also be set to <code class="docutils literal notranslate"><span class="pre">NONE</span></code>. In this case,
+<strong>marx</strong> does not project the rays to the focal plane but stops at
+the last simulated element, either the HRMA or the gratings
+if included. This option is useful for producing rayfiles which
+can be run through <strong>marx</strong> again e.g. using different detectors.</p>
+<figure class="align-center" id="chip-map">
+<a class="reference internal image-reference" href="../_images/chipmap.png"><img alt="../_images/chipmap.png" src="../_images/chipmap.png" style="height: 250px;" /></a>
+<figcaption>
+<p><span class="caption-text">Layout of Chandra flight focal plane detectors.
+The chips are numbered with their standard Chandra identifications.
+Note, the ACIS-I nominal aimpoint falls on chip 3 while the aimpoint
+for the ACIS-S array corresponds to chip 7. For the HRC-S, the
+nominal aimpoint is near the center of MCP 1. The sizes of the MCPs
+and CCDs are drawn roughly to scale, the detector separations and chip gaps are not.</span><a class="headerlink" href="#chip-map" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>marx</strong> automatically places the SIM in the appropriate position
+such that the center of the source coincides with the
+default aimpoint for the selected detector.
+For actual Chandra observations using ACIS, any combination of 6 CCDs
+may be used at one time. However, at present <strong>marx</strong> simulations with ACIS
+only include those CCDs which comprise the selected imager
+(i.e. chips 0-3 for ACIS-I and chips 4-9 for ACIS-S).</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-HESF">
+<span class="sig-name descname"><span class="pre">HRC-HESF</span></span><a class="headerlink" href="#parameter-HRC-HESF" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) If the HRC–S detector is selected, users have the
+option of including a model of the High Energy Suppression
+Filter (HESF) (a.k.a. The Drake Flat).
+Setting the parameter <code class="docutils literal notranslate"><span class="pre">HRC-HESF=&quot;yes&quot;</span></code> includes the HESF;
+however, as we note below, the <a class="reference internal" href="#parameter-DetOffsetZ"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetZ</span></code></a> parameter must also
+be modified to move the HESF into the beam.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DetIdeal">
+<span class="sig-name descname"><span class="pre">DetIdeal</span></span><a class="headerlink" href="#parameter-DetIdeal" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) The quantum efficiency of the specified detector can
+be suppressed using the <code class="docutils literal notranslate"><span class="pre">DetIdeal</span></code> parameter. If <code class="docutils literal notranslate"><span class="pre">DetIdeal=&quot;yes&quot;</span></code>,
+the focal plane geometry of the selected detector is preserved, but
+the efficiency is assumed to be unity.</p>
+</dd></dl>
+
+</section>
+<section id="focal-plane-position">
+<h3>Focal Plane Position<a class="headerlink" href="#focal-plane-position" title="Link to this heading">¶</a></h3>
+<p>The focal plane science instruments on Chandra are mounted on a
+movable platform called the Science Instrument Module (SIM)
+that allows the different detectors to be selected. Movement
+along the optical axis is also possible to adjust the focus.
+<strong>marx</strong> simulates the SIM movement with three parameters:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DetOffsetX">
+<span class="sig-name descname"><span class="pre">DetOffsetX</span></span><a class="headerlink" href="#parameter-DetOffsetX" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Offset in mm from the nominal on-axis, in-focus SIM position.</p>
+<p>In the <strong>marx</strong> coordinate system (which is the same as the
+Chandra coordinate system), the X axis corresponds to the
+optical axis (see <a class="reference internal" href="../indetail/hardwaremodel.html#sect-coordsystem"><span class="std std-ref">The marx Coordinate System</span></a>).
+Therefore, the <code class="docutils literal notranslate"><span class="pre">DetOffsetX</span></code> parameter
+can be used to simulate defocused Chandra observations.
+The maximum X motion of the SIM is -9 mm and +10 mm.
+Movements greater than <span class="math notranslate nohighlight">\(\sim 2\)</span> mm from the best focus position
+produce ring–like images for point sources.
+This functionality is useful for studying photon pileup
+in the ACIS CCDs. Defocusing is one possible
+means of minimizing this effect for a given observation.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DetOffsetZ">
+<span class="sig-name descname"><span class="pre">DetOffsetZ</span></span><a class="headerlink" href="#parameter-DetOffsetZ" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Offset in mm from the nominal on-axis, in-focus SIM position.</p>
+<p>The sign convention is opposite to the <code class="docutils literal notranslate"><span class="pre">sim_z_offset</span></code> that can be
+specified in Chandra observations to move the source onto a
+different part of the detector (see <a class="reference external" href="http://cxc.cfa.harvard.edu/proposer/POG/html/chap6.html#tth_chAp6">Fig 6.1 in the Observatory guide</a> ).</p>
+<p>For grating observations this parameter can be used to translate
+the SIM in the direction perpendicular to the grating
+dispersion. If the HESF (a.k.a. Drake Flat) is to be used, the
+<code class="docutils literal notranslate"><span class="pre">DetOffsetZ</span></code> parameter should be set to a value of 7.25 mm.
+To use the LESF, a value of <code class="docutils literal notranslate"><span class="pre">DetOffsetZ=-6.5</span></code> should be used.</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="source-definition">
+<h2>Source Definition<a class="headerlink" href="#source-definition" title="Link to this heading">¶</a></h2>
+<p>Specifying sources in <strong>marx</strong> is equivalent to choosing a position on
+the sky, a spectral energy distribution, and a spatial distribution
+for the incoming photons. For the latter two source characteristics,
+a number of simple options are built into <strong>marx</strong>.</p>
+<section id="source-position">
+<h3>Source Position<a class="headerlink" href="#source-position" title="Link to this heading">¶</a></h3>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SourceRA">
+<span class="sig-name descname"><span class="pre">SourceRA</span></span><a class="headerlink" href="#parameter-SourceRA" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.502316589E+02</span></code>) RA of source in the sky in decimal degrees.
+Corresponds on the <code class="docutils literal notranslate"><span class="pre">RA_TARG</span></code> FITS header keyword in a standard
+Chandra Level 2 events file.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SourceDEC">
+<span class="sig-name descname"><span class="pre">SourceDEC</span></span><a class="headerlink" href="#parameter-SourceDEC" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-5.375129700E+01</span></code>) RA of source in the sky in decimal degrees.
+Corresponds on the <code class="docutils literal notranslate"><span class="pre">DEC_TARG</span></code> FITS header keyword in a standard
+Chandra Level 2 events file.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-RA_Nom">
+<span class="sig-name descname"><span class="pre">RA_Nom</span></span><a class="headerlink" href="#parameter-RA_Nom" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">250.2134679741175</span></code>) RA of nominal aimpoint in the sky in decimal degrees.
+Corresponds on the <code class="docutils literal notranslate"><span class="pre">RA_NOM</span></code> FITS header keyword in a standard
+Chandra Level 2 events file.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Dec_Nom">
+<span class="sig-name descname"><span class="pre">Dec_Nom</span></span><a class="headerlink" href="#parameter-Dec_Nom" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-53.75743813458669</span></code>) RA of nominal aimpoint in the sky in decimal degrees.
+Corresponds on the <code class="docutils literal notranslate"><span class="pre">DEC_NOM</span></code> FITS header keyword in a standard
+Chandra Level 2 events file.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Roll_Nom">
+<span class="sig-name descname"><span class="pre">Roll_Nom</span></span><a class="headerlink" href="#parameter-Roll_Nom" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">237.36968458476</span></code>) Roll angle in the sky in decimal degrees.
+Corresponds on the <code class="docutils literal notranslate"><span class="pre">ROLL_NOM</span></code> FITS header keyword in a standard
+Chandra Level 2 events file.</p>
+</dd></dl>
+
+<p>If the values of <a class="reference internal" href="#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a> and <a class="reference internal" href="#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a> are different
+from <a class="reference internal" href="#parameter-RA_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">RA_Nom</span></code></a> and <a class="reference internal" href="#parameter-Dec_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">Dec_Nom</span></code></a>, the source will be off-axis.</p>
+</section>
+<section id="source-spectrum">
+<h3>Source Spectrum<a class="headerlink" href="#source-spectrum" title="Link to this heading">¶</a></h3>
+<p>This is described in more details in <a class="reference internal" href="../indetail/models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a>. Here, we
+summarize the most important points.</p>
+<p>Users have two options for specifying the spectral energy distribution
+of source photons: a built-in FLAT spectrum model
+which produces uniform flux over the specified energy range, or
+a FILE mode which reads the spectrum from an external ASCII file.
+The <a class="reference internal" href="../indetail/models.html#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a> parameter selects between these two options.
+In both cases, further parameters are needed to give details:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><a class="reference internal" href="../indetail/models.html#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a></p></th>
+<th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td rowspan="3"><p>FLAT</p></td>
+<td><p><a class="reference internal" href="../indetail/models.html#parameter-MinEnergy"><code class="xref std std-par docutils literal notranslate"><span class="pre">MinEnergy</span></code></a></p></td>
+<td><p>keV</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../indetail/models.html#parameter-MaxEnergy"><code class="xref std std-par docutils literal notranslate"><span class="pre">MaxEnergy</span></code></a></p></td>
+<td><p>keV</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a></p></td>
+<td><p>phot/s/cm^2</p></td>
+</tr>
+<tr class="row-odd"><td rowspan="2"><p>FILE</p></td>
+<td><p><a class="reference internal" href="../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a></p></td>
+<td><p>phot/s/cm^2/keV - see text</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a></p></td>
+<td><p>&lt; 0 to use data in the file
+or &gt; 0 to renormalize the
+spectrum in the file</p></td>
+</tr>
+</tbody>
+</table>
+<p>If the FLAT spectrum is selected, the <a class="reference internal" href="../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameter
+is used to determine the overall normalization of the spectrum in
+photons/sec/cm^2.
+The <a class="reference internal" href="../indetail/models.html#parameter-MinEnergy"><code class="xref std std-par docutils literal notranslate"><span class="pre">MinEnergy</span></code></a> and <a class="reference internal" href="../indetail/models.html#parameter-MaxEnergy"><code class="xref std std-par docutils literal notranslate"><span class="pre">MaxEnergy</span></code></a> energy parameters determine
+the energy range in keV over which photons will be generated for the
+FLAT spectral model. Both parameters may be set to the same value
+to generate a monochromatic source.</p>
+<p>If the FILE mode is selected, the user must specify the name
+of an input ASCII file containing the spectral energy distribution
+using the <a class="reference internal" href="../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a> parameter.
+The input ASCII file should contain two columns separated by at
+least one space where the first column gives the energy grid
+in keV and the second column gives the flux density at that energy
+in units of photons/sec/cm^2/keV.
+No limits are placed on the number of points in the input file
+and the file is assumed to be ordered by increasing energy.
+<strong>marx</strong> checks for this criterion by calculating and reporting the
+integrated flux from the specified file. <a class="reference internal" href="../Reference/tools.html#xspec2marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">xspec2marx</span></code></a> is a script
+installed with <strong>marx</strong> to convert <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a> output to the right format.</p>
+<p>In FILE mode, the <a class="reference internal" href="../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameter can be used
+to set the overall normalization of the input spectral energy
+distribution. Setting <a class="reference internal" href="../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> to a positive, non-zero
+value will cause <strong>marx</strong> to renormalize the spectrum read from
+the ASCII file to the specified total flux.
+If <a class="reference internal" href="../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux=-1</span></code></a> (or any number less than 0), <strong>marx</strong>
+will use the normalization inherent in the input spectrum.
+In this manner, several sources with a consistent spectral shape
+but varying total flux can be simulated using a single input spectrum
+file.</p>
+</section>
+<section id="the-shape-of-the-source-on-the-sky">
+<h3>The shape of the source on the sky<a class="headerlink" href="#the-shape-of-the-source-on-the-sky" title="Link to this heading">¶</a></h3>
+<p>Again, more details on this can be found in <a class="reference internal" href="../indetail/models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a>.</p>
+<p>The spatial distribution of source photons in <strong>marx</strong> is determined
+by the choice of the <a class="reference internal" href="../indetail/models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType</span></code></a> parameter.</p>
+<p>The following sources are currently available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">POINT</span></code>: Point Source</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GAUSS</span></code>: Radially symmetric Gaussian</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BETA</span></code>: Cluster Beta model</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DISK</span></code>: Disk or annulus (e.g. SN remnant)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LINE</span></code>: Straight line</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IMAGE</span></code>: Input from a FITS image file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SAOSAC</span></code>: Input from an SAOSAC FITS rayfile</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RAYFILE</span></code>: Input from a <strong>marx</strong> rayfile</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">USER</span></code>: Dynamically linked user–supplied model</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">IMAGE</span></code>, <code class="docutils literal notranslate"><span class="pre">SAOSAC`,</span> <span class="pre">and</span> <span class="pre">``RAYFILE</span></code> source options
+all take an additional parameter specifying the name of the
+external file to use. With the exception of the <code class="docutils literal notranslate"><span class="pre">SAOSAC</span></code> and <code class="docutils literal notranslate"><span class="pre">RAYFILE</span></code>
+options, all <strong>marx</strong> source models obey the <a class="reference internal" href="#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a>
+and <a class="reference internal" href="#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a> parameters.
+For non-point source models, the center of the source will be placed
+at the coordinates specified by the (<a class="reference internal" href="#parameter-SourceRA"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceRA</span></code></a>, <a class="reference internal" href="#parameter-SourceDEC"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDEC</span></code></a>)
+parameters. In the case of the <code class="docutils literal notranslate"><span class="pre">IMAGE</span></code> source type, the center
+of the image will be located at the specified position.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">USER</span></code> source model requires two additional parameters.
+<a class="reference internal" href="../indetail/models.html#parameter-UserSourceFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">UserSourceFile</span></code></a> specifies the path to the dynamically linked
+source file and should be the full, absolute pathname due to
+peculiarities in the manner in which the dynamic linker locates
+modules. The value of the parameter <a class="reference internal" href="../indetail/models.html#parameter-UserSourceArgs"><code class="xref std std-par docutils literal notranslate"><span class="pre">UserSourceArgs</span></code></a> will depend
+on the specifics of the user model being linked.</p>
+<p>All source models are described in detail in <a class="reference internal" href="../indetail/models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a>.</p>
+</section>
+<section id="aspect-dither-motion">
+<h3>Aspect Dither Motion<a class="headerlink" href="#aspect-dither-motion" title="Link to this heading">¶</a></h3>
+<p>Once the source characteristics and science instrument configuration
+have been specified, the only remaining option the user must choose
+is whether or not to include a simulation of the Chandra aspect
+motion. <strong>marx</strong> includes an internal simulation of the standard lissajous
+dither pattern which Chandra traverses over the course of an observation.</p>
+<p>If <a class="reference internal" href="../indetail/aspect.html#parameter-DitherModel"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherModel=INTERNAL</span></code></a>, <strong>marx</strong> will apply an internal simulation
+of the Chandra aspect dither pattern.  This motion will result in
+a blurring of the source image when viewed in focal plane
+coordinates.
+If a dither model is applied to the simulation, <strong>marx</strong> calculates
+aspect-corrected sky coordinates. These values are ultimately to the FITS events file
+by <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> is used.</p>
+<p>For actual Chandra data sets, residual errors in the aspect correction
+pipeline will introduce uncertainties into the derived Sky X and
+Y coordinates. <strong>marx</strong> includes a simulation of these uncertainties
+through the <a class="reference internal" href="../indetail/aspect.html#parameter-AspectBlur"><code class="xref std std-par docutils literal notranslate"><span class="pre">AspectBlur</span></code></a> parameter.  Other errors affecting the
+derived Sky coordinates include the detector pixelization blur
+(associated with the non-zero size of the pixel, also known as
+truncation blur), and the pixel randomization blur (induced from
+conversion of an integer pixel coordinate to a real-valued one).  The
+user has some control over the form of the randomization blur via the
+<a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> <code class="docutils literal notranslate"><span class="pre">--pixadj</span></code> option.</p>
+<p>Figure <a class="reference internal" href="#fig-ditherexp"><span class="std std-ref">dither</span></a> shows an example of a simulated
+ACIS-I observation of a cluster of galaxies with and without
+aspect motion included.</p>
+<figure class="align-center" id="id1">
+<span id="fig-ditherexp"></span><img alt="Example of ACIS-I simulation with and without dither" src="../_images/dither_exp.png" />
+<figcaption>
+<p><span class="caption-text">Simulation showing the effects of the internal dither model in <strong>marx</strong>.
+The panel on the left shows a simulated ACIS-I observation of
+a cluster of galaxies with no dither included in Sky coordinates.
+The right panel shows the same simulation
+with <strong>marx</strong>’s INTERNAL dither model turned on.
+Note how the aspect motion has blurred the ACIS chip gaps
+but <em>not</em> the cluster image since aspect correction has been
+applied to the Sky coordinates displayed here.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The functional form of the motion model is described in
+<a class="reference internal" href="../indetail/aspect.html#simulatingaspect"><span class="std std-ref">Simulating Aspect with marx</span></a>.
+In general, the form of the dither model has been adjusted to
+correspond to the current parameters used for ACIS observations.
+HRC observations with dither can be simulated by adjusting the
+<a class="reference internal" href="../Reference/othermarxpars.html#parameter-DitherAmp_RA"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherAmp_RA</span></code></a> and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-DitherAmp_Dec"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherAmp_Dec</span></code></a> parameters from
+8 arcsec to 20 arcsec.</p>
+<p>Finally, if <a class="reference internal" href="../indetail/aspect.html#parameter-DitherModel"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherModel=FILE</span></code></a>, <strong>marx</strong> will use the contents on
+an aspect solution file (ASPSOL) to specify the dither motion pattern.
+The name of the ASPSOL file to use is specified by the <a class="reference internal" href="../indetail/aspect.html#parameter-DitherFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherFile</span></code></a>
+parameter. ASPSOL files can be produced by
+the CXCDS aspect pipeline or <a class="reference internal" href="../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a>.
+The FILE mode can be useful for generating <strong>marx</strong> simulations
+which use the same aspect dither motion as an existing Chandra
+dataset or a previous simulation.
+The time interval covered by the ASPSOL file must equal or exceed the
+requested exposure time of the simulation. If the end of the ASPSOL
+file is reached before the requested exposure time, <strong>marx</strong> will truncate
+the simulation at that point.</p>
+</section>
+</section>
+<section id="running-the-simulation">
+<h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Link to this heading">¶</a></h2>
+<p>Once your system has been configured appropriately and any desired
+modifications have been made to the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> parameter file,
+the simulation is ready to run.
+If the parameters in the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> file are already set
+appropriately, the simulation can be launched simply by typing
+<code class="docutils literal notranslate"><span class="pre">marx</span></code> at the shell prompt.
+<strong>marx</strong> will print out a number of diagnostic messages as the simulation
+proceeds indicating which configuration is being used as well as
+which data files were accessed. Output from an example
+using the ACIS-I with dither enabled is shown here:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx
+MARX version 4.0.8, Copyright (C) 2002 Massachusetts Institute of Technology
+
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/EKCHDOS06.rdb
+Reading binary HRMA optical constants:
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/iridium.dat
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/corr_1.dat
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/corr_3.dat
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/corr_4.dat
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/corr_6.dat
+Reading scattering tables
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_p1_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_h1_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_p3_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_h3_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_p4_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_h4_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_p6_M.bin
+    /usr/local/src/marx_4.0.8-dist/marx/data/hrma/scat_h6_M.bin
+Initializing ACIS-I detector...
+Reading ACIS-I/S FEF File
+    /usr/local/src/marx_4.0.8-dist/marx/data/caldb/acisfef.fits
+Reading ACIS-I QE/Filter Files
+    /usr/local/src/marx_4.0.8-dist/marx/data/caldb/acisD1997-04-17qeN0004.fits for [CCDID = 0]
+    /usr/local/src/marx_4.0.8-dist/marx/data/caldb/acisD1997-04-17qeN0004.fits for [CCDID = 1]
+    /usr/local/src/marx_4.0.8-dist/marx/data/caldb/acisD1997-04-17qeN0004.fits for [CCDID = 2]
+    /usr/local/src/marx_4.0.8-dist/marx/data/caldb/acisD1997-04-17qeN0004.fits for [CCDID = 3]
+[Using INTERNAL dither model]
+Initializing source type POINT...
+System initialized.
+
+Starting simulation.  Exposure Time set to 3.000000e+04 seconds
+Collecting 100000 photons...
+    67631 collected.
+Reflecting from HRMA
+Detecting with ACIS-I
+
+Writing output to directory &#39;point&#39; ...
+Total photons: 67631, Total Photons detected: 18060, (efficiency: 0.267037)
+   (efficiency this iteration  0.267037)  Total time: 30000.079736
+</pre></div>
+</div>
+<p>Once the initialization is complete, <strong>marx</strong> will begin processing
+groups of rays. Again, diagnostic messages will be generated which track
+the simulation’s progress, i.e. <code class="docutils literal notranslate"><span class="pre">Collecting...</span></code>, <code class="docutils literal notranslate"><span class="pre">Reflecting...</span></code>, etc.
+A short synopsis will also be printed at the end of each group of rays
+indicating the number of rays processed, the number actually
+“detected”, the efficiency for this iteration, and the total
+integration time incurred so far.
+When the number of rays specified have been processed or the indicated
+integration time has been reached, the simulation will terminate.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Verbose">
+<span class="sig-name descname"><span class="pre">Verbose</span></span><a class="headerlink" href="#parameter-Verbose" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) The diagnostic messages can be quieted by setting the parameter
+<code class="docutils literal notranslate"><span class="pre">Verbose=&quot;no&quot;</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="marx-native-binary-output-files">
+<h2><strong>marx</strong> Native Binary Output Files<a class="headerlink" href="#marx-native-binary-output-files" title="Link to this heading">¶</a></h2>
+<p>Depending on the values of the <a class="reference internal" href="#parameter-OutputDir"><code class="xref std std-par docutils literal notranslate"><span class="pre">OutputDir</span></code></a> and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-OutputVectors"><code class="xref std std-par docutils literal notranslate"><span class="pre">OutputVectors</span></code></a>
+parameters, <strong>marx</strong> will by default create a directory containing a number
+of binary output files. Usually, a user will not use these files directly, but
+convert them to fits files using <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> (see below).
+The native binary format is discussed in more detail in the description of the
+parameter <code class="xref std std-par docutils literal notranslate"><span class="pre">Outputvectors</span></code>.</p>
+<p>These native binary vectors provide convenient access to the individual
+properties of detected photons. For example, to create an ASCII file
+containing only the times and pulse heights for a set of detected photons,
+we can use:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx --dump point/time.dat point/pha.dat &gt; list.txt
+unix% more list.txt
+#            TIME             PHA
+    3.199424e+00             241
+    3.702556e+00             302
+    3.722314e+00             256
+    4.840378e+00             257
+    5.336663e+00             284
+</pre></div>
+</div>
+<p>In this example, the <strong>marx</strong> simulation directory was assumed
+to be named “point”. Alternatively, for IDL users, the routine
+<a class="reference internal" href="../Reference/tools.html#read_marx_file"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">read_marx_file</span></code></a> can be used to read these binary output vectors
+into internal IDL variables.
+These direct means of accessing the properties of detected photons
+can be much more efficient than reading individual columns from
+the equivalent FITS events file, especially for large simulations.</p>
+</section>
+<section id="fits-events-files">
+<h2>FITS Events Files<a class="headerlink" href="#fits-events-files" title="Link to this heading">¶</a></h2>
+<p>The contents of a <strong>marx</strong> simulation output directory may be recast
+in a standard CXC Level 1 FITS events file using the <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>
+tool.
+Events files created in this way contain the standard “detected”
+event quantities such as pixel position, pulse height, time, etc.
+In addition, columns are created in the FITS binary events table
+for the various “simulation” variables (true photon energy,
+dispersed order, mirror reflection shell, etc.).
+<strong>marx</strong> event files can be used transparently
+with the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> extraction tools as well as XSELECT in the
+<a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/software/ftools">FTOOLS</a>
+software suite available from
+<a class="reference external" href="http://heasarc.gsfc.nasa.gov">HEASARC</a>.</p>
+</section>
+<section id="combining-multiple-marx-simulations">
+<h2>Combining multiple <strong>marx</strong> Simulations<a class="headerlink" href="#combining-multiple-marx-simulations" title="Link to this heading">¶</a></h2>
+<p>Complex <strong>marx</strong> simulations can be built using the <a class="reference internal" href="../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> tool.
+This tool concatenates the results of multiple <strong>marx</strong> runs and
+takes as input a list of simulation output directories.
+As output, it creates a new directory containing the merged
+binary output vectors from the specified component directories.
+The resulting merged output vectors will be ordered by photon
+arrival time. <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> can of course still be used to convert
+concatenated simulations into event files.</p>
+<p>The <a class="reference internal" href="../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> tool works by merging the various binary output
+vectors contained in the indicated <strong>marx</strong> output directories. It is the
+user’s responsibility to ensure that the simulations being
+concatenated are commensurate.
+For example, combining simulations with differing pointing
+positions (as defined by <a class="reference internal" href="#parameter-RA_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">RA_Nom</span></code></a> and <a class="reference internal" href="#parameter-Dec_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">Dec_Nom</span></code></a>)
+will produce erroneous results. <a class="reference internal" href="../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> will compare the contents
+of the directories being merged and skip any files which do not
+have counterparts in all the directories.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Running <strong>marx</strong> simulations</a><ul>
+<li><a class="reference internal" href="#the-marx-parameter-file">The <strong>marx</strong> Parameter File</a></li>
+<li><a class="reference internal" href="#simulation-control">Simulation Control</a><ul>
+<li><a class="reference internal" href="#exposure-time">Exposure Time</a></li>
+<li><a class="reference internal" href="#output-directory">Output Directory</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#instrument-configuration">Instrument Configuration</a><ul>
+<li><a class="reference internal" href="#focal-plane-detectors">Focal plane detectors</a></li>
+<li><a class="reference internal" href="#focal-plane-position">Focal Plane Position</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#source-definition">Source Definition</a><ul>
+<li><a class="reference internal" href="#source-position">Source Position</a></li>
+<li><a class="reference internal" href="#source-spectrum">Source Spectrum</a></li>
+<li><a class="reference internal" href="#the-shape-of-the-source-on-the-sky">The shape of the source on the sky</a></li>
+<li><a class="reference internal" href="#aspect-dither-motion">Aspect Dither Motion</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
+<li><a class="reference internal" href="#marx-native-binary-output-files"><strong>marx</strong> Native Binary Output Files</a></li>
+<li><a class="reference internal" href="#fits-events-files">FITS Events Files</a></li>
+<li><a class="reference internal" href="#combining-multiple-marx-simulations">Combining multiple <strong>marx</strong> Simulations</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="caveats.html"
+                          title="previous chapter">Current caveats for MARX</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="gettinghelp.html"
+                          title="next chapter">Reporting a problem or issue</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="gettinghelp.html" title="Reporting a problem or issue"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="caveats.html" title="Current caveats for MARX"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" >MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Running <strong>marx</strong> simulations</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

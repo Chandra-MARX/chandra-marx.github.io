@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Highlights for each version of marx &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Downloading and Installing Marx" href="install.html" />
+    <link rel="prev" title="MARX in brief" href="overview.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Downloading and Installing Marx"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="MARX in brief"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" accesskey="U">MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Highlights for each version of <strong>marx</strong></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="highlights-for-each-version-of-marx">
+<span id="highlights"></span><h1>Highlights for each version of <strong>marx</strong><a class="headerlink" href="#highlights-for-each-version-of-marx" title="Link to this heading">¶</a></h1>
+<section id="marx-5-5-3-dec-2023">
+<h2>Marx 5.5.3 (Dec 2023)<a class="headerlink" href="#marx-5-5-3-dec-2023" title="Link to this heading">¶</a></h2>
+<p>Version 5.5.3 is identical to the previous version 5.5.2 except to a small tweak in the installation scripts that help when compiling marx on Apple’s ARM chips.</p>
+</section>
+<section id="marx-5-5-2-dec-2022">
+<h2>Marx 5.5.2 (Dec 2022)<a class="headerlink" href="#marx-5-5-2-dec-2022" title="Link to this heading">¶</a></h2>
+<p>This release just upgrades the <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> files that are shipped with <strong>marx</strong>.
+There are no code changes.</p>
+</section>
+<section id="marx-5-5-1-dec-2020">
+<h2>Marx 5.5.1 (Dec 2020)<a class="headerlink" href="#marx-5-5-1-dec-2020" title="Link to this heading">¶</a></h2>
+<p>This release just upgrades the <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> files that are shipped with <strong>marx</strong>.
+There are no code changes.</p>
+</section>
+<section id="marx-5-5-dec-2019">
+<h2>Marx 5.5 (Dec 2019)<a class="headerlink" href="#marx-5-5-dec-2019" title="Link to this heading">¶</a></h2>
+<p>Update <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> files that are shipped with <strong>marx</strong> to <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> version 4.9.0.</p>
+<p>Change column type of PHA and PI columns written by <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> to float32
+to match the files that CIAO writes.</p>
+<p>User-compiled sources (<a class="reference internal" href="../indetail/models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType=&quot;USER&quot;</span></code></a>) have a function called
+<code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> which is called with a pointer to ray properties
+(direction, time, and energy). All ray properties used to be undefined before
+calling this function and the user function could return <code class="docutils literal notranslate"><span class="pre">-1</span></code> for energy and
+time to have <strong>marx</strong> assign energy and time. Now, <code class="docutils literal notranslate"><span class="pre">energy</span></code> is initialized
+<em>before</em> <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> is called, to allow user code that assigns
+locations based on the ray energy.  With this change, marx.par must contain a
+valid specification for the source spectrum, since an energy will be drawn,
+even if the user source later assigns a different value. For
+backwards-compatibility, if <code class="docutils literal notranslate"><span class="pre">user_create_ray</span></code> sets the energy to a negative
+value, <strong>marx</strong> will assign the energy drawn before to the variable again.</p>
+</section>
+<section id="marx-5-4-dec-2018">
+<h2>Marx 5.4 (Dec 2018)<a class="headerlink" href="#marx-5-4-dec-2018" title="Link to this heading">¶</a></h2>
+<p>Update <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> files that are shipped with <strong>marx</strong> to <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> version 4.8.2.</p>
+<section id="hrc-psf">
+<h3>HRC PSF<a class="headerlink" href="#hrc-psf" title="Link to this heading">¶</a></h3>
+<p>The HRC detector PSF has some blur in it. See
+<a class="reference external" href="https://cxc.cfa.harvard.edu/twiki/bin/view/HrcCal/DetectorPSF">https://cxc.cfa.harvard.edu/twiki/bin/view/HrcCal/DetectorPSF</a> for how the
+parameters used in previous versions of <strong>marx</strong> are determined. However, we
+recently found that the PSFs are wider than observed. Thus, in this version we
+change the values of the default <cite>marx.par</cite> file to use a single Gaussian
+instead. This change is most important for the profile of the wings in very
+bright HRC sources.  We continue to investigate this and expect another change
+in the next <strong>marx</strong> release.</p>
+</section>
+</section>
+<section id="marx-5-3-3-dec-2017">
+<h2>Marx 5.3.3 (Dec 2017)<a class="headerlink" href="#marx-5-3-3-dec-2017" title="Link to this heading">¶</a></h2>
+<p>Small bug fix to the source code to allow compilation with clang
+(which is the default compiler on Macs).</p>
+</section>
+<section id="marx-5-3-2-dec-2016">
+<h2>Marx 5.3.2 (Dec 2016)<a class="headerlink" href="#marx-5-3-2-dec-2016" title="Link to this heading">¶</a></h2>
+<p>Update <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> files that are shipped with <strong>marx</strong>. No changes to the source
+code.</p>
+</section>
+<section id="marx-5-3-1-aug-2016">
+<h2>Marx 5.3.1 (Aug 2016)<a class="headerlink" href="#marx-5-3-1-aug-2016" title="Link to this heading">¶</a></h2>
+<p>This fixes two bugs for users of SIMPUT sources; all other
+runs are unaffected.</p>
+</section>
+<section id="marx-5-3-apr-2016">
+<h2>Marx 5.3 (Apr 2016)<a class="headerlink" href="#marx-5-3-apr-2016" title="Link to this heading">¶</a></h2>
+<section id="important-bug-fix-for-off-axis-sources-please-upgrade">
+<h3>Important bug-fix for off-axis sources: Please upgrade!<a class="headerlink" href="#important-bug-fix-for-off-axis-sources-please-upgrade" title="Link to this heading">¶</a></h3>
+<p>MARX 5.0, 5.1, and 5.2 contain a bug that affects the PSF for
+simulations of off-axis sources; this is fixed in 5.3.
+The root cause for this bug was that the entrance aperture of the Chandra
+mirrors was chosen to match the size of the mirror opening as seen an on-axis
+source exactly. For an off-axis source that means that the generated photons
+hit only part of the mirror, leading to gaps in the simulated PSF. Now, the
+entrance aperture has been increased to allow sources anywhere in the
+field-of-view to fill the detector. This necessarily increases the run time of
+all <strong>marx</strong> simulations, because more photons need to be generated.
+See <a class="reference external" href="https://github.com/Chandra-MARX/marx/issues/21">https://github.com/Chandra-MARX/marx/issues/21</a> for a detailed
+description of the issue.</p>
+</section>
+<section id="new-source-type-simput">
+<h3>New source type: SIMPUT<a class="headerlink" href="#new-source-type-simput" title="Link to this heading">¶</a></h3>
+<p><strong>marx</strong> now supports the new <a class="reference external" href="http://hea-www.harvard.edu/heasarc/formats/simput-1.1.0.pdf">SIMPUT standard</a>, which is a fits based
+description of sources, which allows a large number of source with different
+spectra, light curves, and shapes on the sky. This file format is supported by a
+number of other simulators (e.g. for ATHENA), so integrating it in <strong>marx</strong>
+allows users to use the same source specification for different X-ray missions.
+The support in <strong>marx</strong> is through the <a class="reference external" href="http://www.sternwarte.uni-erlangen.de/research/sixte/simulation.php">SIMPUT code</a> which needs to be installed
+separately and is linked dynamically at runtime if <a class="reference internal" href="../indetail/models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType=&quot;SIMPUT&quot;</span></code></a>.</p>
+</section>
+</section>
+<section id="marx-5-2-dec-2015">
+<h2>Marx 5.2 (Dec 2015)<a class="headerlink" href="#marx-5-2-dec-2015" title="Link to this heading">¶</a></h2>
+<p>There are only minor enhancements, calibration updates, and bug fixes
+in this version.</p>
+<section id="change-in-default-parameters">
+<h3>Change in default parameters<a class="headerlink" href="#change-in-default-parameters" title="Link to this heading">¶</a></h3>
+<p>Set the <a class="reference internal" href="../Reference/othermarxpars.html#parameter-PointingOffsetY"><code class="xref std std-par docutils literal notranslate"><span class="pre">PointingOffsetY</span></code></a> and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-PointingOffsetZ"><code class="xref std std-par docutils literal notranslate"><span class="pre">PointingOffsetZ</span></code></a> to 0 to match the
+values in current Chandra observations (was <code class="docutils literal notranslate"><span class="pre">-21</span></code> and <code class="docutils literal notranslate"><span class="pre">12</span></code> before).
+This defines the difference between RA/DEC_NOM and RA/DEC_PNT in the
+fits headers of event files; it is not used in the code except to output
+the RA/DEC_PNT values by <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>.</p>
+</section>
+<section id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Match use of long and double types in fits output to standard CIAO products.</p></li>
+<li><p>Previously an ASOL file name &gt; 63 characters would crash <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>.
+Now, it cuts the pathname to shorten the string.</p></li>
+</ul>
+</section>
+</section>
+<section id="marx-5-1-apr-2015">
+<h2>Marx 5.1 (Apr 2015)<a class="headerlink" href="#marx-5-1-apr-2015" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> version 5.1 is a maintenance release. Since more than
+two years have gone by since release 5.0, there are major changes in the
+Chandra calibration data that <strong>marx</strong> uses, particularly in the soft energy
+response of ACIS. In addition there are several minor changes, some of which are
+listed below (see the commit log of the <a class="reference external" href="https://github.com/Chandra-MARX/marx">git repository</a> for complete details):</p>
+<ul class="simple">
+<li><p><strong>marx</strong> now compiles with <code class="docutils literal notranslate"><span class="pre">clang</span></code>, the compiler that is shipped with Max OS X-code.
+(Apple sets an alias called <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, but this really points to <code class="docutils literal notranslate"><span class="pre">clang</span></code>.)</p></li>
+<li><p>Enhanced support for dithered <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> rays on input. In particular, that
+means that the parameter <a class="reference internal" href="../Reference/othermarxpars.html#parameter-SAOSAC_Color_Rays"><code class="xref std std-par docutils literal notranslate"><span class="pre">SAOSAC_Color_Rays</span></code></a> is no longer
+needed. Setting it currently has no effect and this parameter will be removed
+in the next version.</p></li>
+<li><p><a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> writes more header keywords in the output fits files,
+which enables more <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools to work with those files.</p></li>
+<li><p>The HRC blur model has been improved. Simulations with HRC-I and HRC-S will
+give slightly different PSF shapes. In order to describe the HRC blur
+properly, new parameters have been added to <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>. These parameters
+should not be changed by the user; instead we strongly recommend to just copy
+and modify the version of <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> that comes with the installation
+which includes those new parameters.</p></li>
+<li><p><strong>marx</strong> now includes the LEG misalignment compared to the ACIS chips. Handling
+this required changes to the default values of the <a class="reference internal" href="../Reference/othermarxpars.html#parameter-hegTheta"><code class="xref std std-par docutils literal notranslate"><span class="pre">hegTheta</span></code></a>,
+<a class="reference internal" href="../Reference/othermarxpars.html#parameter-megTheta"><code class="xref std std-par docutils literal notranslate"><span class="pre">megTheta</span></code></a>, and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-legTheta"><code class="xref std std-par docutils literal notranslate"><span class="pre">legTheta</span></code></a>. These parameters
+should not be changed by the user; instead we strongly recommend to just copy
+and modify the version of <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> that comes with the installation
+which includes those updated values.</p></li>
+</ul>
+</section>
+<section id="marx-5-0">
+<h2>Marx 5.0<a class="headerlink" href="#marx-5-0" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> 5.0 is a major new release.  This page is devoted to the new
+features.</p>
+<section id="subpixel-randomization">
+<h3>Subpixel Randomization<a class="headerlink" href="#subpixel-randomization" title="Link to this heading">¶</a></h3>
+<p>The EDSER subpixel algorithm was incorporated into CIAO 4.3.  When
+computing Sky coordinates, <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/acis_process_events.html">acis_process_events</a> first converts the
+integer-valued chip coordinate to a floating point value.  There are
+several ways in which this may be done.  One way is to simply cast the
+integer to a float, e.g,, the integer 2 becomes 2.0.  The problem with
+this approach is that it can cause aliasing artifacts in the resulting
+Sky image.  For this reason, the default up until CIAO 4.3 was to
+simply add a uniform random deviate from -0.5 to 0.5 to the integer
+value so that 2 would become a random real number in the semi-open
+interval [1.5, 2.5).  The default was changed in CIAO 4.3 to use a
+discrete probability distribution based upon flight grade and energy, known as
+the EDSER method.</p>
+<p>The <strong>marx</strong> 5 version of <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> introduces a <code class="docutils literal notranslate"><span class="pre">--pixadj</span></code> command
+line parameter that allows the user to select one of several pixel
+randomization methods.  Simply running <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> without any command
+line arguments will display its usage message:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>marx2fits v5.0.0:
+Usage: marx2fits [options] marxdir outfile
+Options:
+  --pileup             Process a marxpileup simulation
+  --pixadj=EDSER       Use a subpixel algorithm (default)
+  --pixadj=RANDOMIZE   Randomize within a detector pixel
+  --pixadj=NONE        Do not randomize within a detector pixel
+  --pixadj=EXACT       Use exact chip coordinates
+</pre></div>
+</div>
+<p>The effect of these randomization methods may be seen in the following
+plot, which shows that the EDSER distribution approaches the
+exact limit.</p>
+<figure class="align-center" id="id1">
+<img alt="Image of PSF with different pixadj values" src="../_images/marxsubpix.png" />
+<figcaption>
+<p><span class="caption-text">Image of PSF with different pixadj values</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>If using <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> rays with <strong>marx</strong>, see <a class="reference internal" href="caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a> regarding the use of
+the EDSER method with such rays. <strong>Note: Caveat removed in 2015. SAOTrace now
+supports dither.</strong></p>
+</section>
+<section id="new-dither-model">
+<h3>New dither model<a class="headerlink" href="#new-dither-model" title="Link to this heading">¶</a></h3>
+<p>The EDSER subpixel algorithm necessitated numerous changes to the
+marx aspect code.  In particular, aspect reconstruction blur
+had to be cleanly separated into its independently contributing
+pieces, namely the telescope pointing uncertainty, the blur introduced
+by pixel quantization/truncation, and the blur associated with pixel
+randomization.  Previous versions of <strong>marx</strong> incorporated these blurs
+under the guise of a single parameter, <code class="xref std std-par docutils literal notranslate"><span class="pre">DitherBlur</span></code>, whose value
+was the RSS sum of the contributing blurs.  This was the source of a
+lot of confusion among users resulting in numerous help desk inquiries
+about how this value was obtained and why it was so large.
+For these reasons, the <code class="xref std std-par docutils literal notranslate"><span class="pre">DitherBlur</span></code> parameter was removed from <strong>marx</strong>
+and replaced by one called <a class="reference internal" href="../indetail/aspect.html#parameter-AspectBlur"><code class="xref std std-par docutils literal notranslate"><span class="pre">AspectBlur</span></code></a> whose value represents
+just the telescope pointing uncertainty,
+<a class="reference external" href="http://cxc.harvard.edu/cal/ASPECT/img_recon/report.html">0.07 arc-seconds</a>.  One consequence of this change is that <strong>marx</strong> 4.x
+parameter files cannot be used with marx 5.0.</p>
+<p>It was also necessary to remove the blur parameters from <a class="reference internal" href="../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a>,
+which computes an aspect solution file for use in reprocessing a
+<a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> generated event file.  Hence any scripts that pass blur
+parameter values to <a class="reference internal" href="../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> will need to be modified.</p>
+</section>
+<section id="calibration-updates">
+<h3>Calibration Updates<a class="headerlink" href="#calibration-updates" title="Link to this heading">¶</a></h3>
+<p>As mentioned above, the <code class="xref std std-par docutils literal notranslate"><span class="pre">DitherBlur</span></code> parameter’s value reflected
+more that just that associated with the aspect uncertainty.  It was
+also tweaked to get the marx PSF to better match Chandra grating line
+profiles.  With this parameter gone, the <strong>marx</strong> HRMA blur parameters
+had to be re-calibrated to get the widths of the <strong>marx</strong> simulated
+grating line profiles to match those in the Chandra CALDB.</p>
+<p>There was a long standing issue of a relative rotation between the
+LETG and the ACIS detector.  The root of this problem was tracked down
+(with the help of <strong>marx</strong>) to a rotation offset between the aspect
+coordinate system and the focal plane detector system.  This offset
+was masked by compensating rotations of the detectors from astrometric
+analysis, and manifested itself as a small rotation of the LEG
+dispersion arm on the ACIS detector.  Changes were added to CIAO 4.3
+that effectively adds an additional rotation to the LETG when used
+with ACIS.  The corresponding change in <strong>marx</strong> 5.0 is implemented via a
+new parameter called <a class="reference internal" href="../indetail/hardwaremodel.html#parameter-LETG_ACIS_dTheta"><code class="xref std std-par docutils literal notranslate"><span class="pre">LETG_ACIS_dTheta</span></code></a>.</p>
+<p>The <strong>marx</strong> calibration data have been brought up to date with the
+Chandra CALDB 4.4.7.</p>
+</section>
+<section id="marx-parameter-file-updates">
+<h3>Marx Parameter File Updates<a class="headerlink" href="#marx-parameter-file-updates" title="Link to this heading">¶</a></h3>
+<p>The parameter files for earlier versions of marx (e.g., the marx.par
+file for version 4.5) cannot be used with marx 5.0.  The recalibrations
+that were necessary for subpixel support resulted in changes to all of
+the HRMA blur parameters, as well as the introduction of the new
+<a class="reference internal" href="../indetail/aspect.html#parameter-AspectBlur"><code class="xref std std-par docutils literal notranslate"><span class="pre">AspectBlur</span></code></a> parameter discussed above.</p>
+<p>The following marx.par parameter values have changed since marx 4.5:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>P1Blur: 0.18129215 --&gt; 0.303427
+H1Blur: 0.13995037 --&gt; 0.0051428
+P3Blur: 0.11527828 --&gt; 0.0951899
+H3Blur: 0.16360829 --&gt; 0.0713614
+P4Blur: 0.1289134 --&gt; 0.178899
+H4Blur: 0.098093014 --&gt; 0.0101367
+P6Blur: 0.076202759 --&gt; 0.151085
+H6Blur: 0.079767401 --&gt; 0.0239287
+MEGRowlandDiameter: 8632.65 --&gt; 8632.48
+HEGRowlandDiameter: 8632.65 --&gt; 8632.48
+HETG_Shell1_Period: 0.400141 --&gt; 0.400195
+HETG_Shell3_Period: 0.400141 --&gt; 0.400195
+LETG_Shell1_Theta: -0.07 --&gt; 0.07
+LETG_Shell3_Theta: -0.07 --&gt; 0.07
+LETG_Shell4_Theta: -0.07 --&gt; 0.07
+LETG_Shell6_Theta: -0.07 --&gt; 0.07
+legCoarseNumOrders: 11 --&gt; 121
+</pre></div>
+</div>
+<p>The following parameters have been removed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>DitherBlur
+</pre></div>
+</div>
+<p>The following parameters have been added:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>AspectBlur: 0.07
+LETG_ACIS_dTheta: -0.0867
+Use_This_Order: 0
+DetExtendFlag: no
+</pre></div>
+</div>
+<p>The latter two parameters were added for the purposes of calibration.</p>
+</section>
+</section>
+<section id="marx-4-0">
+<h2>MARX 4.0<a class="headerlink" href="#marx-4-0" title="Link to this heading">¶</a></h2>
+<p>MARX 4.0 represents a major upgrade since the previous release.
+Where possible, MARX now uses CIAO CALDB data files directly for
+detector responses and quantum efficiencies thus providing the ability
+to transparently analyze simulations using standard CIAO tools. In
+addition to calibration changes, a number of improvements and
+enhancements to MARX’s functionality have been made. These include:</p>
+<ul class="simple">
+<li><p>Simplified source position specification</p></li>
+<li><p>Direct CALDB interface for calibration information</p></li>
+<li><p>Direct use of FEF files for ACIS spectral response</p></li>
+<li><p>New ACIS photon pileup tool</p></li>
+<li><p>Enhancements to support processing CHART rayfiles</p></li>
+<li><p>Improved compatibility with CIAO data analysis tools</p></li>
+<li><p>Miscellaneous bug fixes</p></li>
+</ul>
+<p>As with previous updates, most of these changes should be completely
+transparent to the returning user.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Highlights for each version of <strong>marx</strong></a><ul>
+<li><a class="reference internal" href="#marx-5-5-3-dec-2023">Marx 5.5.3 (Dec 2023)</a></li>
+<li><a class="reference internal" href="#marx-5-5-2-dec-2022">Marx 5.5.2 (Dec 2022)</a></li>
+<li><a class="reference internal" href="#marx-5-5-1-dec-2020">Marx 5.5.1 (Dec 2020)</a></li>
+<li><a class="reference internal" href="#marx-5-5-dec-2019">Marx 5.5 (Dec 2019)</a></li>
+<li><a class="reference internal" href="#marx-5-4-dec-2018">Marx 5.4 (Dec 2018)</a><ul>
+<li><a class="reference internal" href="#hrc-psf">HRC PSF</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#marx-5-3-3-dec-2017">Marx 5.3.3 (Dec 2017)</a></li>
+<li><a class="reference internal" href="#marx-5-3-2-dec-2016">Marx 5.3.2 (Dec 2016)</a></li>
+<li><a class="reference internal" href="#marx-5-3-1-aug-2016">Marx 5.3.1 (Aug 2016)</a></li>
+<li><a class="reference internal" href="#marx-5-3-apr-2016">Marx 5.3 (Apr 2016)</a><ul>
+<li><a class="reference internal" href="#important-bug-fix-for-off-axis-sources-please-upgrade">Important bug-fix for off-axis sources: Please upgrade!</a></li>
+<li><a class="reference internal" href="#new-source-type-simput">New source type: SIMPUT</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#marx-5-2-dec-2015">Marx 5.2 (Dec 2015)</a><ul>
+<li><a class="reference internal" href="#change-in-default-parameters">Change in default parameters</a></li>
+<li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#marx-5-1-apr-2015">Marx 5.1 (Apr 2015)</a></li>
+<li><a class="reference internal" href="#marx-5-0">Marx 5.0</a><ul>
+<li><a class="reference internal" href="#subpixel-randomization">Subpixel Randomization</a></li>
+<li><a class="reference internal" href="#new-dither-model">New dither model</a></li>
+<li><a class="reference internal" href="#calibration-updates">Calibration Updates</a></li>
+<li><a class="reference internal" href="#marx-parameter-file-updates">Marx Parameter File Updates</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#marx-4-0">MARX 4.0</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="overview.html"
+                          title="previous chapter">MARX in brief</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="install.html"
+                          title="next chapter">Downloading and Installing Marx</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Downloading and Installing Marx"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="MARX in brief"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" >MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Highlights for each version of <strong>marx</strong></a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

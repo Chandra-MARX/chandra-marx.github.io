@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Coordinates on the sky and the chip &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="List of code used to run tests" href="listofcode.html" />
+    <link rel="prev" title="Sources in marx" href="source.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="listofcode.html" title="List of code used to run tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="source.html" title="Sources in marx"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U"><strong>marx</strong> accuracy and testing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Coordinates on the sky and the chip</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="coordinates-on-the-sky-and-the-chip">
+<span id="sect-tests-positions"></span><h1>Coordinates on the sky and the chip<a class="headerlink" href="#coordinates-on-the-sky-and-the-chip" title="Link to this heading">¶</a></h1>
+<p>In every <strong>marx</strong> simulation, one or more sources are placed at some sky position.
+<strong>marx</strong> simulates photons coming from that position, traces them through the
+mirror and gratings and finally places them on the chip. With a known
+aspect solution, chip coordinates can then be transformed back to sky
+coordinates. In general, this will not recover the exact sky position where a
+photon started out. A big part of that is scatter in the mirrors, which blurs
+the image (see <a class="reference internal" href="PSF.html#sect-tests-psf"><span class="std std-ref">Point Spread Function (PSF)</span></a> for tests of the PSF).
+However, with a large number of photons, we can fit the average position which
+should be close to the real sky position.</p>
+<p>In real observations, other factors contribute, such as the finite
+resolution of the detectors (<strong>marx</strong> usually takes that into account, but it can
+be switched of through the <code class="docutils literal notranslate"><span class="pre">--pixadj=&quot;EXACT&quot;</span></code> switch in <a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>)
+and the uncertainty of the aspect solution.</p>
+<p>Within a single observation, positions will be less certain for fainter sources
+(due to Poisson statistics) and for sources at a larger off-axis angles (due to the
+larger PSF).</p>
+<section id="chandra-orion-ultradeep-project">
+<span id="sect-test-onc"></span><h2>Chandra Orion Ultradeep project<a class="headerlink" href="#chandra-orion-ultradeep-project" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&amp;obsid=3744">ObsID 3744</a></p>
+</dd>
+<dt class="field-even">code<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="code/ONC.html#test-code-onc"><span class="std std-ref">Chandra Orion Ultradeep project</span></a></p>
+</dd>
+</dl>
+<p>The <a class="reference external" href="http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=onc">Orion Nebula Cluster (ONC)</a>
+is a dense star forming region with about 1600 X-ray sources observed
+in the COUP survey by
+<a class="reference external" href="http://adsabs.harvard.edu/abs/2005ApJS..160..319G">Getman et al (2005)</a> .
+We simulate this field with <strong>marx</strong> and then run a source detection to check
+how well we recover the input coordinates. This will depend on the number
+of counts detected and the position in the field.
+To simplify the simulation input, we assume that all sources have flat
+lightcurves and are
+monoenergetic at the observed mean energy (the energy matters because
+the effective area is energy dependent and so is the PSF).
+We write a short C code that reads an input coordiante list and generates
+the photons in this manner. We compile
+the code, and call it as a <a class="reference internal" href="../indetail/models.html#sect-usersource"><span class="std std-ref">USER Source</span></a>.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/ONC_ds9.png"><img alt="" src="../_images/ONC_ds9.png" style="width: 614.25px; height: 373.5px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> image of the observed data (left) and simulation (right). The sources detected in the simulation are overlayed. There are few cases where the read-out streak is identified as source or where two close sources are detected as one larger resolved source. The COUP catalog used as input is based on much longer merged observations and has been checked against optical and IR observations to remove such spurious detections.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../_images/ONC_dist.png"><img alt="Scatter plot with distance from aimpoint vs coordinate error in the fit." src="../_images/ONC_dist.png" style="width: 565.5px; height: 325.5px;" /></a>
+<figcaption>
+<p><span class="caption-text">Apart from a few outliers close to the aimpoint  (mostly confused sources, see above), the distribution of coordinate errors follows spreads out with increasing distance, i.e. size of the PSF.</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>For this field, we know the true input coordinates so we can check how well <strong>marx</strong> reproduces those. In the center of the field (about one armin) the coordiante error is less than the size of an ACIS pixel for all sources and the average error never grows much beyond 1 ACIS pixel even for far off-axis source. The upper envelope of the distribution of errors is approximate linear and reaches 1 arcsec at a distance of 200 arcsec. No strong correlation of coordiante error and count rate of the source is apparent, indicating that the dominant error is not just due to Poisson counting statistics.</p>
+</section>
+<section id="regular-grid-acis">
+<span id="sect-test-regulargrid"></span><h2>Regular Grid (ACIS)<a class="headerlink" href="#regular-grid-acis" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/RegularGrid.html#test-code-regulargrid"><span class="std std-ref">Regular Grid (ACIS)</span></a></p>
+</dd>
+</dl>
+<p>In this example we place a radial grid of sources on the sky. Each source
+emits an equal number of photons (exactly, no Poisson statistics) so that
+we can compare the accuracy of the position we recover. Note that the
+<em>detected</em> number of photons will be smaller for off-axis photons because
+of vignetting!</p>
+<p>We write a short C code that generates the photons in this manner, compile
+it, and call is as a <a class="reference internal" href="../indetail/models.html#sect-usersource"><span class="std std-ref">USER Source</span></a>.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/RegularGrid_ds9.png"><img alt="Sources positioned like knots in a spider web." src="../_images/RegularGrid_ds9.png" style="width: 375.0px; height: 411.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> image of the simulation. The size of the PSF increases further away from the aimpoint.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/RegularGrid_hist.png"><img alt="Plot is described in the caption." src="../_images/RegularGrid_hist.png" style="width: 588.0px; height: 288.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>left</em>: The error in the position (measured radially to the optical axis) increases with the distance to the optical axis. One part of this is just that the effective area and thus the number of counts decreases. There is also a systematic trend where sources at larger off-acis angle are systematically fitted too close to the center. Further investigation is necessary to check if this is a problem of <strong>marx</strong> related or <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/celldetect.html">celldetect</a>. In any case, the typical offset is below 0.2 arcsec, which is less then half a pixel in ACIS. <em>right</em>: Difference in position angle between input and fit. (Outliers beyond the plot range are not shown.)</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The input position is typically recovered to much better than one pixel for sources with a few hundred counts. There is a small systematic trend that needs to be studied further.</p>
+</section>
+<section id="regular-grid-hrc">
+<span id="sect-test-regulargridhrci"></span><h2>Regular grid (HRC)<a class="headerlink" href="#regular-grid-hrc" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/RegularGridHRCI.html#test-code-regulargridhrci"><span class="std std-ref">Regular grid (HRC)</span></a></p>
+</dd>
+</dl>
+<p>Same as above, but with HRC-I as a detector.</p>
+<p>The field-of-view for the HRC-I is larger for than for ACIS-I, but the PSF becomes
+very large at large off-axis angles and thus the positional uncertainty
+will be so large that a comparison to <strong>marx</strong> is no longer helpful to test
+the accuracy of the <strong>marx</strong> simulations.</p>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="../_images/RegularGridHRCI_ds9.png"><img alt="Sources positioned like knots in a spider web. The image is very similar to the previous ACIS example." src="../_images/RegularGridHRCI_ds9.png" style="width: 375.0px; height: 411.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> image of the simulation. The size of the PSF increases further away from the aimpoint.</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="../_images/RegularGridHRCI_hist.png"><img alt="Plot is described in the caption." src="../_images/RegularGridHRCI_hist.png" style="width: 588.0px; height: 288.0px;" /></a>
+<figcaption>
+<p><span class="caption-text">See previous example. The same trends are visible with a slightly larger scatter.</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>In the central few arcmin the input position is typically recovered to better than 0.2 pixels for sources with a few hundred counts.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Coordinates on the sky and the chip</a><ul>
+<li><a class="reference internal" href="#chandra-orion-ultradeep-project">Chandra Orion Ultradeep project</a></li>
+<li><a class="reference internal" href="#regular-grid-acis">Regular Grid (ACIS)</a></li>
+<li><a class="reference internal" href="#regular-grid-hrc">Regular grid (HRC)</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="source.html"
+                          title="previous chapter">Sources in <strong>marx</strong></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="listofcode.html"
+                          title="next chapter">List of code used to run tests</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="listofcode.html" title="List of code used to run tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="source.html" title="Sources in marx"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" ><strong>marx</strong> accuracy and testing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Coordinates on the sky and the chip</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The marx Models for the Spacecraft &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="marx accuracy and testing" href="../tests/index.html" />
+    <link rel="prev" title="The spectrum and the spatial shape of the X-ray source" href="models.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../tests/index.html" title="marx accuracy and testing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="The spectrum and the spatial shape of the X-ray source"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" accesskey="U">Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The <strong>marx</strong> Models for the Spacecraft</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="the-marx-models-for-the-spacecraft">
+<span id="sect-modelsforthespacecraft"></span><h1>The <strong>marx</strong> Models for the Spacecraft<a class="headerlink" href="#the-marx-models-for-the-spacecraft" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> provides the capability to simulate the various combinations of
+scientific instruments onboard the Chandra satellite and includes models
+of the Chandra mirrors, the low- and high-energy transmission grating
+assemblies (LETG and HETG), and the HRC and ACIS focal plane detectors.
+<strong>marx</strong> also provides support for simulations of ground–based
+calibration tests at XRCF. The HRMA shutter assembly is modeled as well
+as sources at a finite distance. The purpose of this Section is to
+provide technical information about the implementation of the various
+subsystems of <strong>marx</strong>.</p>
+<p>With very few exceptions, a <strong>marx</strong> user should not change the parameters
+that control the spacecraft model. Their defaults are based on the best
+available Chandra calibration information. Thus, only very few <strong>marx</strong>
+parameters are described in this Section. For reference a list of all
+parameters that control the spacecraft model can be found in <a class="reference internal" href="../Reference/othermarxpars.html#spacecraftpars"><span class="std std-ref">Further marx parameters</span></a>.</p>
+<section id="the-marx-coordinate-system">
+<span id="sect-coordsystem"></span><h2>The <strong>marx</strong> Coordinate System<a class="headerlink" href="#the-marx-coordinate-system" title="Link to this heading">¶</a></h2>
+<p>The coordinate system used by <strong>marx</strong> is shown in <a class="reference internal" href="#figure-coordinate-system">Figure Coordinate System</a>.
+The origin is in the vertical plane of symmetry of the system. The
+orientation is such that the X–axis is parallel to the optical axis of
+the telescope and increases away from the focal plane. Thus,
+astrophysical sources are at a distance of <span class="math notranslate nohighlight">\(x=+\infty\)</span>. The Z–axis
+is perpendicular to the horizontal plane of symmetry of the telescope
+passing through the X–axis and parallel to the SIM translation
+direction. The Y–axis completes the system and corresponds to the
+dispersion direction for the gratings on Chandra. The origin of the
+<strong>marx</strong> coordinate system is located at the center of the Rowland
+torus.</p>
+<figure class="align-center" id="figure-coordinate-system">
+<img alt="See text for a description of the coordinate system." src="../_images/coord.png" />
+<figcaption>
+<p><span class="caption-text">The MARX Coordinate System.</span><a class="headerlink" href="#figure-coordinate-system" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>This coordinate system is equivalent to the Chandra coordinate system
+described in the Chandra Observatory Guide. More information on the
+<strong>marx</strong> and Chandra coordinate systems can be found in several CXC Manuals
+available from <a class="reference external" href="http://cxc.harvard.edu/ciao/manuals.html">http://cxc.harvard.edu/ciao/manuals.html</a> .
+The physical placements of the mirror, gratings,
+detectors and other hardware components of Chandra in <strong>marx</strong> were
+taken from those documents.</p>
+</section>
+<section id="hrma-model">
+<span id="sect-hrma"></span><span id="index-0"></span><h2>HRMA model<a class="headerlink" href="#hrma-model" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> implements two different models for the HRMA onboard Chandra.
+Selection between these two models is accomplished using the <a class="reference internal" href="../inbrief/simsetup.html#parameter-MirrorType"><code class="xref std std-par docutils literal notranslate"><span class="pre">MirrorType</span></code></a>
+parameter. The first of these models, the <code class="docutils literal notranslate"><span class="pre">EA-MIRROR</span></code> model, is a simpler
+representation of the <code class="docutils literal notranslate"><span class="pre">HRMA</span></code> based on effective area and point spread
+function tables. This model does not include any of the detailed
+characterization of the mirror such as misalignments, tilts, etc.
+present in the either the <code class="docutils literal notranslate"><span class="pre">HRMA</span></code> model or SAOSAC. The <code class="docutils literal notranslate"><span class="pre">EA-MIRROR</span></code> is limited
+to simulation of on-axis point sources. Use of the various spatial
+models listed in <a class="reference internal" href="models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a> requires the <code class="docutils literal notranslate"><span class="pre">HRMA</span></code> model in
+<strong>marx</strong> . The remainder of this discussion refers to the <code class="docutils literal notranslate"><span class="pre">HRMA</span></code> model
+which is the default model.</p>
+<section id="hrma-geometric-model">
+<h3>HRMA Geometric Model<a class="headerlink" href="#hrma-geometric-model" title="Link to this heading">¶</a></h3>
+<p>The HRMA onboard Chandra consists of four Wolter Type I mirrors. These
+mirrors are nested and each shell consists of a paraboloid at the front
+and a hyperboloid at the back. The physical geometry of the HRMA is
+defined externally to <strong>marx</strong> through the file EKCHDOS06.rdb. This file
+is produced by the CXC Calibration group and contains information about
+the size, shape, and placement of the hyperboloid and paraboloid mirror
+elements. This information includes the offsets and rotations of the
+various mirror shells relative to the optical axis. During the
+simulation, the paths of individual photons are traced through this
+geometric structure.</p>
+<p>The mirror support structure is not currently modeled as part of the
+HRMA raytrace. The vignetting effects of these structures is instead
+included as a uniform reduction in the total effective area of the HRMA.
+The degree of vignetting can be adjusted via the HRMAVig parameter. In
+general, this parameter should not be modified.</p>
+</section>
+<section id="hrma-reflectivity-model">
+<h3>HRMA Reflectivity Model<a class="headerlink" href="#hrma-reflectivity-model" title="Link to this heading">¶</a></h3>
+<p>When a ray encounters a mirror surface, <strong>marx</strong> calculates the
+probability that the photon is reflected or absorbed based on the
+properties of the mirror coating and the energy and incidence angle of
+the photon. The mirror shells are assumed to be coated with iridium and
+the iridium optical constants as provided by the Henke Tables are used
+to compute the reflectivity of the mirrors as a function of energy.
+Comparison of the resulting HRMA effective area with that produced by
+SAOSAC raytraces agree to less than 1% over the energy range 0.03–10 keV.</p>
+</section>
+<section id="hrma-scattering-model">
+<h3>HRMA Scattering Model<a class="headerlink" href="#hrma-scattering-model" title="Link to this heading">¶</a></h3>
+<p>The point spread function (PSF) of the HRMA is largely determined by two
+components: the gross physical shape of the mirrors and scattering of
+photons due to small–scale surface irregularities. The physical geometry
+of the mirrors is implemented as discussed above. To treat the
+scattering properties of the HRMA, <strong>marx</strong> provides two options.</p>
+<p>First, a simple Gaussian “blur” may be applied to photon reflections.
+The direction of a ray after reflection from the mirror surface is
+determined by the orientation of the surface normal at the point of
+reflection. This simple model assumes that the direction of the normal
+can vary from its ideal direction according to a Gaussian probability
+distribution whose standard deviation is given by the HRMABlur
+parameters. Blur parameters are specified for each of the parabolic and
+hyperbolic HRMA elements. This model produces a reasonable approximation
+to the measured core of the HRMA PSF.</p>
+<p>In addition to a Gaussian core, the HRMA PSF exhibits energy–dependent
+extended tails as seen in SAOSAC simulations. By default, <strong>marx</strong> uses
+a scattering model based on the treatment of HRMA scattering used by the
+MST’s high fidelity raytrace SAOSAC. The probability that a photon’s
+scattered direction is displaced from a perfect reflection is determined
+using the results of WFOLD scattering tables which specify the
+probability that a photon of a given energy is scattered into a given
+angle. Since the previous release, the HRMA raytrace in <strong>marx</strong> has
+been improved to account for the individual scattering properties of the
+various mirror components. For reference, SAOSAC breaks the HRMA P and H
+optics into many different segments with an associated WFOLD scattering
+table for each to better treat the changes in surface properties along
+the mirror surfaces. The files listed in Table [tab:hrma] and used by
+<strong>marx</strong> represent the scattering properties for the midpoint of each
+hyperbolic and parabolic section of the HRMA. They do not include any
+alignment or gravity induced errors which are handled by the physical
+model of the HRMA. The normalizations of the various WFOLD scattering
+tables can be adjusted using the ScatFactor parameters. The WFOLD
+scattering model can be disabled in <strong>marx</strong> by setting the parameter
+<a class="reference internal" href="../Reference/othermarxpars.html#parameter-HRMA_Use_WFold"><code class="xref std std-par docutils literal notranslate"><span class="pre">HRMA_Use_WFold=&quot;no&quot;</span></code></a>.</p>
+</section>
+</section>
+<section id="grating-modules">
+<span id="id1"></span><h2>Grating Modules<a class="headerlink" href="#grating-modules" title="Link to this heading">¶</a></h2>
+<p><strong>Chandra</strong> contains two distinct grating assemblies called the HETG and
+the LETG. The parameter <a class="reference internal" href="../inbrief/simsetup.html#parameter-GratingType"><code class="xref std std-par docutils literal notranslate"><span class="pre">GratingType</span></code></a> selects the grating for a <strong>marx</strong> simulation.
+The HETG is meant to be used for high energy X–rays and the
+LETG is optimized for low energy X–rays. Actually, the HETG consists of
+two types of gratings: MEG for medium energy rays, and HEG for high
+energy rays. The LETG consists entirely of LEG type gratings. Each
+grating facet is arranged such that its geometric center lies on a
+<strong>Rowland Torus</strong>. The MEG torus is rotated by <span class="math notranslate nohighlight">\(-5\)</span> degrees with
+respect to the LEG torus, and the HEG torus is rotated by <span class="math notranslate nohighlight">\(+5\)</span>
+degrees with respect to the LEG torus.</p>
+<p>After a ray leaves the mirror it travels towards the detector. If the
+gratings are being used, the ray will intersect the grating and undergo
+a diffraction process. Actually, a certain percentage of the rays will
+not strike a grating facet; instead some will be absorbed by the grating
+assembly. The percentage of rays that intersect with a facet is
+specified by the appropriate vignetting parameter, <a class="reference internal" href="../Reference/othermarxpars.html#parameter-LEGVig"><code class="xref std std-par docutils literal notranslate"><span class="pre">LEGVig</span></code></a> if the LETG is
+being used, or <a class="reference internal" href="../Reference/othermarxpars.html#parameter-HEGVig"><code class="xref std std-par docutils literal notranslate"><span class="pre">HEGVig</span></code></a> and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-MEGVig"><code class="xref std std-par docutils literal notranslate"><span class="pre">MEGVig</span></code></a> if the HETG is used.</p>
+<p><strong>marx</strong> currently knows very little about the actual location of
+individual grating facets. The assumption is that the HRMA and the
+grating assembly is aligned such that the probability of a ray striking
+a facet is maximized, and the percentage that miss is controlled by the
+vignetting factor.</p>
+<p>The LETG includes a complex support structure consisting of a triangular
+“coarse” support and a mesh of “fine” wire supports. Both of these
+“fine” and “coarse” wire support structures result in additional
+diffraction patterns. The LETG grating model in <strong>marx</strong> includes the
+multiple diffractions due to these support structures. Roughly 10% of
+the detected photons will be diffracted by one or both of these support
+structures. The reader is referred to the
+<a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap9.html">http://cxc.harvard.edu/proposer/POG/html/chap9.html</a> for more details.</p>
+<section id="intersection-with-the-rowland-torus">
+<h3>Intersection with the Rowland Torus<a class="headerlink" href="#intersection-with-the-rowland-torus" title="Link to this heading">¶</a></h3>
+<p>The Rowland torus is defined by the equation</p>
+<div class="math notranslate nohighlight" id="equation-eqtorus">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eqtorus" title="Link to this equation">¶</a></span>\[(x^2 + y^2 + z^2)^2 = 4 R^2 (x^2 + z^2)\]</div>
+<p>where <span class="math notranslate nohighlight">\(R\)</span> is the Rowland radius. To determine the intersection of
+a ray with the torus, the ray equation</p>
+<div class="math notranslate nohighlight" id="equation-eqray">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eqray" title="Link to this equation">¶</a></span>\[{\vec{x}}= {\vec{x}}_0 + {\hat{p}}t\]</div>
+<p>is substituted into the equation for the torus. This yields the fourth
+order equation for <span class="math notranslate nohighlight">\(t\)</span></p>
+<div class="math notranslate nohighlight" id="equation-quartic">
+<span class="eqno">(3)<a class="headerlink" href="#equation-quartic" title="Link to this equation">¶</a></span>\[\begin{split}\begin{split}
+ 0 = t^4 &amp;+ 4 ({\hat{p}}\cdot{\vec{x}}_0)t^3  \\
+         &amp;+ 2t^2 \big(|{\vec{x}}|^2 + 2({\hat{p}}\cdot{\vec{x}}_0)^2 - 2R^2(p_x^2 + p_z^2)\big) \\
+         &amp;+ 4t \big(|{\vec{x}}_0|^2 ({\hat{p}}\cdot{\vec{x}}_0) - 2R^2(p_x x_0 + p_z z_0)\big)  \\
+         &amp;+ |{\vec{x}}_0|^4 - 4R^2 (x_0^2 + z_0^2)
+\end{split}\end{split}\]</div>
+<p>where the vector <span class="math notranslate nohighlight">\({\vec{x}}_0\)</span> has components
+<span class="math notranslate nohighlight">\((x_0, y_0, z_0)\)</span>. The four roots of this equation are a
+manifestation of the fact that a line can intersect the torus at four
+different places.</p>
+<p>An important case is when <span class="math notranslate nohighlight">\({\vec{x}}_0 = \vec{0}\)</span> where an
+enormous simplification occurs and the equation reduces to</p>
+<div class="math notranslate nohighlight">
+\[0 = t^4 - 4R^2t^2(p_x^2 + p_z^2).\]</div>
+<p>This equation has a double root at <span class="math notranslate nohighlight">\(0\)</span> and non-zero roots at</p>
+<div class="math notranslate nohighlight" id="equation-t0">
+<span class="eqno">(4)<a class="headerlink" href="#equation-t0" title="Link to this equation">¶</a></span>\[t = \pm 2R\sqrt{p_x^2 + p_z^2}.\]</div>
+<p>In the coordinate employed by <strong>marx</strong> , rays travel in the negative
+<span class="math notranslate nohighlight">\(x\)</span> direction from the <strong>HRMA</strong> to the torus. This means that the
+solution of interest is the <em>most negative</em> root of <a class="reference internal" href="#equation-quartic">(3)</a>. Such a
+root corresponds to the first intersection point of the ray with the
+torus.</p>
+<p>Even if <span class="math notranslate nohighlight">\({\vec{x}}_0\)</span> is non-zero, one can always project the ray
+to the <span class="math notranslate nohighlight">\(x = 0\)</span> plane to make the component <span class="math notranslate nohighlight">\(x_0 = 0\)</span>. One
+can then argue that the remaining two components <span class="math notranslate nohighlight">\(z_0\)</span> and
+<span class="math notranslate nohighlight">\(y_0\)</span> will be small (i.e., <span class="math notranslate nohighlight">\(z_0&lt;&lt;R\)</span>) since the rays from the
+HRMA will be converging to the focal point located at the center of the
+torus. The upshot is that <a class="reference internal" href="#equation-t0">(4)</a> is a good zeroth order approximation to
+the exact solution and that one can use this value as the starting point
+in an iterative solution to <a class="reference internal" href="#equation-quartic">(3)</a>. Newton’s method is used by MARX,
+although a closed form solution exists for the quartic equation.</p>
+<p>Let <span class="math notranslate nohighlight">\(t\)</span> be the solution to the equation <span class="math notranslate nohighlight">\(0 = f(t)\)</span> and let
+<span class="math notranslate nohighlight">\(t_0\)</span> represent an approximate root. If
+<span class="math notranslate nohighlight">\(\delta t = t - t_0\)</span>, then a taylor expansion yields</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+   0 = &amp; f(t) \\
+     = &amp; f(t_0 + \delta t) \\
+     = &amp; f(t_0) + \delta t f'(t_0) + \cdots
+\end{split}\end{split}\]</div>
+<p>or</p>
+<div class="math notranslate nohighlight">
+\[t = t_0 - \frac{f(t_0)}{f'(t_0)} + \cdots.\]</div>
+<p>Newton’s method follows from the last expression as an iterative
+solution of the form</p>
+<div class="math notranslate nohighlight" id="equation-newton">
+<span class="eqno">(5)<a class="headerlink" href="#equation-newton" title="Link to this equation">¶</a></span>\[t_{k+1} = t_k - \frac{f(t_k)}{f'(t_k)}.\]</div>
+<p>For the quartic equation</p>
+<div class="math notranslate nohighlight">
+\[0 = t^4 + at^3 + bt^2 + ct + d,\]</div>
+<p>Newton’s method yields the iterative scheme</p>
+<div class="math notranslate nohighlight" id="equation-iterat">
+<span class="eqno">(6)<a class="headerlink" href="#equation-iterat" title="Link to this equation">¶</a></span>\[t_{k+1} = \frac{(3t_k^2 + 2at_k + b)t_k^2 - d}{(4t_k + 3a)t_k^2 + 2bt_k + c}\]</div>
+<p>From <a class="reference internal" href="#equation-quartic">(3)</a>, it follows that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+   a = &amp; 4{\hat{p}}\cdot{\vec{x}}_0 \\
+   b = &amp; 2|{\vec{x}}|^2 + 4({\hat{p}}\cdot{\vec{x}}_0)^2 - 4R^2(p_x^2 + p_z^2) \\
+   c = &amp; 4|{\vec{x}}_0|^2 {\hat{p}}\cdot{\vec{x}}_0 - 8R^2 p_z z_0 \\
+   d = &amp;  |{\vec{x}}_0|^4 - 4R^2 z_0^2
+\end{split}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(x_0\)</span> has been set to zero in accordance with the
+understanding that <strong>the ray has been projected to the x = 0
+plane</strong>. This means that</p>
+<div class="math notranslate nohighlight">
+\[t_0 = -2R\sqrt{p_x^2 + p_z^2}\]</div>
+<p>should be used to seed <a class="reference internal" href="#equation-iterat">(6)</a>.</p>
+<p>The previous analysis is appropriate for any torus whose symmetry axis
+is aligned with the <strong>marx</strong> <span class="math notranslate nohighlight">\(y\)</span> axis. This is the case for the
+LETG; however the tori that make up the HETG differ from the LETG torus
+by a rotation. In particular, the MEG torus differs from the LEG torus
+by a rotation of <span class="math notranslate nohighlight">\(-5\)</span> degrees about the <span class="math notranslate nohighlight">\(x\)</span> axis. Similarly,
+the HEG torus is rotated by <span class="math notranslate nohighlight">\(+5\)</span> degrees the other direction. In
+the following, we consider the more general case of a torus that is
+rotated by an angle <span class="math notranslate nohighlight">\(\theta\)</span> about the <span class="math notranslate nohighlight">\(x\)</span> axis.</p>
+<p>Let <span class="math notranslate nohighlight">\({\cal R}(\theta)\)</span> represent a rotation about the <span class="math notranslate nohighlight">\(x\)</span>
+axis by an angle theta. It takes a vector <span class="math notranslate nohighlight">\(\vec{v}\)</span> and transforms
+it into a new vector <span class="math notranslate nohighlight">\(\vec{v'}\)</span> via</p>
+<div class="math notranslate nohighlight" id="equation-rotation">
+<span class="eqno">(7)<a class="headerlink" href="#equation-rotation" title="Link to this equation">¶</a></span>\[\vec{v}' = {\cal R}(\theta) \vec{v}\]</div>
+<p>where the components of <span class="math notranslate nohighlight">\(\vec{v}'\)</span> satisfy</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+   v_x' = &amp; v_x \\
+   v_y' = &amp; v_y \cos\theta + v_z \sin\theta \\
+   v_z' = &amp; -v_y \sin\theta + v_z\cos\theta.
+\end{split}\end{split}\]</div>
+<p>At this point <a class="reference internal" href="#equation-rotation">(7)</a> could be applied to points on the torus to
+obtain a rotated version of <a class="reference internal" href="#equation-eqtorus">(1)</a> and the preceding analysis
+repeated with the new, more complicated, equation. However, it is easier
+to work in a rotated coordinate system where the equation of the torus
+retains its form given in <a class="reference internal" href="#equation-eqtorus">(1)</a>. So, the prescription for
+computing the intersection with a rotated torus looks like this:</p>
+<ol class="arabic simple">
+<li><p>After projecting <span class="math notranslate nohighlight">\({\vec{x}}_0\)</span> to the <span class="math notranslate nohighlight">\(x = 0\)</span> plane,
+rotate <span class="math notranslate nohighlight">\({\vec{x}}_0\)</span> and <span class="math notranslate nohighlight">\({\hat{p}}\)</span> via
+<span class="math notranslate nohighlight">\({\cal R}(-\theta)\)</span>.</p></li>
+<li><p>Perform the intersection calculation outlined above using the rotated
+values of <span class="math notranslate nohighlight">\({\vec{x}}_0\)</span> and <span class="math notranslate nohighlight">\({\hat{p}}\)</span>. This calculation
+will result in the intersection point <span class="math notranslate nohighlight">\({\vec{x}}\)</span> with
+components expressed in the rotated frame.</p></li>
+<li><p>Rotate all vectors back using <span class="math notranslate nohighlight">\({\cal R}(\theta)\)</span>. The result
+will be that the intersection point <span class="math notranslate nohighlight">\({\vec{x}}\)</span> will be
+expressed in the unrotated frame.</p></li>
+</ol>
+<p>To illustrate this procedure, consider the special case of
+<span class="math notranslate nohighlight">\({\vec{x}}_0 = 0\)</span>. In the unrotated case, we found <a class="reference internal" href="#equation-t0">(4)</a> as the
+solution. For a rotation by an angle <span class="math notranslate nohighlight">\(\theta\)</span>, the solution in the
+rotated frame will be</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    {\vec{x}}' &amp;= {\hat{p}}' t_0   \\
+                 &amp;= -2R {\hat{p}}' \sqrt{p_x^2 + (p_z\cos\theta + p_y\sin\theta)^2}
+                     \\
+\end{aligned}\end{split}\]</div>
+<p>which when rotated back to the original frame yields</p>
+<div class="math notranslate nohighlight">
+\[{\vec{x}}= -2R {\hat{p}}\sqrt{p_x^2 + (p_z\cos\theta - p_y\sin\theta)^2}.\]</div>
+</section>
+<section id="diffraction-of-the-ray">
+<h3>Diffraction of the Ray<a class="headerlink" href="#diffraction-of-the-ray" title="Link to this heading">¶</a></h3>
+<p>Consider a ray with wavelength <span class="math notranslate nohighlight">\(\lambda\)</span> and direction
+<span class="math notranslate nohighlight">\({\hat{p}}\)</span> incident upon a diffraction grating of period
+<span class="math notranslate nohighlight">\(d\)</span> located at position <span class="math notranslate nohighlight">\({\vec{x}}\)</span> and normal
+<span class="math notranslate nohighlight">\(\hat{n}\)</span>. The grating lines are assumed to oriented in the
+direction <span class="math notranslate nohighlight">\(\hat{l}\)</span>. See Figure <a class="reference internal" href="#fig-diffraction"><span class="std std-ref">Diffraction Coordinate System</span></a>.
+In a very general way, the diffraction equation can be written in vector form as
+<span class="math notranslate nohighlight">\(\hat{p}' \times \hat{n} = \hat{p} \times \hat{n} + (m
+\lambda/d)\hat{l}\)</span>.
+Taking the dot product of this equation with <span class="math notranslate nohighlight">\(\hat{d}\)</span> and
+<span class="math notranslate nohighlight">\(\hat{l}\)</span> respectively, it can be shown
+that a ray diffracting into order <span class="math notranslate nohighlight">\(m\)</span> will move in a direction
+<span class="math notranslate nohighlight">\({\hat{p}}'\)</span> determined by the conditions:</p>
+<div class="math notranslate nohighlight" id="equation-diffract0">
+<span class="eqno">(8)<a class="headerlink" href="#equation-diffract0" title="Link to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+    {\hat{p}}'\cdot\hat{l} &amp;= {\hat{p}}\cdot\hat{l} \\
+    {\hat{p}}'\cdot\hat{d} &amp;= {\hat{p}}\cdot\hat{d} + \frac{m\lambda}{d}
+\end{aligned}\end{split}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\hat{d} = \hat{n} \times \hat{l}.\]</div>
+<p>(And because these vectors form an orthonormal basis the following is also true:
+<span class="math notranslate nohighlight">\(\hat{l} = \hat{d} \times \hat{n}\)</span> and <span class="math notranslate nohighlight">\(\hat{n} = \hat{l} \times
+\hat{d}\)</span>.)</p>
+<figure class="align-center" id="id6">
+<span id="fig-diffraction"></span><img alt="../_images/grating.png" src="../_images/grating.png" />
+<figcaption>
+<p><span class="caption-text">Diffraction Coordinate System</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>Figure showing the orthogonal coordinate system local to an individual grating
+facet. The vector <span class="math notranslate nohighlight">\(\hat{n}\)</span> is normal to the facet and <span class="math notranslate nohighlight">\(\hat{l}\)</span> is in the direction of the grating lines. The
+vector <span class="math notranslate nohighlight">\(\hat{d}\)</span> is in the dispersion direction. The incident ray is
+given by <span class="math notranslate nohighlight">\(\hat{p}\)</span> and the diffracted ray is <span class="math notranslate nohighlight">\(\hat{p}'\)</span>.</p>
+</div>
+</figcaption>
+</figure>
+<p>Since <span class="math notranslate nohighlight">\(\hat{n}\)</span>, <span class="math notranslate nohighlight">\(\hat{l}\)</span>, and <span class="math notranslate nohighlight">\(\hat{d}\)</span> form a
+right-handed orthonormal coordinate system, it trivially follows that</p>
+<div class="math notranslate nohighlight" id="equation-diffracted">
+<span class="eqno">(9)<a class="headerlink" href="#equation-diffracted" title="Link to this equation">¶</a></span>\[{\hat{p}}' = ({\hat{p}}\cdot\hat{l})\hat{l}
+        + ({\hat{p}}\cdot\hat{d} + \frac{m\lambda}{d})\hat{d}
+        + \hat{n} \sqrt{1
+                       - ({\hat{p}}\cdot\hat{l})^2
+                       - ({\hat{p}}\cdot\hat{d} + \frac{m\lambda}{d})^2}.\]</div>
+<p>After diffraction, the ray will travel along the trajectory</p>
+<div class="math notranslate nohighlight">
+\[{\vec{x}}(t) = {\vec{x}}+ {\hat{p}}'t.\]</div>
+<p>Note that <a class="reference internal" href="#equation-diffracted">(9)</a> may be put into a more familiar form as
+follows. Since the component of the ray in the <span class="math notranslate nohighlight">\(\hat{l}\)</span> direction
+is not changed by the grating, the effect of the diffraction is simply a
+rotation of <span class="math notranslate nohighlight">\({\hat{p}}\)</span> about the <span class="math notranslate nohighlight">\(\hat{l}\)</span> axis by some
+angle. Let <span class="math notranslate nohighlight">\({\vec{p}_{\perp}}\)</span> denote the projection of
+<span class="math notranslate nohighlight">\({\hat{p}}\)</span> onto the <span class="math notranslate nohighlight">\((\hat{d},\hat{n})\)</span> plane, and let
+<span class="math notranslate nohighlight">\(\theta\)</span> be the angle between <span class="math notranslate nohighlight">\({\vec{p}_{\perp}}\)</span> and
+<span class="math notranslate nohighlight">\(\hat{n}\)</span>. Define <span class="math notranslate nohighlight">\({{\vec{p}_{\perp}}\,\!\!\!\!'}\)</span> and
+<span class="math notranslate nohighlight">\(\theta'\)</span> in a similar fashion (see Figure <a class="reference internal" href="#fig-diffraction-plane"><span class="std std-ref">Diffraction in a plane</span></a>).</p>
+<figure class="align-center" id="id7">
+<span id="fig-diffraction-plane"></span><img alt="../_images/diffract.png" src="../_images/diffract.png" />
+<figcaption>
+<p><span class="caption-text">Diffraction in a plane</span><a class="headerlink" href="#id7" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>Diffraction in the <span class="math notranslate nohighlight">\((n, d)\)</span> plane. Here <span class="math notranslate nohighlight">\(\theta\)</span> is the angle the projection of the incoming
+ray onto the <span class="math notranslate nohighlight">\(\hat{d}\hat{n}\)</span> plane  makes with respect to the normal, and <span class="math notranslate nohighlight">\(\theta\)</span> is the angle between the normal and
+the projection of the outgoing ray.</p>
+</div>
+</figcaption>
+</figure>
+<p>It follows from <a class="reference internal" href="#equation-diffract0">(8)</a> that</p>
+<div class="math notranslate nohighlight">
+\[p_{\perp} \sin \theta' = p_{\perp} \sin \theta - \frac{m\lambda}{d},\]</div>
+<p>where
+<span class="math notranslate nohighlight">\(p_{\perp} = |{\vec{p}_{\perp}}| = |{{\vec{p}_{\perp}}\,\!\!\!\!'}|\)</span>.
+In fact, the previous equation reduces to the well known diffraction
+equation when <span class="math notranslate nohighlight">\({\hat{p}}\)</span> has no component in the <span class="math notranslate nohighlight">\(\hat{l}\)</span>
+direction. Using these definitions, one can write <a class="reference internal" href="#equation-diffracted">(9)</a> in the
+form</p>
+<div class="math notranslate nohighlight">
+\[{\hat{p}}' = ({\hat{p}}\cdot\hat{l})\hat{l}
+        - (p_{\perp} \sin{\theta'}) \hat{d}
+        + (p_{\perp} \cos{\theta'}) \hat{n}.\]</div>
+<p>In general, <span class="math notranslate nohighlight">\(\hat{n}\)</span> and <span class="math notranslate nohighlight">\(\hat{l}\)</span> are complicated
+functions of the position of the grating. However, for gratings of
+infinitesimal size (For finite size facets, the grating normal will have to be looked up in a facet database.)
+positioned on the surface of the Rowland torus,
+<span class="math notranslate nohighlight">\(\hat{n}\)</span> will be directed towards the origin, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[\hat{n} = -\frac{{\vec{x}}}{|{\vec{x}}|}\]</div>
+<p>Similarly, <span class="math notranslate nohighlight">\(\hat{l}\)</span> may be determined from the condition that the
+facets are arranged such that <span class="math notranslate nohighlight">\(\hat{l}\)</span> has no <span class="math notranslate nohighlight">\(y\)</span>
+component (We are working in the natural coordinate system of the torus. Thus these equations hold for the LETG and
+the HETG.) and that it is normal to <span class="math notranslate nohighlight">\(\hat{n}\)</span>. That is,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+   0 &amp;= \hat{l}\cdot\hat{y} \\
+   0 &amp;= \hat{l}\cdot\hat{n} \\
+   1 &amp;= |\hat{l}|
+\end{split}\end{split}\]</div>
+<p>from which it follows that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\hat{l} = \frac{1}{\sqrt{n_x^2 + n_z^2}}
+              \begin{pmatrix}
+                 n_z\\
+                 0\\
+                 -n_x
+              \end{pmatrix}.\end{split}\]</div>
+<p>Since the LETG gratings have a support structure that also acts as a
+diffraction grating, we need to consider a more general orientation of
+the <span class="math notranslate nohighlight">\(\hat{l}\)</span> axis that consists of a rotation about the
+<span class="math notranslate nohighlight">\(\hat{n}\)</span> axis by some angle <span class="math notranslate nohighlight">\(\theta\)</span>. This means that the
+rotated vectors,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+  \hat{l}_{\theta} &amp;= \hat{l} \cos\theta + \hat{d}\sin\theta \\
+  \hat{d}_{\theta} &amp;= -\hat{l} \sin\theta + \hat{d}\cos\theta,
+\end{aligned}\end{split}\]</div>
+<p>should be used in <a class="reference internal" href="#equation-diffracted">(9)</a> to yield</p>
+<div class="math notranslate nohighlight">
+\[{\hat{p}}' = ({\hat{p}}\cdot\hat{l}_{\theta})\hat{l}_{\theta}
+        + ({\hat{p}}\cdot\hat{d}_{\theta} + \frac{m\lambda}{d})\hat{d}_{\theta}
+        + \hat{n} \sqrt{1
+                       - ({\hat{p}}\cdot\hat{l}_{\theta})^2
+                       - ({\hat{p}}\cdot\hat{d}_{\theta} + \frac{m\lambda}{d})^2}.\]</div>
+</section>
+<section id="grating-efficiency">
+<span id="gratingefficiency"></span><h3>Grating Efficiency<a class="headerlink" href="#grating-efficiency" title="Link to this heading">¶</a></h3>
+<p>The grating efficiency is a function of many quantities such as the
+geometrical parameters that specify the bar shape, the chemical
+composition and thickness of the layers that make up the plating base of
+the grating, etc. An extensive effort has been made to quantitatively
+understand the relationship of these quantities to the grating
+efficiency (see the <a class="reference external" href="http://space.mit.edu/HETG/report.html">http://space.mit.edu/HETG/report.html</a>).</p>
+<p>In early versions of <strong>marx</strong> a simple, uniform rectangular bar
+model was used to calculate the diffraction efficiency of the HETG and
+LETG grating facets. Based on comparison to synchrotron measurements,
+the rectangular grating bar model appears to be accurate to
+approximately 5% over most of the HETG’s operating passband. This model
+does not meet the HETG calibration goal of 1%. Consequently, the current <strong>marx</strong>
+version uses a new grating efficiency model based on
+tabulated facet data from sub–assembly and XRCF data.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-UseGratingEffFiles">
+<span class="sig-name descname"><span class="pre">UseGratingEffFiles</span></span><a class="headerlink" href="#parameter-UseGratingEffFiles" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use grating efficiency tables?  These efficiency
+tables have been provided by the HETG IPI team and include grating
+efficiencies for orders -11 to 11. In the case of the LETG tables,
+orders from -25 to 25 are included. Individual tables have been
+calculated for each mirror shell and include the inter-grating
+vignetting. Users can still access the old uniform bar facet
+model by setting <code class="docutils literal notranslate"><span class="pre">UseGratingEffFiles=no</span></code>, but this is not
+recommended.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Use_Unit_Efficiencies">
+<span class="sig-name descname"><span class="pre">Use_Unit_Efficiencies</span></span><a class="headerlink" href="#parameter-Use_Unit_Efficiencies" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) If <cite>yes</cite>, rays which intersect the HETG or LETG will
+still be diffracted but no efficiency filter will be applied. Hence all
+orders will have an equal probability of being populated. This mode is
+useful for studying the characteristics of higher order dispersed
+photons without having to run very large simulations in order to build
+up reasonable statistics.</p>
+</dd></dl>
+
+</section>
+<section id="facet-period-variations-and-misalignments">
+<span id="misalignments"></span><h3>Facet Period Variations and Misalignments<a class="headerlink" href="#facet-period-variations-and-misalignments" title="Link to this heading">¶</a></h3>
+<p>The HETG onboard Chandra consists of 336 individual grating facets.
+During the XRCF calibration of the HETG, it was discovered that 6 MEG
+grating facets were mis-aligned by angles ranging from 3 to 24 arcmins.
+The effects of these mis-aligned facets is shown in
+<a class="reference internal" href="#figure-misalignment">Figure Misalignment</a>.</p>
+<figure class="align-center" id="figure-misalignment">
+<img alt="../_images/mis_align_defocus.png" src="../_images/mis_align_defocus.png" />
+<figcaption>
+<p><span class="caption-text">An image from XRCF test D-HXH-AL-27.001 showing the
+MEG 3rd order Al-K defocused to 65.54 mm. The
+main <span class="math notranslate nohighlight">\(K\alpha\)</span> line, satellite line, and <span class="math notranslate nohighlight">\(K\beta\)</span>/O-K lines are
+visible in the left panel. The enlarged view in the right panel
+shows the effects of the mis-aligned gratings.</span><a class="headerlink" href="#figure-misalignment" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>marx</strong> allows to specify
+the mis-alignment angles and period variations of groups of facets
+as a function of azimuthal angle around the HETG support
+structure. Sector files describing the properties of the facets as a
+function of angle (including the mis-aligned MEG facets) have been
+provided by the HETG IPI team and reside in the <code class="docutils literal notranslate"><span class="pre">MARX_DATA_DIR</span></code>
+directory.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Use_HETG_Sector_Files">
+<span class="sig-name descname"><span class="pre">Use_HETG_Sector_Files</span></span><a class="headerlink" href="#parameter-Use_HETG_Sector_Files" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use HETG Sector Files?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Use_LETG_Sector_Files">
+<span class="sig-name descname"><span class="pre">Use_LETG_Sector_Files</span></span><a class="headerlink" href="#parameter-Use_LETG_Sector_Files" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) Sector files are currently unavailable for
+the LETG, so this option is off by default when simulating LETG
+observations. Instead, the misalignmens is treated statistically
+using <a class="reference internal" href="../Reference/othermarxpars.html#parameter-legdTheta"><code class="xref std std-par docutils literal notranslate"><span class="pre">legdTheta</span></code></a> parameter.</p>
+</dd></dl>
+
+<p>There was a long standing issue of a relative rotation between the LETG and the
+ACIS detector. The root of this problem was tracked down (with the help of
+<strong>marx</strong>) to a rotation offset between the aspect coordinate system and the focal
+plane detector system. This offset was masked by compensating rotations of the
+detectors from astrometric analysis, and manifested itself as a small rotation
+of the LEG dispersion arm on the ACIS detector. Changes were added to CIAO 4.3
+that effectively adds an additional rotation to the LETG when used with ACIS.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_ACIS_dTheta">
+<span class="sig-name descname"><span class="pre">LETG_ACIS_dTheta</span></span><a class="headerlink" href="#parameter-LETG_ACIS_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-0.0867</span></code>) aspect/focalplane misaligment induced dtheta for LETG/ACIS (degrees)</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="detector-models">
+<span id="sect-detectormodel"></span><h2>Detector Models<a class="headerlink" href="#detector-models" title="Link to this heading">¶</a></h2>
+<p>The detector models in <strong>marx</strong> are all consist of at least four
+components: geometry, filter transmissions, detector quantum efficiency,
+and spectral resolution. The specifics of these components for each of
+the four Chandra focal plane detectors is discussed here.</p>
+<section id="detector-geometry">
+<h3>Detector Geometry<a class="headerlink" href="#detector-geometry" title="Link to this heading">¶</a></h3>
+<p>The physical placement of the detectors in the Chandra focal plane is
+based on reference data given in the CXC coordinates documents. These
+data include locations and tilts in three dimensions for each CCD in the
+ACIS-I and ACIS-S arrays as well as all four MCPs in the HRC-I and
+HRC-S. The detector geometric model in <strong>marx</strong> reproduces the tilts of
+the ACIS-S CCD to follow the “bowl”-shaped HRMA focal surface and the
+arc of the six ACIS-S CCDs which follows the curved Rowland focal
+surface (see <a class="reference external" href="http://asc.harvard.edu/proposer/POG/html/index.html">http://asc.harvard.edu/proposer/POG/html/index.html</a>
+for a more detailed description).</p>
+<p>Similarly, the tilts of the three MCPs in the HRC-S spectroscopic array
+are reproduced. Chip and plate gaps as appropriate are also included in
+the geometric model. <strong>marx</strong> writes the raw U and V coordinates for the
+HRC-S to the <code class="docutils literal notranslate"><span class="pre">hrc_u.dat</span></code> and <code class="docutils literal notranslate"><span class="pre">hrc_v.dat</span></code> files and they will appear in the events files created with
+<a class="reference internal" href="../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>.</p>
+</section>
+<section id="filters">
+<h3>Filters<a class="headerlink" href="#filters" title="Link to this heading">¶</a></h3>
+<section id="acis">
+<h4>ACIS<a class="headerlink" href="#acis" title="Link to this heading">¶</a></h4>
+<p>Both the ACIS-I and ACIS-S CCD arrays include UV/visual optical blocking
+filters to protect the CCDs from non-X-ray photons. <strong>marx</strong> models
+these filters using tabulated transmission efficiencies supplied by G.
+Chartas (Penn State). Separate tables are used for the filters on the
+ACIS-I and ACIS-S arrays. This transmission efficiency calculation can
+be disabled in <strong>marx</strong> using the parameter <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetIdeal"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetIdeal=&quot;yes&quot;</span></code></a>.</p>
+</section>
+<section id="hrc">
+<h4>HRC<a class="headerlink" href="#hrc" title="Link to this heading">¶</a></h4>
+<p>The HRC-I and HRC-S detectors include a set of UV/Ion shields to block
+UV photons and low energy ions. In the case of the HRC-I, a single
+uniform UV/Ion shield covers the entire surface of the MCP. As with the
+ACIS optical blocking filters, <strong>marx</strong> uses an external data file
+containing tabulated efficiencies to model the shield’s transmission and
+this transmission can be disabled with <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetIdeal"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetIdeal=&quot;yes&quot;</span></code></a>.</p>
+<p>The UV/Ion shield configuration of the HRC-S array is slightly more
+complicated and includes four distinct regions each with a unique
+transmission efficiency. For an overview of the HRC–S shield
+configuration see:
+<a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap7.html">http://cxc.harvard.edu/proposer/POG/html/chap7.html</a>.</p>
+<p><strong>marx</strong> uses four individual data files to specify the transmission
+of these regions. The central region of the HRC-S UV/Ion shield includes
+a “T” shaped region of thicker Al which can be used to preferentially
+reject low energy photons. This Low Energy Suppression Filter (LESF)
+region is included in the <strong>marx</strong> model of the HRC–S UV/Ion shield. If
+the LESF is to be used, the SIM should be repositioned using
+<a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetZ"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetZ=-6.5</span></code></a> to place dispersed spectrum over the LESF. Users should
+consult the <a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap7.html">http://cxc.harvard.edu/proposer/POG/html/chap7.html</a> for
+more information on the LESF.</p>
+<p>As a final complication, the UV/Ion shield on the HRC-S array is
+physically offset from the MCP surfaces by approximately 10 mm. This
+separation can lead to “shadowing” near the edges of differing filter
+regions. This effect is included in <strong>marx</strong> and the separation is
+controlled with the <a class="reference internal" href="../Reference/othermarxpars.html#parameter-HESFOffsetX"><code class="xref std std-par docutils literal notranslate"><span class="pre">HESFOffsetX</span></code></a> parameter.</p>
+</section>
+</section>
+<section id="detector-quantum-efficiency">
+<h3>Detector Quantum Efficiency<a class="headerlink" href="#detector-quantum-efficiency" title="Link to this heading">¶</a></h3>
+<p>The detector quantum efficiency is modeled in exactly the same manner
+for both the ACIS and HRC detectors. External data files are used to
+define the quantum efficiency as a function of photon energy for each
+detector. Using this function, <strong>marx</strong> calculates a cumulative
+probability as a function of photon energy. For each photon which
+reaches the detector surface, a random number is then generated and
+compared with the cumulative probability in order to determine whether
+the photon was detected.</p>
+<p>Unique quantum efficiency curves are used for the MCPs in the HRC–I and
+HRC-S; however, all three HRC-S MCPs are currently assumed to have the
+same quantum efficiency. As the Chandra calibration effort progresses,
+these curves will be replaced by specific curves for each MCP.</p>
+<p>Quantum efficiency (QE) files are available for the 10 CCDs
+comprising the ACIS-I and ACIS-S detectors. In the previous version of
+<strong>marx</strong> , QE files where available only for generic front-illuminated
+and back-illuminated CCDs.</p>
+<p>If the parameter <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetIdeal"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetIdeal=&quot;yes&quot;</span></code></a>, the QE of the selected focal plane
+detector (including any filter transmission) will be set to unity.</p>
+</section>
+<section id="detector-spectral-resolution">
+<h3>Detector Spectral Resolution<a class="headerlink" href="#detector-spectral-resolution" title="Link to this heading">¶</a></h3>
+<p>The detector redistribution function determines the mapping of photon
+energy to detected pulse height (PH). These functions determine the
+intrinsic spectral resolution of the different detectors. <strong>marx</strong> uses
+a mixture of calibration information and simple analytic forms to
+approximate these functions. More accurate redistribution functions can
+be applied to <strong>marx</strong> simulations using the <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool discussed <a class="reference internal" href="rsp.html#rsp"><span class="std std-ref">Using Response Matrices with marx</span></a>.</p>
+<section id="aciscti">
+<span id="id2"></span><h4>ACIS<a class="headerlink" href="#aciscti" title="Link to this heading">¶</a></h4>
+<p>The redistribution of the ACIS detector is exceedingly complex. Both the
+gain and spectral resolution of each of the 10 ACIS CCDs varies with
+position on the chip. Due to the radiation damage induced increase in
+charge transfer inefficiency (CTI), the spatial variations of the
+frontside chips are especially large. Fortunately, an extensive effort
+has been undertaken by the CXC Calibration group to measure these
+variations as a function position for each of the ACIS CCDs. Currently,
+the ACIS-S aimpoint CCD (chip ID 7) has calibration data specifying the
+gain and spectral resolution for each 32x32 pixel region on the chip.
+Due to reduced signal to noise, the remaining backside chip (chip ID 5)
+has been calibrated on 64x64 pixel regions. The remaining 8 frontside
+CCDs are calibrated in 256x32 pixel segments. For each of these CCD
+calibration regions, the CXC has determined a unique gain and functional
+fit to the redistribution function. The redistribution model in
+utilizes this calibration information when determining the
+observed PHA channel for a given detected event.</p>
+<p>The CXC Calibration group currently models the ACIS redistribution using
+a functional form consisting of multiple Gaussian components. The
+internal <strong>marx</strong> redistribution function reproduces <em>only</em> the primary
+peak of the ACIS response, assuming a single Gaussian whose width is
+determined by the CXC CCD Calibration data mentioned above.</p>
+<p>The gain and spectral response of the ACIS CCDs are also functions of
+focal plane temperature. At the time of this release, complete
+calibration data is available for a focal plane temperature of -110 C. A
+<strong>marx</strong> gain map will be released for -120 C when this data becomes
+available.</p>
+<p>More information on the ACIS energy resolution can be found at
+<a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap6.html#tth_sEc6.7">http://cxc.harvard.edu/proposer/POG/html/chap6.html#tth_sEc6.7</a> .</p>
+</section>
+<section id="id3">
+<h4>HRC<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<p>The MCPs which comprise the HRC-I and HRC-S detectors have very limited
+spectral resolution with <span class="math notranslate nohighlight">\(\sigma_E / E \sim 1\)</span>. As with the ACIS
+CCDs, the redistribution function is assumed to be a Gaussian. The width
+of the MCPs distribution, however, is more complicated and is
+represented in <strong>marx</strong> by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sigma(E) = \left\{
+    \begin{array}{ll}
+    a_0 \sqrt{ E }~~~~~~ &amp; E &lt; 0.5 ~\mbox{keV} \\
+    a_1 E^{0.1}    &amp; 0.5 &lt; E &lt; 2.0 ~\mbox{keV} ~~.\\
+    a_2            &amp; E &gt; 2.0 ~\mbox{keV}
+    \end{array}
+               \right.
+\label{eqn:hrc_res}\end{split}\]</div>
+<p>Here <span class="math notranslate nohighlight">\(E\)</span> is the photon energy and <span class="math notranslate nohighlight">\(a_0\)</span>, <span class="math notranslate nohighlight">\(a_1\)</span>, and
+<span class="math notranslate nohighlight">\(a_2\)</span> are constants which have been adjusted to approximately
+reproduce the preliminary XRCF measurements of the HRC redistribution
+function.</p>
+</section>
+</section>
+<section id="detector-spatial-resolution">
+<h3>Detector Spatial Resolution<a class="headerlink" href="#detector-spatial-resolution" title="Link to this heading">¶</a></h3>
+<section id="id4">
+<h4>ACIS<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<p>No extra blur is applied to ACIS simulations.</p>
+</section>
+<section id="id5">
+<h4>HRC<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h4>
+<p>The physical characteristics and readout electronics of the HRC MCPs add
+a “blur” to the observed system point spread function in addition to the
+intrinsic FWHM of the HRMA. In <strong>marx</strong>, this blur is modeled as the sum
+of two Gaussians and a Lorentzian.
+Since the 2d Lorentzian diverges, it has to be cutoff at some
+radius, <span class="math notranslate nohighlight">\(R_\mathrm{max}\)</span>.  Its normalized form is given by</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[L(r) = \frac{L_0}{1+r^2/g^2}\]</div>
+</div></blockquote>
+<p>where <span class="math notranslate nohighlight">\(1/L_0 = g^2 \pi \log(1 + R_\mathrm{max}^2/g^2)\)</span>.
+Then <span class="math notranslate nohighlight">\(1 = \int_0^{R_\mathrm{max}} (2 \pi r) L(r) \;dr\)</span>.</p>
+<p>The 2-d gaussian has the normalized form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}G(r) = \exp(-\frac{r^2}{2\sigma^2}) / (2 \pi \sigma^2)\\
+1 = \int (2 \pi r) G(r) \;dr\end{split}\]</div>
+<p>The parameters that specify the coefficients of all functions are listed
+in <a class="reference internal" href="../Reference/othermarxpars.html#hrciparameters"><span class="std std-ref">HRC-I Model Parameters</span></a> and <a class="reference internal" href="../Reference/othermarxpars.html#hrcsparameters"><span class="std std-ref">HRC-S Model Parameters</span></a>.</p>
+</section>
+<section id="hesf">
+<span id="index-1"></span><h4>HESF<a class="headerlink" href="#hesf" title="Link to this heading">¶</a></h4>
+<p>Due to the poor intrinsic energy resolution of the HRC-S, order sorting
+for astrophysical spectra obtained with the LETG+HRC-S combination will
+be difficult. In an attempt to ameliorate this problem, the High Energy
+Reflection Filter (HESF) was added to the original HRC-S design. The
+HESF (a.k.a. Drake Flat) is a two facet filter coated with Cr and C
+which can be inserted into the Chandra beam by a translation of the SIM
+along the <span class="math notranslate nohighlight">\(Z\)</span> axis. Above the Cr L and C K edges, the reflectivity
+of the filter is designed to be low, thus suppressing higher order
+photons. <cite>Figure Drake Flat</cite> shows a schematic of the HESF. More details
+on the HESF are available in the
+<a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap7.html">http://cxc.harvard.edu/proposer/POG/html/chap7.html</a> .</p>
+<figure class="align-center" id="figure-drake-flat">
+<img alt="../_images/drake.png" src="../_images/drake.png" />
+<figcaption>
+<p><span class="caption-text">Schematic of the HRC–S High Energy Suppression Filter (HESF). Figure courtesy
+of Dr. Jeremy Drake (SAO/CXC).</span><a class="headerlink" href="#figure-drake-flat" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>marx</strong> includes the HESF in its raytrace calculation if the parameter
+<a class="reference internal" href="../inbrief/simsetup.html#parameter-HRC-HESF"><code class="xref std std-par docutils literal notranslate"><span class="pre">HRC-HESF=&quot;yes&quot;</span></code></a>. The reflectivity of the of Cr and C surface coatings is
+calculated internally. If the HESF is to be used, the SIM should be
+repositioned using <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetZ"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetZ=-5.471</span></code></a> to place the HESF in the Chandra
+beam.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="simulating-ground-calibration-data">
+<h1>Simulating ground calibration data<a class="headerlink" href="#simulating-ground-calibration-data" title="Link to this heading">¶</a></h1>
+<p>With appropriate configuration, <strong>marx</strong> can be used to simulate
+data taken during the calibration phase of the Chandra mission at the
+X–Ray Calibration facility (XRCF) in Huntsville, AL. By default,
+<strong>marx</strong> simulates the flight performance of the Chandra satellite.
+However, a number of effects contribute to differences between the
+flight and XRCF performance of Chandra. A brief summary of these effects
+are listed here.</p>
+<ul class="simple">
+<li><p>Additional HRMA blur: The effects of gravity on the HRMA at XRCF
+produce an additional “blurring” of the mirror’s point spread
+function (PSF) relative to the flight performance. This behavior can
+be adjusted with the <a class="reference internal" href="../Reference/othermarxpars.html#parameter-P1Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P1Blur</span></code></a>, <a class="reference internal" href="../Reference/othermarxpars.html#parameter-P3Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P3Blur</span></code></a>, <a class="reference internal" href="../Reference/othermarxpars.html#parameter-P4Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P4Blur</span></code></a>, and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-P6Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P6Blur</span></code></a>
+and the <a class="reference internal" href="../Reference/othermarxpars.html#parameter-H1Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H1Blur</span></code></a>, <a class="reference internal" href="../Reference/othermarxpars.html#parameter-H3Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H3Blur</span></code></a>, <a class="reference internal" href="../Reference/othermarxpars.html#parameter-H4Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H4Blur</span></code></a>, and  <a class="reference internal" href="../Reference/othermarxpars.html#parameter-H6Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H6Blur</span></code></a> parameters.</p></li>
+<li><p>Change of HRMA Focus position: Since the x-ray source at XRCF was at
+a finite distance from the HRMA, the effective location of the
+“focus” falls at a different location along the optical axis than the
+default flight configuration. Changing the <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetX"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetX</span></code></a> parameter will
+move the location of the focal plane relative to the HRMA.</p></li>
+<li><p>Finite Source Size: Due to its finite distance, the EIPS x-ray source
+used at XRCF was actually resolved by the HRMA resulting in a broader
+PSF than one would measure for a point source. A simple way to
+include this affect is to use the <code class="docutils literal notranslate"><span class="pre">DISK</span></code> source model to simulate an
+extended source. Alternatively, one could use the <code class="docutils literal notranslate"><span class="pre">IMAGE</span></code> source model
+in conjunction with actual FITS images of the EIPS source provided by
+the <a class="reference external" href="http://wwwastro.msfc.nasa.gov/xray/xraycal/spot">http://wwwastro.msfc.nasa.gov/xray/xraycal/spot</a> .</p></li>
+<li><p>Finite Source Distance: By default <strong>marx</strong>, assumes that sources
+are sufficiently far away that photons impinging on the HRMA can be
+assumed to be parallel to the optical axis. At XRCF, the calibration
+source was not far enough away from the focal plane for this
+assumption to hold. For XRCF simulations, the <a class="reference internal" href="../Reference/othermarxpars.html#parameter-SourceDistance"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDistance</span></code></a>
+parameter should be set to a value of 537.587 meters.</p></li>
+<li><p>Modified Rowland Diameter: The difference in the location of the
+focal plane at XRCF results in a different Rowland geometry for the
+HETG and LETG spectrometers. This geometry is controlled via the
+<a class="reference internal" href="../Reference/othermarxpars.html#parameter-HEGRowlandDiameter"><code class="xref std std-par docutils literal notranslate"><span class="pre">HEGRowlandDiameter</span></code></a>, <a class="reference internal" href="../Reference/othermarxpars.html#parameter-MEGRowlandDiameter"><code class="xref std std-par docutils literal notranslate"><span class="pre">MEGRowlandDiameter</span></code></a>, and
+<a class="reference internal" href="../Reference/othermarxpars.html#parameter-LEGRowlandDiameter"><code class="xref std std-par docutils literal notranslate"><span class="pre">LEGRowlandDiameter</span></code></a> parameters.</p></li>
+</ul>
+<p>To simulate XRCF data, these parameters should be modified in your
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> file. The table provides a summary of the relevant
+parameters, their default values, and values appropriate for simulating
+XRCF data. An example XRCF simulation is
+shown in the <a class="reference internal" href="#fig-xrcf"><span class="std std-ref">figure below</span></a> for test ID D-IXH-PI-3.003.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>XRCF</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-P1Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P1Blur</span></code></a></p></td>
+<td><p>0.18129215</p></td>
+<td><p>0.362</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-H1Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H1Blur</span></code></a></p></td>
+<td><p>0.13995037</p></td>
+<td><p>0.280</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-P3Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P3Blur</span></code></a></p></td>
+<td><p>0.11527828</p></td>
+<td><p>0.230</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-H3Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H3Blur</span></code></a></p></td>
+<td><p>0.16360829</p></td>
+<td><p>0.327</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-P4Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P4Blur</span></code></a></p></td>
+<td><p>0.12891340</p></td>
+<td><p>0.258</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-H4Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H4Blur</span></code></a></p></td>
+<td><p>0.098093014</p></td>
+<td><p>0.196</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-P6Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">P6Blur</span></code></a></p></td>
+<td><p>0.076202759</p></td>
+<td><p>0.152</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-H6Blur"><code class="xref std std-par docutils literal notranslate"><span class="pre">H6Blur</span></code></a></p></td>
+<td><p>0.079767401</p></td>
+<td><p>0.160</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetX"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetX</span></code></a></p></td>
+<td><p>0.0</p></td>
+<td><p>-194.925</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType</span></code></a></p></td>
+<td><p>POINT</p></td>
+<td><p>DISK</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="models.html#parameter-S-DiskTheta0"><code class="xref std std-par docutils literal notranslate"><span class="pre">S-DiskTheta0</span></code></a></p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="models.html#parameter-S-DiskTheta1"><code class="xref std std-par docutils literal notranslate"><span class="pre">S-DiskTheta1</span></code></a></p></td>
+<td><p>0.0</p></td>
+<td><p>0.0767372</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-SourceDistance"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceDistance</span></code></a></p></td>
+<td><p>0.0</p></td>
+<td><p>537.587</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-HEGRowlandDiameter"><code class="xref std std-par docutils literal notranslate"><span class="pre">HEGRowlandDiameter</span></code></a></p></td>
+<td><p>8632.48</p></td>
+<td><p>8587.88</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-MEGRowlandDiameter"><code class="xref std std-par docutils literal notranslate"><span class="pre">MEGRowlandDiameter</span></code></a></p></td>
+<td><p>8632.48</p></td>
+<td><p>8587.88</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../Reference/othermarxpars.html#parameter-LEGRowlandDiameter"><code class="xref std std-par docutils literal notranslate"><span class="pre">LEGRowlandDiameter</span></code></a></p></td>
+<td><p>8637.00</p></td>
+<td><p>8593.12</p></td>
+</tr>
+</tbody>
+</table>
+<figure class="align-center" id="id8">
+<span id="fig-xrcf"></span><img alt="../_images/compare_xrcf.png" src="../_images/compare_xrcf.png" />
+<figcaption>
+<p><span class="caption-text">A comparison between data from XRCF test ID D-IXH-PI-3.003 and a corresponding MARX simulation. The MARX simulation was 9.7 mm out of focus like the XRCF test.</span><a class="headerlink" href="#id8" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The <strong>marx</strong> Models for the Spacecraft</a><ul>
+<li><a class="reference internal" href="#the-marx-coordinate-system">The <strong>marx</strong> Coordinate System</a></li>
+<li><a class="reference internal" href="#hrma-model">HRMA model</a><ul>
+<li><a class="reference internal" href="#hrma-geometric-model">HRMA Geometric Model</a></li>
+<li><a class="reference internal" href="#hrma-reflectivity-model">HRMA Reflectivity Model</a></li>
+<li><a class="reference internal" href="#hrma-scattering-model">HRMA Scattering Model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#grating-modules">Grating Modules</a><ul>
+<li><a class="reference internal" href="#intersection-with-the-rowland-torus">Intersection with the Rowland Torus</a></li>
+<li><a class="reference internal" href="#diffraction-of-the-ray">Diffraction of the Ray</a></li>
+<li><a class="reference internal" href="#grating-efficiency">Grating Efficiency</a></li>
+<li><a class="reference internal" href="#facet-period-variations-and-misalignments">Facet Period Variations and Misalignments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#detector-models">Detector Models</a><ul>
+<li><a class="reference internal" href="#detector-geometry">Detector Geometry</a></li>
+<li><a class="reference internal" href="#filters">Filters</a><ul>
+<li><a class="reference internal" href="#acis">ACIS</a></li>
+<li><a class="reference internal" href="#hrc">HRC</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#detector-quantum-efficiency">Detector Quantum Efficiency</a></li>
+<li><a class="reference internal" href="#detector-spectral-resolution">Detector Spectral Resolution</a><ul>
+<li><a class="reference internal" href="#aciscti">ACIS</a></li>
+<li><a class="reference internal" href="#id3">HRC</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#detector-spatial-resolution">Detector Spatial Resolution</a><ul>
+<li><a class="reference internal" href="#id4">ACIS</a></li>
+<li><a class="reference internal" href="#id5">HRC</a></li>
+<li><a class="reference internal" href="#hesf">HESF</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simulating-ground-calibration-data">Simulating ground calibration data</a></li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="models.html"
+                          title="previous chapter">The spectrum and the spatial shape of the X-ray source</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../tests/index.html"
+                          title="next chapter"><strong>marx</strong> accuracy and testing</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../tests/index.html" title="marx accuracy and testing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="The spectrum and the spatial shape of the X-ray source"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" >Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The <strong>marx</strong> Models for the Spacecraft</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

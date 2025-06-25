@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Including background in a marx simulation &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Replicating a Chandra Observation / Using ChaRT or SAOTrace" href="../simobs/simobs.html" />
+    <link rel="prev" title="Simulating two overlapping sources" href="../marxcat/marxcat.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../simobs/simobs.html" title="Replicating a Chandra Observation / Using ChaRT or SAOTrace"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../marxcat/marxcat.html" title="Simulating two overlapping sources"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Including background in a <strong>marx</strong> simulation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="including-background-in-a-marx-simulation">
+<span id="sect-ex-bkg"></span><h1>Including background in a <strong>marx</strong> simulation<a class="headerlink" href="#including-background-in-a-marx-simulation" title="Link to this heading">¶</a></h1>
+<p>The data from all Chandra observations includes different background
+components: Astrophysical background (e.g. unresolved sources), instrumental
+background (e.g. high-energy particles from the sun), and a read-out artifact.
+The <a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap6.html#tth_sEc6.16">Proposers Observatory Guide</a> describes
+all these components in detail.</p>
+<p>The background matters most for faint or extended sources. In this
+example we show two different methods to include a background component into a
+<strong>marx</strong> simulation. Because <strong>marx</strong> ray-traces X-ray photons and does not
+calculate the interaction between spacecraft components and energetic
+particles, both methods need to make approximations:</p>
+<ol class="arabic simple">
+<li><p>The Chandra calibration team has released “blank sky background” files for the ACIS
+detector. <a class="reference internal" href="#subsect-ex-bkg-blanksky"><span class="std std-ref">Adding “blank-sky background” to a marx simulation</span></a> shows how to add observed background
+events from these files to a <strong>marx</strong> simulation. This should provide the most
+realistic background, but there are several caveats:</p>
+<ul class="simple">
+<li><p>As described in <a class="reference internal" href="../../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a>, <strong>marx</strong> does not incorporate the
+non-uniformity maps for the ACIS detector, nor does it employ the spatially
+varying CTI-corrected pha redistribution matrices (RMFs). As such there
+always will be systematic differences between the simulated MARX source and
+the real background data.</p></li>
+<li><p>The “blank sky” files contain between a 30,000 and a few million photons
+(depending on the chip). If this procedure is repeated for many <strong>marx</strong>
+simulations, it adds photons <em>from the same pool</em> every time, so this cannot
+be used for a statistical analysis if the total number of background photons
+approaches the number of photons in the file.</p></li>
+</ul>
+</li>
+<li><p>We extract fit the apparent spectrum of the “blank sky” files (“apparent”
+because the events look like X-ray photons on the CCD, but in reality many are electron
+or proton impacts) and then use <strong>marx</strong> to simulate an extended source that
+produces a similar spectrum (<a class="reference internal" href="#subsect-ex-bkg-marxbkg"><span class="std std-ref">Simulating a background-like source with marx</span></a>). This approach is
+easier and faster, but it does  not capture all details of the <a class="reference external" href="http://cxc.harvard.edu/cal/Acis/Cal_prods/bkgrnd/nonuniformity/acisbg.html">spatial
+variations of the background</a>.</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Background is time variable!</p>
+<p>The background count rate can vary within minutes in so-called flares (<a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap6.html#tth_sEc6.16.3">example for a background
+lightcurve</a>),
+and even the quiescent background level changes over time.
+Thus, the simulation can only give a prediction of a <em>typical</em> background. The actual
+background might turn out to be higher or lower.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Sky background depends on Ra, Dec!</p>
+<p>See e.g. <a class="reference external" href="http://arxiv.org/pdf/astro-ph/0205333v1.pdf">Markevitch (2002)</a>
+for a comparison of Chandra and XMM-Newton data of the same galaxy cluster,
+where the fitted temperature strongly depends on the background model and
+the Chandra “blank sky” files underpredict the background flux.</p>
+</div>
+<section id="simulating-the-source-a-diffuse-thermal-emission">
+<h2>Simulating the source: A diffuse, thermal emission<a class="headerlink" href="#simulating-the-source-a-diffuse-thermal-emission" title="Link to this heading">¶</a></h2>
+<p>In this example, we model a diffuse
+emission region with a cool, thermal plasma as they are often seen in massive
+star forming regions. For the purposes of this example, we do not model the
+stars themselves, which would show up as additional point sources. We chose a
+relatively simple model with one thermal emission component in collisional
+ionization equilibrium with parameters similar to those observed by <a class="reference external" href="http://adsabs.harvard.edu/abs/2008Sci...319..309G">Güdel et. al
+(2008)</a> in Orion.</p>
+<figure class="align-center" id="id1">
+<a class="reference external image-reference" href="http://chandra.harvard.edu/photo/2011/carina/"><img alt="The Carina Nebula contains 14,000 point sources and significant diffuse emission." src="../../_images/carina.jpg" style="width: 435.0px; height: 438.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">X-rays in the Carina Nebula</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>Point sources and diffuse emission in the Carina Nebula, yet another star
+forming region with diffuse emission. The image is a composite from several
+Chandra observations. <a class="reference external" href="http://adsabs.harvard.edu/abs/2011ApJS..194...15T">Townsley et
+al. (2011)</a>
+fit the diffuse emission with a complex model of 6 components, most of which
+are thermal plasmas.</p>
+<p>Image credit: NASA/CXC/PSU/L.Townsley et al.</p>
+</div>
+</figcaption>
+</figure>
+<p>Similar to <a class="reference internal" href="../LETGpow/letgplaw.html#creating-sherpa-spectrum"><span class="std std-ref">Creating an input spectrum from a Sherpa model</span></a> we will use <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> to create a
+2-column text file that tabulates the flux density [photons/sec/keV/cm^2] (second
+column) as a function of energy [keV] (first column).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set source properties</span>
+<span class="n">set_source</span><span class="p">(</span><span class="n">xsphabs</span><span class="o">.</span><span class="n">abs1</span> <span class="o">*</span> <span class="n">xsapec</span><span class="o">.</span><span class="n">apec1</span><span class="p">)</span>
+<span class="n">abs1</span><span class="o">.</span><span class="n">nH</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">apec1</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="c1"># get source</span>
+<span class="n">my_src</span> <span class="o">=</span> <span class="n">get_source</span><span class="p">()</span>
+
+<span class="c1"># set energy grid</span>
+<span class="n">bin_width</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="n">bin_width</span><span class="p">)</span>
+
+<span class="c1"># evaluate source on energy grid</span>
+<span class="n">flux</span> <span class="o">=</span> <span class="n">my_src</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+
+<span class="c1"># Sherpa uses the convention that an energy array holds the LOWER end of the bins;</span>
+<span class="c1"># Marx that it holds the UPPER end of a bin.</span>
+<span class="c1"># Thus, we need to shift energies and flux by one bin.</span>
+<span class="c1"># Also, we need to divide the flux by the bin width to obtain the flux density.</span>
+<span class="n">save_arrays</span><span class="p">(</span><span class="s2">&quot;source_flux.tbl&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">flux</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">bin_width</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;keV&quot;</span><span class="p">,</span><span class="s2">&quot;photons/s/cm**2/keV&quot;</span><span class="p">],</span> <span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More details about the format of the <strong>marx</strong> input spectrum can be found at
+<a class="reference internal" href="../../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a>.</p>
+<p>The next step is to run <strong>marx</strong> in the desired configuration:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="w"> </span>marx<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span><span class="m">0</span>.02<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;source_flux.tbl&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">100000</span><span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">2012</span>.5<span class="w"> </span><span class="nv">OutputDir</span><span class="o">=</span>diffuse<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span><span class="w"> </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span><span class="w"> </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">SourceType</span><span class="o">=</span><span class="s2">&quot;GAUSS&quot;</span><span class="w"> </span>S-GaussSigma<span class="o">=</span><span class="m">60</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> sets the observed photon flux by renormalizing the input
+spectrum. For the shape of the source we choose a Gaussian that is more than one
+arcmin wide and we set the aimpoint on the back-illuminated ACIS-S3 chip (chip ID 7). The results of the
+simulation will be written to a subdirectory called <code class="docutils literal notranslate"><span class="pre">diffuse</span></code>, as
+specified by the <a class="reference internal" href="../../inbrief/simsetup.html#parameter-OutputDir"><code class="xref std std-par docutils literal notranslate"><span class="pre">OutputDir</span></code></a> parameter.  After the simulation has
+completed, a standard Chandra event file may be created using the
+<a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> program:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx2fits<span class="w"> </span>diffuse<span class="w"> </span>diffuse_evt2.fits
+</pre></div>
+</div>
+<p>We also generate an aspect solution file that matches the simulation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;diffuse&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;diffuse_asol1.fits&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-blank-sky-background-to-a-marx-simulation">
+<span id="subsect-ex-bkg-blanksky"></span><h2>Adding “blank-sky background” to a <strong>marx</strong> simulation<a class="headerlink" href="#adding-blank-sky-background-to-a-marx-simulation" title="Link to this heading">¶</a></h2>
+<p>The “blank sky background” files are part of
+<a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> but because of their size
+they are not installed by default. If you don’t have them yet, use the
+<a class="reference external" href="http://cxc.harvard.edu/ciao/download/">ciao-install script</a> or download them
+by hand from <a class="reference external" href="http://cxc.harvard.edu/ciao/download/caldb.html">http://cxc.harvard.edu/ciao/download/caldb.html</a> . <strong>marx</strong> does not
+simulate all physical effects in Chandra (see <a class="reference internal" href="../../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a>) and thus none of
+the “blank sky background” files matches the way that <strong>marx</strong> generates the data
+exactly. In particular, <strong>marx</strong> does not apply the CTI correction, thus we will
+use the “blank sky background” files that do not have <code class="docutils literal notranslate"><span class="pre">_cti</span></code> in their
+filename. The naming convention is
+<code class="docutils literal notranslate"><span class="pre">acis&lt;chip&gt;&lt;aimpoint&gt;D&lt;date&gt;bkgrndN&lt;version&gt;.fits</span></code>.</p>
+<p>In this simulation we care for chip-ID 7 and the ACIS-S aimpoint, so we select
+the most recent background file and copy it to the working directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span><span class="nv">$CALDB</span>/data/chandra/acis/bkgrnd/acis7sD2009-09-21bkgrndN0002.fits<span class="w"> </span>acis7sbkg.fits
+</pre></div>
+</div>
+<p>We now need to do some fiddleing with the <strong>marx</strong> simulation and the background
+file to make their formats compatible so that we can eventually merge them into
+a single event file. This involves the following steps:</p>
+<ol class="arabic">
+<li><p>Select a random subset of photons in the “blank sky file”. We need to</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Find the number of rows in that file (header keyword <code class="docutils literal notranslate"><span class="pre">NAXIS2</span></code>).</p></li>
+<li><p>Estimate the number of background photons we want to simulate.
+Looking at <a class="reference external" href="http://cxc.harvard.edu/proposer/POG/html/chap6.html#tth_sEc6.16.2">the appropriate table in the Observatory Guide</a>
+we see that roughly 0.3 cts/s (in the event grades we care for) is a good,
+conservative estiamte. For an observation of 100 ks, we thus decide to
+select roughly 30,000 photons.</p></li>
+<li><p>Events in the “blank sky” files are sorted in x and y. In order to
+select a random subset, we use <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmtcalc.html">dmtcalc</a> to assign a random number
+in column <code class="docutils literal notranslate"><span class="pre">randnum</span></code> and multiply it with the ratio of the number of
+photons in the “blank sky” file and the number of photons we
+want to select.</p></li>
+<li><p>We copy only those photons where the ratio is smaller than 1. Since this
+involves a random number, this also introduces a “random error” to the
+number of photons we select - it will not be exactly 30,000.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Add a time column to the “blank sky” file and fill it with random values
+during the observation.</p></li>
+<li><p>Reproject the “blank sky” file to the observed position on the sky.</p></li>
+<li><p>Select the same columns in the <strong>marx</strong> simulation and the “blank sky” file, so
+that they can be merged with <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmmerge.html">dmmerge</a>.</p></li>
+</ol>
+<p>Here is the script that we use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#! /bin/bash</span>
+
+<span class="c1"># Pick how many background photons we want to add to our simulation.</span>
+
+<span class="nv">n</span><span class="o">=</span><span class="sb">`</span>dmlist<span class="w"> </span>acis7sbkg.fits<span class="w"> </span>header,raw<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>NAXIS2<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{ print $6 }&#39;</span><span class="sb">`</span>
+dmtcalc<span class="w"> </span>acis7sbkg.fits<span class="w"> </span>temp.fits<span class="w"> </span><span class="nv">expression</span><span class="o">=</span><span class="s2">&quot;randnum=</span><span class="nv">$n</span><span class="s2">/3e4*#trand&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmcopy<span class="w"> </span><span class="s2">&quot;temp.fits[randnum=0:1]&quot;</span><span class="w"> </span>temp2.fits<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+<span class="c1"># Assign some random time during the observation to each photon.</span>
+<span class="nv">t0</span><span class="o">=</span><span class="sb">`</span>dmkeypar<span class="w"> </span>diffuse_evt2.fits<span class="w"> </span>TSTART<span class="w"> </span>echo+<span class="sb">`</span>
+<span class="nv">t1</span><span class="o">=</span><span class="sb">`</span>dmkeypar<span class="w"> </span>diffuse_evt2.fits<span class="w"> </span>TSTOP<span class="w"> </span>echo+<span class="sb">`</span>
+
+dmtcalc<span class="w"> </span>temp2.fits<span class="w"> </span>temp3.fits<span class="w"> </span><span class="nv">expression</span><span class="o">=</span><span class="s2">&quot;time=</span><span class="nv">$t0</span><span class="s2">+(</span><span class="nv">$t1</span><span class="s2">-</span><span class="nv">$t0</span><span class="s2">)*#trand&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmsort<span class="w"> </span>temp3.fits<span class="w"> </span>temp4.fits<span class="w"> </span><span class="nv">keys</span><span class="o">=</span>TIME<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+<span class="c1"># Reproject the blank sky fields to the same position on the sky as the marx simulation.</span>
+punlearn<span class="w"> </span>reproject_events<span class="w"> </span>
+reproject_events<span class="w"> </span><span class="nv">infile</span><span class="o">=</span>temp4.fits<span class="w"> </span><span class="nv">outfile</span><span class="o">=</span>acis7s_bkg_reproj.fits<span class="w"> </span><span class="nv">aspect</span><span class="o">=</span>diffuse_asol1.fits<span class="w"> </span><span class="nv">match</span><span class="o">=</span>diffuse_evt2.fits<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+<span class="c1"># Merge marx simulation and blank sky fields into a single fits table.</span>
+punlearn<span class="w"> </span>dmmerge
+dmmerge<span class="w"> </span><span class="s2">&quot;diffuse_evt2.fits[cols ccd_id,node_id,chip,det,sky,pha,energy,pi,fltgrade,grade,status,time]&quot;</span>,<span class="s2">&quot;acis7s_bkg_reproj.fits[cols ccd_id,node_id,chip,det,sky,pha,energy,pi,fltgrade,grade,status,time]&quot;</span><span class="w"> </span>merged.fits<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+</pre></div>
+</div>
+<p>If the source in the simulation covers multiple ACIS chips, then this
+has to be repeated chip-by-chip.</p>
+<figure class="align-center" id="id2">
+<span id="fig-ex-bkg"></span><img alt="Images of three event files. See caption for a description." src="../../_images/bkg.png" />
+<figcaption>
+<p><span class="caption-text">Images of event files</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+<div class="legend">
+<p><em>left:</em> Image of the <strong>marx</strong> simulation alone. The source is extended and not
+very strong. <em>center:</em> Background added to the simulation. The source is
+not visible any longer, because the background totally domiantes the count
+rate. <em>right:</em> We know that our source is fairly soft, while the background
+contains a lot of high-energy events. Thus, we can apply an energy filter
+(here 0.2-2.0 keV) that focusses on the energy range where the source is
+strongest relative to the background. A slight overdensity of photons can
+be seen at the position of the source, but it will be very difficult to fit
+spectral parameters or to determine the radius of the source accurately.</p>
+</div>
+</figcaption>
+</figure>
+<p>The figure <a class="reference internal" href="#fig-ex-bkg"><span class="std std-ref">Images of event files</span></a> shows the <strong>marx</strong> simulation alone, with added
+background from the “blank sky” file and with an energy filter that we would
+probably use for real data to suppresses some of the background.</p>
+<p>Looking at the background-free <strong>marx</strong> simulation, measuring the flux and the
+size of this source seems like an easy task. When properly including background
+the source can still be detected, but fitted source parameters will be more
+uncertain than they would be in a background-free scenario. This example shows
+how important it is to consider the instrumental background when simulating weak sources.</p>
+</section>
+<section id="simulating-a-background-like-source-with-marx">
+<span id="subsect-ex-bkg-marxbkg"></span><h2>Simulating a background-like source with <strong>marx</strong><a class="headerlink" href="#simulating-a-background-like-source-with-marx" title="Link to this heading">¶</a></h2>
+<p>An alternative approach is to extract a spectrum from the “black-sky” fields
+and use this spectrum as input for <strong>marx</strong>. This spectrum does <strong>not</strong>
+describe the real <em>physical properties</em> such as the energy of the background events
+(many of them are not even photons), it just provides an effective way
+to simulate “something that looks similar to real background when run through
+<strong>marx</strong>”.</p>
+<p>The advantage of this approach is that we can generate more random events
+than the original “blank-sky” file has without repeating photons.</p>
+<p>First, extract a spectrum from the “blank-sky” background and save this
+spectrum in a table that <strong>marx</strong> can read. This can be done
+with the following commands (a detailed explanation for this is at
+<a class="reference external" href="http://cxc.harvard.edu/ciao/threads/extended/">http://cxc.harvard.edu/ciao/threads/extended/</a> ):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dmextract<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;acis7s_bkg_reproj.fits[sky=rotbox(1:59:59,+39:59:20,3.2&#39;,3.5&#39;,0)][bin pi]&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s1">&#39;blank_sky.pi&#39;</span><span class="w"> </span><span class="nv">wmap</span><span class="o">=</span><span class="s2">&quot;[bin tdet=8]&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+asphist<span class="w"> </span><span class="nv">infile</span><span class="o">=</span>diffuse_asol1.fits<span class="w"> </span><span class="nv">outfile</span><span class="o">=</span>blank_sky.asphist<span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;diffuse_evt2.fits[ccd_id=7]&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+sky2tdet<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;acis7s_bkg_reproj.fits[sky=rotbox(1:59:59,+39:59:20,3.2&#39;,3.5&#39;,0)][bin sky=8]&quot;</span><span class="w"> </span><span class="nv">asphistfile</span><span class="o">=</span><span class="s2">&quot;blank_sky.asphist&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;blank_sky_tdet.fits[wmap]&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+mkwarf<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;blank_sky_tdet.fits[wmap]&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span>blank_sky.arf<span class="w"> </span><span class="nv">weightfile</span><span class="o">=</span>blank_sky.wfef<span class="w"> </span><span class="nv">egridspec</span><span class="o">=</span><span class="m">0</span>.3:11.0:0.1<span class="w">  </span><span class="nv">mskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">spectrumfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">pbkfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+mkrmf<span class="w"> </span><span class="nv">infile</span><span class="o">=</span>CALDB<span class="w"> </span><span class="nv">outfile</span><span class="o">=</span>blank_sky.rmf<span class="w"> </span><span class="nv">axis1</span><span class="o">=</span><span class="s2">&quot;energy=0:1&quot;</span><span class="w"> </span><span class="nv">axis2</span><span class="o">=</span><span class="s2">&quot;pi=1:1024:1&quot;</span><span class="w"> </span><span class="nv">weights</span><span class="o">=</span>blank_sky.wfef<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+</pre></div>
+</div>
+<p>We use <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> to display the spectrum on the screen (see
+<a class="reference internal" href="#fig-ex-blankskyspectrum"><span class="std std-ref">Extracted “blank-sky” spectrum.</span></a>) and save it in a table
+with columns energy and count rate density (see <a class="reference internal" href="../../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a> for details
+of the input spectrum format for <strong>marx</strong>):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">load_data</span><span class="p">(</span><span class="s1">&#39;blank_sky.pi&#39;</span><span class="p">)</span>
+<span class="n">load_rmf</span><span class="p">(</span><span class="s1">&#39;blank_sky.rmf&#39;</span><span class="p">)</span>
+<span class="n">load_arf</span><span class="p">(</span><span class="s1">&#39;blank_sky.arf&#39;</span><span class="p">)</span>
+<span class="n">plot_data</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;extracted_bkgspec.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;extracted_bkgspec.eps&#39;</span><span class="p">)</span>
+
+<span class="n">pl</span> <span class="o">=</span> <span class="n">get_data_plot</span><span class="p">()</span>
+<span class="n">save_arrays</span><span class="p">(</span><span class="s1">&#39;bkgspec.tbl&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">y</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Energy&#39;</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">ylabel</span><span class="p">],</span> <span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-center" id="id3">
+<span id="fig-ex-blankskyspectrum"></span><img alt="Mostly flat spectrum, rising at large energies. There are a few emission features on top of the spectrum." src="../../_images/extracted_bkgspec.png" />
+<figcaption>
+<p><span class="caption-text">Extracted “blank-sky” spectrum.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Again, we want a source flux of about 0.3 counts/s over the entire detector.
+<a class="reference internal" href="../../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> expects the flux in counts/s/cm^2, so we would have to devide
+by <em>Chandra</em>’s effective area. Alternatively, we can just set the
+exact number of photons we want to detect with <a class="reference internal" href="../../inbrief/simsetup.html#parameter-ExposureTime"><code class="xref std std-par docutils literal notranslate"><span class="pre">ExposureTime=0</span></code></a> and <a class="reference internal" href="../../inbrief/simsetup.html#parameter-NumRays"><code class="xref std std-par docutils literal notranslate"><span class="pre">NumRays</span></code></a>
+set to a negative number. We set <a class="reference internal" href="../../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a> to the spectrum of
+the background. Now we only need to specify the shape of the
+source. Figure <a class="reference internal" href="#fig-ex-bkgonchip"><span class="std std-ref">Binned “blank sky” file for chip 7</span></a> shows regions with higher or
+lower background level in the input “blank sky” file.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dmcopy<span class="w"> </span><span class="s2">&quot;acis7sbkg.fits[EVENTS][bin x=::32,y=::32]&quot;</span><span class="w"> </span>chip-shape.fits<span class="w"> </span><span class="nv">option</span><span class="o">=</span>image
+</pre></div>
+</div>
+<figure class="align-center" id="id4">
+<span id="fig-ex-bkgonchip"></span><img alt="Image with rough blocks almost like a checkerboard, but with very little contrast." src="../../_images/chip-shape.png" />
+<figcaption>
+<p><span class="caption-text">Binned “blank sky” file for chip 7</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>To reproduce this pattern, we use <strong>marx</strong> with <a class="reference internal" href="../../indetail/models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType=&quot;IMAGE&quot;</span></code></a>.
+There is a trade-off here: If we bin the image too much, we smooth out the
+structure, if we bin too little such that we still see the random noise in the
+image, then our <strong>marx</strong> simulation will produce an event distribution that shows
+the same “random noise pattern”. That fine, unless we want to run many <strong>marx</strong>
+simulations, where we would see the same “random” pattern again and again. Here, the
+binning is chosen such that we find a few thousand events in every pixel of the
+image.</p>
+<p>All remaining <strong>marx</strong> parameters (<a class="reference internal" href="../../inbrief/simsetup.html#parameter-RA_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">RA_Nom</span></code></a>, <a class="reference internal" href="../../inbrief/simsetup.html#parameter-Dec_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">Dec_Nom</span></code></a> etc.) are the
+same as in the simulation of the astrophysical source of interest above.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span><span class="m">3</span>.<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;bkgspec.tbl&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">NumRays</span><span class="o">=</span>-30000<span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">2012</span>.5<span class="w"> </span><span class="nv">OutputDir</span><span class="o">=</span>bkg<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span><span class="w"> </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span><span class="w"> </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">SourceType</span><span class="o">=</span><span class="s2">&quot;IMAGE&quot;</span><span class="w"> </span>S-ImageFile<span class="o">=</span><span class="s2">&quot;chip-shape.fits&quot;</span>
+</pre></div>
+</div>
+<p>Now, we can use <a class="reference internal" href="../../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> to merge the simulation of the diffuse
+source and the background and <a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> to convert the merged
+results into a fits file.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxcat<span class="w"> </span>diffuse<span class="w"> </span>bkg<span class="w"> </span>diffuse_with_bkg
+
+marx2fits<span class="w"> </span>diffuse_with_bkg<span class="w"> </span>diffuse_with_bkg.fits
+</pre></div>
+</div>
+<figure class="align-center" id="id5">
+<span id="fig-ex-bkg2"></span><img alt="Images of three event files. See caption for a description." src="../../_images/bkg2.png" />
+<figcaption>
+<p><span class="caption-text">Images of the event files with <strong>marx</strong> simulated background</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>This figure has the same panels as <a class="reference internal" href="#fig-ex-bkg2"><span class="std std-ref">Images of the event files with marx simulated background</span></a>, except that the background is
+simulated with <strong>marx</strong> instead of taking photons directly from the “blank
+sky” file.</p>
+</div>
+</figcaption>
+</figure>
+<p>Looking at <a class="reference internal" href="#fig-ex-bkg2"><span class="std std-ref">Images of the event files with marx simulated background</span></a> we again see that the background makes it much
+harder to discern the source. The images look very similar to
+<a class="reference internal" href="#fig-ex-bkg"><span class="std std-ref">Images of event files</span></a>, indicating that both approaches to describe the background
+give similar results. The main difference is that in the <strong>marx</strong> simulation the
+edge of the chip is more fuzzy. That’s because pixel boundaries in
+<a class="reference internal" href="#fig-ex-bkgonchip"><span class="std std-ref">Binned “blank sky” file for chip 7</span></a> do not coincide exactly with the chip
+boundaries and thus we simulate the “background” for a region slightly larger
+than the chip. However, this is not important for our purpose: Finding how well we
+can fit the source position, size and spectrum in the presence of background.</p>
+</section>
+<section id="notes-about-additional-background-components">
+<h2>Notes about additional background components<a class="headerlink" href="#notes-about-additional-background-components" title="Link to this heading">¶</a></h2>
+<p>In addition to the instrumental background, there is
+also an astrophyiscal background. This can be unrelated to the target of the
+observation, such as charge exchange emission in the solar wind or the
+population of weak background AGN, that is roughly homogeneous over the
+field-of-view and contributes to the observed “diffuse” background.</p>
+<p>For some targets, there are additional contributions to the apparent background
+that are related to the source. For example, in the case of diffuse emission in a star
+forming region there will be stars in the cluster. While the bright stars
+should be detected as point sources and those regions can be excluded from the
+analysis, there might be a population of weak stars that contribute only a few
+photons each, but add up to provide significant flux in addition to a truly
+diffuse component from a hot gas.</p>
+<p>Different strategies can be used to account for those backgrounds in spectral
+modeling, but that is beyond the scope of this <strong>marx</strong> example.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Including background in a <strong>marx</strong> simulation</a><ul>
+<li><a class="reference internal" href="#simulating-the-source-a-diffuse-thermal-emission">Simulating the source: A diffuse, thermal emission</a></li>
+<li><a class="reference internal" href="#adding-blank-sky-background-to-a-marx-simulation">Adding “blank-sky background” to a <strong>marx</strong> simulation</a></li>
+<li><a class="reference internal" href="#simulating-a-background-like-source-with-marx">Simulating a background-like source with <strong>marx</strong></a></li>
+<li><a class="reference internal" href="#notes-about-additional-background-components">Notes about additional background components</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../marxcat/marxcat.html"
+                          title="previous chapter">Simulating two overlapping sources</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../simobs/simobs.html"
+                          title="next chapter">Replicating a Chandra Observation / Using ChaRT or SAOTrace</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../simobs/simobs.html" title="Replicating a Chandra Observation / Using ChaRT or SAOTrace"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../marxcat/marxcat.html" title="Simulating two overlapping sources"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Including background in a <strong>marx</strong> simulation</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

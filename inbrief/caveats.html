@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Current caveats for MARX &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running marx simulations" href="simsetup.html" />
+    <link rel="prev" title="Downloading and Installing Marx" href="install.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="simsetup.html" title="Running marx simulations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Downloading and Installing Marx"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" accesskey="U">MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Current caveats for MARX</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="current-caveats-for-marx">
+<span id="caveats"></span><h1>Current caveats for MARX<a class="headerlink" href="#current-caveats-for-marx" title="Link to this heading">¶</a></h1>
+<section id="general-caveats-for-monte-carlo-simulations">
+<h2>General Caveats for Monte-Carlo simulations<a class="headerlink" href="#general-caveats-for-monte-carlo-simulations" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> is a Monte-Carlo tool, that means it uses random numbers when simulating
+the X-ray flux and the response for Chandra. For example, if the source
+spectrum indicates a constant flux between 1 and 10 keV, <strong>marx</strong> will create
+photons randomly from this interval. If only a small number of photons is used
+in a simulation, it is possible (though not very likely) that a lot more
+photons are softer than 5 keV. For a large number of photons, the result will
+eventually converge to a constant spectrum.</p>
+<p>Random numbers are used for all interactions in <strong>marx</strong>, not only when selecting
+the energy of the photons, but also to see where in the aperture it enters
+Chandra, how it bounces of the mirrors, how it defracts from the gratings, etc.
+Thus, even if the physical model for a source is perfect, the simulated
+spectrum and a Chandra observation will differ.</p>
+<p>Furthermore, this means that two <strong>marx</strong> simulations with the same input
+parameters will give different results, unless they use the same sequence of
+random numbers (set the parameter <a class="reference internal" href="simsetup.html#parameter-RandomSeed"><code class="xref std std-par docutils literal notranslate"><span class="pre">RandomSeed</span></code></a> to a positive number to
+obtain the same sequence of random numbers).</p>
+</section>
+<section id="spatial-dependence-of-the-quantum-efficiency">
+<h2>Spatial Dependence of the Quantum Efficiency<a class="headerlink" href="#spatial-dependence-of-the-quantum-efficiency" title="Link to this heading">¶</a></h2>
+<p>The current version of <strong>marx</strong> does not incorporate the QE uniformity
+maps and bad-pixel files that give rise to spatial variation in the
+QE.  Consequently, exposure maps and ARFs created by default in ciao
+will be inconsistent with MARX simulations.  For simulated
+observations on ACIS-S3, this difference should be small since spatial
+variations in the QE are relatively small on this CCD. However,
+simulated ACIS-I observations will be effected to a greater degree due
+to the larger QE variations produced by CTI effects.</p>
+<p>For users of <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> 2.3 and higher, the tools <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkarf.html">mkarf</a> and <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkinstmap.html">mkinstmap</a>
+include the ability to turn off the QE uniformity maps through the use
+of <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/ardlib.html">ardlib</a> qualifiers.  For example, a calling sequence like:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix%  mkarf detsubsys=&quot;ACIS-7;uniform;bpmask=0&quot; ......
+</pre></div>
+</div>
+<p>will produce an ARF on ACIS-7 (ACIS-S3) but with bad pixel processing
+disabled (<code class="docutils literal notranslate"><span class="pre">bpmask=0</span></code>) and without the effects of the CALDB
+non-uniformity files included.  The resulting ARF will be consistent
+with a <strong>marx</strong> simulation.  A similar call to <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkinstmap.html">mkinstmap</a> can
+be used in conjunction with <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkexpmap.html">mkexpmap</a> to create exposure maps
+appropriate for <strong>marx</strong> simulations.  This technique is illustrated in <a class="reference internal" href="../examples/ACISpowerpileup/powerlaw.html#ex-ciao"><span class="std std-ref">Creating CIAO-based ARFs and RMFs for MARX Simulations</span></a>.</p>
+</section>
+<section id="acis-response-functions">
+<h2>ACIS Response Functions<a class="headerlink" href="#acis-response-functions" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> includes a couple of different tools for creating ACIS response
+matrices (RMFs): <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkacisrmf.html">mkacisrmf</a> and <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a>.  The <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkacisrmf.html">mkacisrmf</a> tool is
+designed for the analysis of CTI corrected data, whereas <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a>
+creates an RMF for non-CTI corrected data.  The response algorithm
+implemented in <strong>marx</strong> is based upon the calibration data used by
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a>.  Hence the PHAs generated by <strong>marx</strong> for the ACIS detector
+represent non-CTI corrected values and as such are consistent with the
+responses generated by <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> but not with <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkacisrmf.html">mkacisrmf</a>.  Consequently,
+users should continue to use the <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> to create RMFs that
+are consistent with their <strong>marx</strong> simulations.  More information about
+using <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> in the context of a <strong>marx</strong> simulation may be found in <a class="reference internal" href="../examples/ACISpowerpileup/powerlaw.html#ex-ciao"><span class="std std-ref">Creating CIAO-based ARFs and RMFs for MARX Simulations</span></a>.</p>
+<p>Alternatively, <a class="reference internal" href="../Reference/tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> may be used to apply <em>any</em> RMF to a <strong>marx</strong>
+simulation with the caveat that the mapping from photon energy to PHA
+does not vary over the detector.</p>
+</section>
+<section id="mismatch-between-the-fef-based-response-and-the-caldb-order-sorting-tables">
+<h2>Mismatch between the FEF-based response and the CALDB order-sorting tables<a class="headerlink" href="#mismatch-between-the-fef-based-response-and-the-caldb-order-sorting-tables" title="Link to this heading">¶</a></h2>
+<p>As mentioned above, <strong>marx</strong> generates non-CTI corrected PHA values. This
+is accomplished by mapping the incident photon energy to a PHA value
+using a probability from derived from the most recent non-CTI
+calibration data (CALDB <code class="docutils literal notranslate"><span class="pre">acisD2000-01-29fef_phaN0005.fits</span></code>).  The CIAO
+tool <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tg_resolve_events.html">tg_resolve_events</a> assigns a diffracted order to each event
+by comparing the event’s ACIS energy to its dispersion coordinate.
+The ACIS energy window for a particular order is tabulated in a
+CALDB order-sorting table (OSIP).</p>
+<p>For non-CTI corrected data, the CALDB order sorting table
+(<code class="docutils literal notranslate"><span class="pre">acisD2000-01-29osipN0006.fits</span></code>) was computed using a much older
+version of the non-CTI response data
+(<code class="docutils literal notranslate"><span class="pre">acisD2000-01-29fef_phaN0002.fits</span></code>).  These files
+(<code class="docutils literal notranslate"><span class="pre">acisD2000-01-29fef_phaN0002.fits</span></code> vs <code class="docutils literal notranslate"><span class="pre">acisD2000-01-29fef_phaN0005.fits</span></code>)
+differ mainly in the region around the Si K edge (~1.8 keV).  As such,
+a comparison of a <strong>marx</strong> spectrum with the expected spectrum
+of the input model will show strong systematic residuals near 1.8 keV.</p>
+</section>
+<section id="isis-pileup-fitting-kernel">
+<h2>ISIS Pileup Fitting Kernel<a class="headerlink" href="#isis-pileup-fitting-kernel" title="Link to this heading">¶</a></h2>
+<p>The default parameters for the pileup fitting kernel in <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>, but also in
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> and <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSpec</a> have been
+calibrated for point source extractions. Specifically, the values
+correspond to a circular extraction region 4 ACIS pixels in radius.
+Although <strong>marx</strong> can be used to include the effects of photon
+pileup for any arbitrary spatial and spectral source model, the
+fitting kernel may need to be adjusted for larger extraction
+regions. In particular, the <code class="docutils literal notranslate"><span class="pre">psffrac</span></code> parameter represents the
+fraction of the Chandra PSF contained within the extraction region and
+may need to be increased for larger regions. Note, however, that for
+real data, larger extraction regions will include a higher fraction of
+unpiled background photons complicating the fitting of the piled
+source spectrum.  As such, it is recommended that this value be
+allowed to vary during the spectral fit.  See the <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> manual for
+more discussion of the pileup fitting kernel.</p>
+</section>
+<section id="chandra-aimpoint-drift">
+<h2>Chandra Aimpoint Drift<a class="headerlink" href="#chandra-aimpoint-drift" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> does not currently take into account of temporal drift in
+Chandra’s HRMA aimpoint. Fortunately the effect of the drift is
+generally negligible and should not be a concern for Chandra proposers.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Current caveats for MARX</a><ul>
+<li><a class="reference internal" href="#general-caveats-for-monte-carlo-simulations">General Caveats for Monte-Carlo simulations</a></li>
+<li><a class="reference internal" href="#spatial-dependence-of-the-quantum-efficiency">Spatial Dependence of the Quantum Efficiency</a></li>
+<li><a class="reference internal" href="#acis-response-functions">ACIS Response Functions</a></li>
+<li><a class="reference internal" href="#mismatch-between-the-fef-based-response-and-the-caldb-order-sorting-tables">Mismatch between the FEF-based response and the CALDB order-sorting tables</a></li>
+<li><a class="reference internal" href="#isis-pileup-fitting-kernel">ISIS Pileup Fitting Kernel</a></li>
+<li><a class="reference internal" href="#chandra-aimpoint-drift">Chandra Aimpoint Drift</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="install.html"
+                          title="previous chapter">Downloading and Installing Marx</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="simsetup.html"
+                          title="next chapter">Running <strong>marx</strong> simulations</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="simsetup.html" title="Running marx simulations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Downloading and Installing Marx"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="overview.html" >MARX in brief</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Current caveats for MARX</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

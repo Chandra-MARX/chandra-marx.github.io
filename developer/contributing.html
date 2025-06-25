@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Contributing code or documentation &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Making a release" href="release.html" />
+    <link rel="prev" title="Further marx parameters" href="../Reference/othermarxpars.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="release.html" title="Making a release"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../Reference/othermarxpars.html" title="Further marx parameters"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Contributing code or documentation</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="contributing-code-or-documentation">
+<h1>Contributing code or documentation<a class="headerlink" href="#contributing-code-or-documentation" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> is developed by the MIT/CXC group and made available under the GPL v2 license
+in source code form. The latest release can be found at <a class="reference external" href="ftp://space.mit.edu/pub/cxc/marx/v5.5/marx-dist-5.5.3.tar.gz">distribution</a>.</p>
+<p>The developers use the <a class="reference external" href="https://git-scm.com/">git version control system</a>
+and host the code on github.
+We welcome pull requests through github for all apects of the <strong>marx</strong> software, which
+includes the following repositories:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Chandra-MARX/marx">https://github.com/Chandra-MARX/marx</a> : <strong>marx</strong> source code.
+Building the source code has only minimal requirements (a C compiler and GNU autotools).</p></li>
+<li><p><a class="reference external" href="https://github.com/Chandra-MARX/doc">https://github.com/Chandra-MARX/doc</a> : This keeps the source code for the documentation.
+The documentation is written using <a class="reference external" href="http://www.sphinx-doc.org/">Sphinx</a> and requires
+a number of packages to be build:</p>
+<ul>
+<li><p>python, sphinx, matplotlib, pygments: for text and figures</p></li>
+<li><p><strong>marx</strong>, <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>, <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>, <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a>, and <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> to run the examples and
+generate the associated figures. (The documentation can be build without this, but it
+will be missing all figures in the examples.)</p></li>
+</ul>
+</li>
+<li><p><a class="reference external" href="https://github.com/Chandra-MARX/marx-test">https://github.com/Chandra-MARX/marx-test</a> : Tests that either run a long time or have
+extra dependencies beyond <strong>marx</strong> itself (e.g. <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>) are collected in this repository.</p></li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../Reference/othermarxpars.html"
+                          title="previous chapter">Further <strong>marx</strong> parameters</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="release.html"
+                          title="next chapter">Making a release</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="release.html" title="Making a release"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../Reference/othermarxpars.html" title="Further marx parameters"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Contributing code or documentation</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

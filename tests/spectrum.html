@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Reproducing an input spectrum &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sources in marx" href="source.html" />
+    <link rel="prev" title="Flight grade distribution" href="grades.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="source.html" title="Sources in marx"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grades.html" title="Flight grade distribution"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U"><strong>marx</strong> accuracy and testing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reproducing an input spectrum</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="reproducing-an-input-spectrum">
+<span id="sect-tests-spectrum"></span><h1>Reproducing an input spectrum<a class="headerlink" href="#reproducing-an-input-spectrum" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> allows users to specify either a flat input spectrum or to pass in a file.
+Here, we generate input spectra with the spectral modeling program <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a>.
+We run <strong>marx</strong> to
+simulate a point source and extract the data from that simulation using <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>,
+read it back into <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> and fit the simulated data.
+If everything works well and all detector effects are treated consistently,
+we should recover the same spectral parameters (up to Poisson noise).
+On the other hand, if <strong>marx</strong> and
+<a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> are inconsistent the fit parameters will deviate from the input
+parameters.</p>
+<p>In the past, this has happened after the release of <strong>marx</strong> 5.0, which contains
+some files to describe the ACIS contamination. This contamination changes with
+time and several <a class="reference external" href="http://cxc.harvard.edu/caldb/">CalDB</a> releases had happened before we released <strong>marx</strong> 5.1.
+At that time, <strong>marx</strong> always predicted too many counts at low energies.</p>
+<p>The following tests are designed to test <strong>consistency</strong> with <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>.
+Since there is always some uncertainty about the intrinsic spectrum of
+astrophysical sources, this test is best done with simulated input spectra.</p>
+<section id="absorbed-powerlaw-on-acis-s">
+<span id="sect-test-spectrumabspowaciss"></span><h2>Absorbed powerlaw on ACIS-S<a class="headerlink" href="#absorbed-powerlaw-on-acis-s" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/SpectrumAbsPowACISS.html#test-code-spectrumabspowaciss"><span class="std std-ref">Absorbed powerlaw on ACIS-S</span></a></p>
+</dd>
+</dl>
+<p>This test checks the internal consistency of a <strong>marx</strong> spectral simulation
+by simulating a source placed on an back-illuminated chip of ACIS-S.
+The input spectrum is an absorbed powerlaw.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/SpectrumAbsPowACISS_spec.png"><img alt="Spectra and model shown in top of each other. Differences are described in the text." src="../_images/SpectrumAbsPowACISS_spec.png" style="width: 433.5px; height: 342.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">Data reduced as required to reproduce the <strong>marx</strong> setup (see <a class="reference internal" href="../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a>) is shown in green, data reduced with standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> setting in orange. The orange error bars are omitted for clarity. In this display, green and orange points should be on top of each other, but the next figure shows that real differences exist when ARF is needed to calculate the flux. Lines show the input model (red, using the ARF of the green data), the best-fit model to the green data (green line) and to the orange data (orange line).</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../_images/SpectrumAbsPowACISS_arf.png"><img alt="ARFs differ in the range 2-5 keV" src="../_images/SpectrumAbsPowACISS_arf.png" style="width: 432.0px; height: 339.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">ARFs for both extraction methods (some color as above).</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Fit results:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Input</p></th>
+<th class="head" colspan="3"><p>MARX special extraction</p></th>
+<th class="head" colspan="3"><p>CIAO default extraction</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>name</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>err_down</p></th>
+<th class="head"><p>err_up</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>err_down</p></th>
+<th class="head"><p>err_up</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>a.nH</p></td>
+<td><p>1.0</p></td>
+<td><p>0.95</p></td>
+<td><p>-0.049</p></td>
+<td><p>0.051</p></td>
+<td><p>0.88</p></td>
+<td><p>-0.046</p></td>
+<td><p>0.048</p></td>
+</tr>
+<tr class="row-even"><td><p>p.PhoIndex</p></td>
+<td><p>1.8</p></td>
+<td><p>1.8</p></td>
+<td><p>-0.058</p></td>
+<td><p>0.059</p></td>
+<td><p>1.6</p></td>
+<td><p>-0.056</p></td>
+<td><p>0.057</p></td>
+</tr>
+<tr class="row-odd"><td><p>p.norm</p></td>
+<td><p>0.001</p></td>
+<td><p>0.00092</p></td>
+<td><p>-6.6e-05</p></td>
+<td><p>7.3e-05</p></td>
+<td><p>0.00082</p></td>
+<td><p>-5.7e-05</p></td>
+<td><p>6.2e-05</p></td>
+</tr>
+</tbody>
+</table>
+<p>The table shows how the best fit of the simulated and extracted data compares to the
+parameter values that were used to generate the input spectrum. The two columns compare
+the fit results using an extraction that takes <strong>marx</strong>’s <a class="reference internal" href="../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a> into account
+and an extraction that just applies <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> default values.</p>
+<p>In a Monte-Carlo simulation we can never expect the fit to hit the input values exactly.
+In fact, a perfect agreement between input and output numbers would indicate
+that the random number generator is not random enough. When running this example
+many times, the average distance should be roughly 1 sigma.</p>
+</section>
+<section id="powerlaw-spectrum-of-an-off-axis-source">
+<span id="sect-test-spectrumabspowaciss-offaxis"></span><h2>Powerlaw spectrum of an off-axis source<a class="headerlink" href="#powerlaw-spectrum-of-an-off-axis-source" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/SpectrumAbsPowACISS_offaxis.html#test-code-spectrumabspowaciss-offaxis"><span class="std std-ref">Powerlaw spectrum of an off-axis source</span></a></p>
+</dd>
+</dl>
+<p>Same as above, but for an off-axis source.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/SpectrumAbsPowACISS_offaxis_spec.png"><img alt="Spectra and model shown in top of each other. Differences are described in the text." src="../_images/SpectrumAbsPowACISS_offaxis_spec.png" style="width: 433.5px; height: 342.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">Data reduced as required to reproduce the <strong>marx</strong> setup (see <a class="reference internal" href="../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a>) is shown in green, data reduced with standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> setting in orange. The orange error bars are omitted for clarity. In this display, green and orange points should be on top of each other, but the next figure shows that real differences exist when ARF is needed to calculate the flux. Lines show the input model (red, using the ARF of the green data), the best-fit model to the green data (green line) and to the orange data (orange line).</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/SpectrumAbsPowACISS_offaxis_arf.png"><img alt="ARFs differ in the range 2-5 keV" src="../_images/SpectrumAbsPowACISS_offaxis_arf.png" style="width: 432.0px; height: 339.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">ARFs for both extraction methods (some color as above).</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Fit results:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Input</p></th>
+<th class="head" colspan="3"><p>MARX special extraction</p></th>
+<th class="head" colspan="3"><p>CIAO default extraction</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>name</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>err_down</p></th>
+<th class="head"><p>err_up</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>err_down</p></th>
+<th class="head"><p>err_up</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>a.nH</p></td>
+<td><p>1.0</p></td>
+<td><p>1.0</p></td>
+<td><p>-0.077</p></td>
+<td><p>0.08</p></td>
+<td><p>1.0</p></td>
+<td><p>-0.077</p></td>
+<td><p>0.08</p></td>
+</tr>
+<tr class="row-even"><td><p>p.PhoIndex</p></td>
+<td><p>1.8</p></td>
+<td><p>1.9</p></td>
+<td><p>-0.076</p></td>
+<td><p>0.078</p></td>
+<td><p>1.8</p></td>
+<td><p>-0.076</p></td>
+<td><p>0.078</p></td>
+</tr>
+<tr class="row-odd"><td><p>p.norm</p></td>
+<td><p>0.001</p></td>
+<td><p>0.001</p></td>
+<td><p>-9.9e-05</p></td>
+<td><p>0.00011</p></td>
+<td><p>0.001</p></td>
+<td><p>-0.0001</p></td>
+<td><p>0.00011</p></td>
+</tr>
+</tbody>
+</table>
+<p>The table shows how the best fit of the simulated and extracted data
+compares to the parameter values that were used to generate the input
+spectrum.</p>
+<p>See above for a detailed description.</p>
+</section>
+<section id="two-thermal-components-on-acis-i">
+<span id="sect-test-spectrumapecacisi"></span><h2>Two thermal components on ACIS-I<a class="headerlink" href="#two-thermal-components-on-acis-i" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/SpectrumAPECACISI.html#test-code-spectrumapecacisi"><span class="std std-ref">Two thermal components on ACIS-I</span></a></p>
+</dd>
+</dl>
+<p>Same as above, but for a front-illuminated ACIS-I chip and using
+an input spectrum with two thermal components similar to a stellar corona.</p>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="../_images/SpectrumAPECACISI_spec.png"><img alt="Spectra and model shown in top of each other. Differences are described in the text." src="../_images/SpectrumAPECACISI_spec.png" style="width: 433.5px; height: 342.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">Data reduced as required to reproduce the <strong>marx</strong> setup (see <a class="reference internal" href="../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a>) is shown in green, data reduced with standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> setting in orange. The orange error bars are omitted for clarity. In this display, green and orange points should be on top of each other, but the next figure shows that real differences exist when ARF is needed to calculate the flux. Lines show the input model (red, using the ARF of the green data), the best-fit model to the green data (green line) and to the orange data (orange line).</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="../_images/SpectrumAPECACISI_arf.png"><img alt="ARFs differ in the range 2-5 keV" src="../_images/SpectrumAPECACISI_arf.png" style="width: 432.0px; height: 339.75px;" /></a>
+<figcaption>
+<p><span class="caption-text">ARFs for both extraction methods (some color as above).</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Fit results:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Input</p></th>
+<th class="head" colspan="3"><p>MARX special extraction</p></th>
+<th class="head" colspan="3"><p>CIAO default extraction</p></th>
+</tr>
+<tr class="row-even"><th class="head"><p>name</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>err_down</p></th>
+<th class="head"><p>err_up</p></th>
+<th class="head"><p>value</p></th>
+<th class="head"><p>err_down</p></th>
+<th class="head"><p>err_up</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-odd"><td><p>a1.kT</p></td>
+<td><p>0.7</p></td>
+<td><p>0.7</p></td>
+<td><p>-0.044</p></td>
+<td><p>0.039</p></td>
+<td><p>0.7</p></td>
+<td><p>-0.042</p></td>
+<td><p>0.037</p></td>
+</tr>
+<tr class="row-even"><td><p>a1.Ne</p></td>
+<td><p>2.0</p></td>
+<td><p>2.0</p></td>
+<td><p>-1.3</p></td>
+<td><p>1.3</p></td>
+<td><p>2.1</p></td>
+<td><p>-1.3</p></td>
+<td><p>1.3</p></td>
+</tr>
+<tr class="row-odd"><td><p>a1.norm</p></td>
+<td><p>0.0002</p></td>
+<td><p>0.00019</p></td>
+<td><p>-1.3e-05</p></td>
+<td><p>1.4e-05</p></td>
+<td><p>0.0002</p></td>
+<td><p>-1.4e-05</p></td>
+<td><p>1.4e-05</p></td>
+</tr>
+<tr class="row-even"><td><p>a2.kT</p></td>
+<td><p>2.0</p></td>
+<td><p>1.9</p></td>
+<td><p>-0.11</p></td>
+<td><p>0.11</p></td>
+<td><p>2.0</p></td>
+<td><p>-0.11</p></td>
+<td><p>0.11</p></td>
+</tr>
+<tr class="row-odd"><td><p>a2.norm</p></td>
+<td><p>0.0004</p></td>
+<td><p>0.0004</p></td>
+<td><p>-2.3e-05</p></td>
+<td><p>2.3e-05</p></td>
+<td><p>0.00042</p></td>
+<td><p>-2.4e-05</p></td>
+<td><p>2.5e-05</p></td>
+</tr>
+</tbody>
+</table>
+<p>The table shows how the best fit of the simulated and extracted data
+compares to the parameter values that were used to generate the input
+spectrum.</p>
+<p>See above for a detailed description.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Reproducing an input spectrum</a><ul>
+<li><a class="reference internal" href="#absorbed-powerlaw-on-acis-s">Absorbed powerlaw on ACIS-S</a></li>
+<li><a class="reference internal" href="#powerlaw-spectrum-of-an-off-axis-source">Powerlaw spectrum of an off-axis source</a></li>
+<li><a class="reference internal" href="#two-thermal-components-on-acis-i">Two thermal components on ACIS-I</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="grades.html"
+                          title="previous chapter">Flight grade distribution</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="source.html"
+                          title="next chapter">Sources in <strong>marx</strong></a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="source.html" title="Sources in marx"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grades.html" title="Flight grade distribution"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" ><strong>marx</strong> accuracy and testing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Reproducing an input spectrum</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

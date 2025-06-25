@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Using marx with SAOSAC &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The spectrum and the spatial shape of the X-ray source" href="models.html" />
+    <link rel="prev" title="Using Response Matrices with marx" href="rsp.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="The spectrum and the spatial shape of the X-ray source"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="rsp.html" title="Using Response Matrices with marx"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" accesskey="U">Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Using <strong>marx</strong> with SAOSAC</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="using-marx-with-saosac">
+<span id="saosac"></span><h1>Using <strong>marx</strong> with SAOSAC<a class="headerlink" href="#using-marx-with-saosac" title="Link to this heading">¶</a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Out of date.</p>
+<p>Some information in section might be out of date. It will be rewritten soon.</p>
+</div>
+<p>For calibration purposes, the Mission Support Team (MST) has developed
+an extremely high-fidelity raytrace of the HRMA onboard Chandra called
+SAOSAC. SAOSAC is the definitive CXC mirror model and includes many of
+the details of the HRMA’s physical construction such as the stray light
+baffles and support structures as well as a detailed model of the
+reflective properties of the mirror surface. Using XRCF and, ultimately,
+on-orbit calibration data, SAOSAC will be “tuned” to reproduce actual
+HRMA performance to a high degree of accuracy. SAOSAC serves as baseline
+for the HRMA model contained within <strong>marx</strong>. In fact, the <strong>marx</strong> HRMA
+model is a simplified version of SAOSAC and includes as many of SAOSAC’s
+features as can be reasonably be reproduced while still maintaining
+<strong>marx</strong> ‘s speed and portability.</p>
+<section id="using-saosac-rayfiles-in-marx">
+<h2>Using SAOSAC Rayfiles in <strong>marx</strong><a class="headerlink" href="#using-saosac-rayfiles-in-marx" title="Link to this heading">¶</a></h2>
+<p>For many purposes, the HRMA model within <strong>marx</strong> will be sufficiently
+accurate. However, users wishing to study very subtle effects caused by
+fine details in the HRMA may wish to run simulations utilizing the
+SAOSAC mirror model. Users involved in analysis of calibration data are
+one obvious example. In such a situation, the user might wish to use
+SAOSAC in combination with the detector models or grating models
+available within <strong>marx</strong>. The <strong>marx</strong> package provides this capability
+by ingesting SAOSAC FITS format rayfiles.</p>
+<p>At the current time, it is not planned to distribute the SAOSAC mirror
+model to the user community. Instead, SAOSAC rayfiles will be
+pre-computed and distributed as needed. These rayfiles take the form of
+FITS files containing binary tables of photon or “ray” properties. In
+order to provide users with the option of using the SAOSAC mirror model,
+<strong>marx</strong> is capable of ingesting standard SAOSAC FITS rayfiles.</p>
+<p>The interface to SAOSAC rayfiles is implemented in <strong>marx</strong> by setting
+the value of the <a class="reference internal" href="models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType</span></code></a> parameter to <code class="docutils literal notranslate"><span class="pre">SAOSAC</span></code>. The path to the
+SAOSAC rayfile to be accessed is specified using the <a class="reference internal" href="models.html#parameter-SAOSACFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SAOSACFile</span></code></a>
+parameter. For example, if we wanted to run a <strong>marx</strong> simulation of the
+HSI first light test at XRCF, we might use a command similar to:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx SourceType=&quot;SAOSAC&quot; SAOSACFile=&quot;C-IXH-PI-3.001.fits&quot;
+</pre></div>
+</div>
+<p>where C-IXH-PI-3.001.fits in this case is the rayfile appropriate for
+that test.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/fig_saosac.png" src="../_images/fig_saosac.png" />
+<figcaption>
+<p><span class="caption-text">The distribution of focal plane photon positions for a <strong>marx</strong> simulation created
+using an SAOSAC FITS rayfile. This rayfile corresponds to XRCF test ID C-IXH-PI-3.001 and
+contains 10000 rays. The XRCF test in question was performed with the HRMA 5.0 mm out of
+focus and this defocus value is reproduced in the simulation.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>In <strong>marx</strong> 4.0, an option for “colorizing” SAOSAC rays has been added.
+If the parameter <a class="reference internal" href="../Reference/othermarxpars.html#parameter-SAOSAC_Color_Rays"><code class="xref std std-par docutils literal notranslate"><span class="pre">SAOSAC_Color_Rays=yes</span></code></a>, then photon energies and
+arrival times for each SAOSAC ray processed will be determined based on
+the status of the <a class="reference internal" href="models.html#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a> parameter. Note that since SAOSAC
+rayfiles are typically calculated for monochromatic energies, this
+option could lead to inaccuracies over large energy ranges. For narrow
+energy bands, such as in the vicinity of a bright emission line, this
+scaling should be reasonably accurate. If the SAOSAC rayfile contains
+event arrival times and <a class="reference internal" href="../Reference/othermarxpars.html#parameter-SAOSAC_Color_Rays"><code class="xref std std-par docutils literal notranslate"><span class="pre">SAOSAC_Color_Rays=no</span></code></a>, then <strong>marx</strong> will use
+the values in the rayfile. In the absence of specified arrival times or
+colorizing, <strong>marx</strong> assigns incremental 1 sec arrival times to each
+detected event.</p>
+</section>
+<section id="using-marx-rayfiles-in-saosac">
+<h2>Using <strong>marx</strong> Rayfiles in SAOSAC<a class="headerlink" href="#using-marx-rayfiles-in-saosac" title="Link to this heading">¶</a></h2>
+<p>One of the limitations of the SAOSAC model at present is its inability
+to model polychromatic sources. Such sources must currently be modeled
+by forming weighted sums of a set of monochromatic simulations.
+<strong>marx</strong>  provides an alternative to this approach. Using the <a class="reference internal" href="../Reference/tools.html#marx2dpde"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2dpde</span></code></a>
+tool, <strong>marx</strong> simulations can be translated into DPDE format suitable
+for further processing using any tools or pipelines built to handle this
+SAOSAC output format. The DPDE format is a binary rayfile format which
+was the precursor to the current FITS standard. A number of tools
+including the Calibration group’s ACIS simulator were designed to work
+with these files.</p>
+<p>To create a DPDE file from the results of a <strong>marx</strong> simulation, one
+might use the following command:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2dpde saosac-sim/ saosac-sim.dpde
+</pre></div>
+</div>
+<p>The resulting DPDE file can then be processed by additional tools as
+desired. The <a class="reference internal" href="../Reference/tools.html#marx2dpde"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2dpde</span></code></a> tool can also be used to examine the contents of
+an SAOSAC DPDE file with:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2dpde --dump saosac-sim.dpde &gt; saosac-sim.out
+</pre></div>
+</div>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">marx2dpde</span> <span class="pre">--dump</span></code> sends its output to the standard output.
+Here we have piped that output into an ASCII file.</p>
+<p>Note, according to the MST, the SAOSAC DPDE format is being phased out
+in favor of the FITS rayfile standard discussed in the previous section.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using <strong>marx</strong> with SAOSAC</a><ul>
+<li><a class="reference internal" href="#using-saosac-rayfiles-in-marx">Using SAOSAC Rayfiles in <strong>marx</strong></a></li>
+<li><a class="reference internal" href="#using-marx-rayfiles-in-saosac">Using <strong>marx</strong> Rayfiles in SAOSAC</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="rsp.html"
+                          title="previous chapter">Using Response Matrices with <strong>marx</strong></a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="models.html"
+                          title="next chapter">The spectrum and the spatial shape of the X-ray source</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="The spectrum and the spatial shape of the X-ray source"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="rsp.html" title="Using Response Matrices with marx"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="docs.html" >Detailed information on MARX</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Using <strong>marx</strong> with SAOSAC</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>HETG simulation of an extended source &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulating an LETG/ACIS-S observation" href="../LETGpow/letgplaw.html" />
+    <link rel="prev" title="Simulating a thermal plasma with the HETGS grating" href="../aped/aped.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../LETGpow/letgplaw.html" title="Simulating an LETG/ACIS-S observation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../aped/aped.html" title="Simulating a thermal plasma with the HETGS grating"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">HETG simulation of an extended source</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="hetg-simulation-of-an-extended-source">
+<span id="sect-ex-hetg-disk"></span><h1>HETG simulation of an extended source<a class="headerlink" href="#hetg-simulation-of-an-extended-source" title="Link to this heading">¶</a></h1>
+<p>The purpose of this example, contributed by
+<a class="reference external" href="http://space.mit.edu/home/dd/">Dan Dewey</a>, is to show how to use
+<strong>marx</strong> to simulate an HETG observation of a point and a
+simple extended source with a user-specified spectrum. This example, like many
+of the other examples, uses <strong>marx</strong>, <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> and <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>, which should be
+installed on your system to run this example.</p>
+<section id="create-the-spectral-file">
+<h2>Create the spectral file<a class="headerlink" href="#create-the-spectral-file" title="Link to this heading">¶</a></h2>
+<p>Use MARX to simulate an HETG observation of a powerlaw with two added lines
+(For example, this could be Fe and Ne flourescence lines).
+We will use <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> to create a file <a class="reference download internal" download="" href="../../_downloads/29e2c87a1af83e6f4cc2c022bb0fb68a/plaw_hetg.par"><code class="xref download docutils literal notranslate"><span class="pre">plaw_hetg.par</span></code></a> which describes this
+spectral model.
+This is similar to <a class="reference internal" href="../ACISpowerpileup/powerlaw.html#sect-ex-acisccd"><span class="std std-ref">Simulating a user-defined CCD spectrum with ACIS</span></a> except that the source is brighter
+and has a less steep powerlaw.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fit_fun(&quot;phabs(1)*powerlaw(1)+gauss(1)+gauss(2)&quot;);
+list_par;  % This will show the model parameters.
+
+% Set the model parameters:
+
+set_par(1, 0.80);
+set_par(2, 0.020);
+set_par(3, 1.20);
+
+% Set the Gaussian line parameters.
+% It&#39;s also possible to set the parameters by name instead of their number.
+% Note that the &quot;center&quot; must be specified in Angstroms,
+% so keV values are converted using Const_hc [ keV A ].
+
+% Fe line and Ne line centers
+
+set_par(&quot;gauss(1).center&quot;, Const_hc/6.4038);
+set_par(&quot;gauss(2).center&quot;, Const_hc/0.8486);
+
+% Set the areas and widths of the lines:
+
+set_par(&quot;gauss(1).area&quot;, 3.0e-4);
+set_par(&quot;gauss(2).area&quot;, 1.0e-4);
+
+% Make the lines have small but non-zero widths
+% of 0.020 A FWHM, or sigma = 0.020/2.35 = 0.0085 A.
+% These correspond to velocity widths of:
+% c * 0.020/1.936 =  ~ 3100 km/s FWHM for Fe line
+% c * 0.020/14.61 =  ~  410 km/s FWHM for Ne line
+
+set_par(&quot;gauss(1).sigma&quot;, 0.0085);
+set_par(&quot;gauss(2).sigma&quot;, 0.0085);
+
+% Save the model/parameters to a file and exit isis.
+
+save_par (&quot;plaw_hetg.par&quot;);
+</pre></div>
+</div>
+<p>Now, use <a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> to evaluate the <code class="docutils literal notranslate"><span class="pre">plaw_hetg.par</span></code> file to create a <strong>marx</strong> spectrum file.
+Here a fine binning is used having bins with dE/E = 0.0003 (v_bin = 90 km/s).
+This gives a high resolution spectrum across the whole 1 to 40 A
+(0.31 to 12.4 keV) range suitable for use with the HETG as well as, e.g.,
+future microcalorimeter instruments.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxflux<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;_A(exp([log(1.0):log(40.0):0.0003]))&#39;</span><span class="w"> </span>plaw_hetg.par<span class="w"> </span>plawflux_hetg.tbl
+</pre></div>
+</div>
+<p>The file <a class="reference download internal" download="" href="../../_downloads/e2d3b31480452412f882dc3cd437c7c9/plawflux_hetg.tbl"><code class="xref download docutils literal notranslate"><span class="pre">plawflux_hetg.tbl</span></code></a> can now be used by <strong>marx</strong> to define the spectrum.</p>
+</section>
+<section id="setup-and-run-marx">
+<h2>Setup and run <strong>marx</strong><a class="headerlink" href="#setup-and-run-marx" title="Link to this heading">¶</a></h2>
+<p>Roughly these steps are the same as for the previous examples, except that
+the HETG is inserted by using <a class="reference internal" href="../../inbrief/simsetup.html#parameter-GratingType"><code class="xref std std-par docutils literal notranslate"><span class="pre">GratingType=&quot;HETG&quot;</span></code></a>.</p>
+<p>It can be convenient to use <a class="reference internal" href="../../Reference/tools.html#pset"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">pset</span></code></a> to set the parameters in a
+local par file, so that method is demonstrated and used here.</p>
+<p>Set up the various marx parameters as desired.  Note that
+you can edit and re-do the following lines for new
+or modified simulations.  As an example, the first simulation
+here is for a <a class="reference internal" href="../../indetail/models.html#sect-models-point"><span class="std std-ref">POINT Source</span></a>; it is followed by a few additional
+lines to do a second simulation with a <a class="reference internal" href="../../indetail/models.html#sect-models-disk"><span class="std std-ref">DISK Source</span></a>.</p>
+<p>In the working directory paste these sets of lines to the unix prompt to run
+a first simulation using a point source:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make a par file for my marx simulation:</span>
+cp<span class="w"> </span>marx.par<span class="w"> </span>mysim.par
+
+<span class="c1"># set the spectrum file to use:</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;plawflux_hetg.tbl&quot;</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span>-1
+
+<span class="c1"># Set other parameters of the simulation:</span>
+<span class="c1"># Using 50 ks</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">50000</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">OutputDir</span><span class="o">=</span><span class="s2">&quot;hetg_plaw&quot;</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span>
+
+<span class="c1"># Use the HETG with ACIS-S:</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">GratingType</span><span class="o">=</span><span class="s2">&quot;HETG&quot;</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span>
+
+<span class="c1"># Some other parameters it can be useful to set:</span>
+
+<span class="c1"># Date of observation (effects ACIS QE)</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">2009</span>.50
+<span class="c1"># Roll of the observation: 0 puts average dispersion along E -- W.</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">0</span>.0
+
+<span class="c1"># Source RA/DEC (degrees)</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">250</span>.000
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span>-54.000
+<span class="c1"># Pointing RA/DEC (degrees)</span>
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">250</span>.000
+pset<span class="w"> </span>mysim.par<span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span>-54.000
+
+<span class="c1"># Finally,</span>
+<span class="c1"># Run the simulation:</span>
+marx<span class="w"> </span>@@mysim.par
+</pre></div>
+</div>
+<p><strong>marx</strong> runs, ending with something similar to (since <strong>marx</strong> is a Monte-Carlo
+based simulation, the exact number of detected photons can vary):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Writing output to directory &#39;hetg_plaw&#39; ...
+Total photons: 3495031, Total Photons detected: 255172, (efficiency: 0.073010)
+  (efficiency this iteration  0.073986)  Total time: 50000.000492
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the fits event file and the aspect solution file:</span>
+marx2fits<span class="w"> </span>hetg_plaw<span class="w"> </span>hetg_plaw_evt2.fits
+marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;hetg_plaw&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;hetg_plaw_asol1.fits&quot;</span>
+</pre></div>
+</div>
+<p>Now, do another simulation keeping most things the same as above
+by starting with the <code class="docutils literal notranslate"><span class="pre">mysim.par</span></code> as it is left from above
+but changing a few things to use a <a class="reference internal" href="../../indetail/models.html#sect-models-disk"><span class="std std-ref">DISK Source</span></a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>mysim.par<span class="w"> </span>mysim_disk.par
+<span class="c1"># New output dir for the Disk</span>
+pset<span class="w"> </span>mysim_disk.par<span class="w"> </span><span class="nv">OutputDir</span><span class="o">=</span><span class="s2">&quot;hetg_pldisk&quot;</span>
+
+<span class="c1"># Change the SourceType:</span>
+pset<span class="w"> </span>mysim_disk.par<span class="w"> </span><span class="nv">SourceType</span><span class="o">=</span><span class="s2">&quot;DISK&quot;</span>
+<span class="c1"># a thin disk with average radius ~ 2.0&quot;</span>
+pset<span class="w"> </span>mysim_disk.par<span class="w"> </span>S-DiskTheta0<span class="o">=</span><span class="m">1</span>.7
+pset<span class="w"> </span>mysim_disk.par<span class="w"> </span>S-DiskTheta1<span class="o">=</span><span class="m">2</span>.3
+
+<span class="c1"># Run the second simulation:</span>
+marx<span class="w"> </span>@@mysim_disk.par
+</pre></div>
+</div>
+<p>Next, we create the fits event file and the aspect solution files for both
+simulations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx2fits<span class="w"> </span>hetg_plaw<span class="w"> </span>hetg_plaw_evt2.fits
+marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;hetg_plaw&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;hetg_plaw_asol1.fits&quot;</span>
+
+marx2fits<span class="w"> </span>hetg_pldisk<span class="w"> </span>hetg_pldisk_evt2.fits
+marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;hetg_pldisk&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;hetg_pldisk_asol1.fits&quot;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Combining <strong>marx</strong> simulations</p>
+<p>The tool <a class="reference internal" href="../../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> allows simulations to be combined, e.g., we
+could do the following to make a combination of the point and disk events:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>marxcat hetg_plaw hetg_pldisk hetg_plboth
+</pre></div>
+</div>
+<p>and then create fits and asol files as above.
+This allows more complex spatial-spectral simulations to be done with <strong>marx</strong>.</p>
+</div>
+<p>We can look at the simulation output event files with <a class="reference external" href="http://ds9.si.edu/">ds9</a> to check that they
+are as expected before continuuing with ciao-processing. Figure
+<a class="reference internal" href="#fig-ex-hetgplaw"><span class="std std-ref">Event files from both marx simulations</span></a> shows both simulations.</p>
+<figure class="align-center" id="id1">
+<span id="fig-ex-hetgplaw"></span><img alt="ds9 image of two event files, described in the caption" src="../../_images/hetg.png" />
+<figcaption>
+<p><span class="caption-text">Event files from both <strong>marx</strong> simulations</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>The simulation of the point source is shown on the top, the extended source
+on the bottom. The extended source has a much wider zeroth order, but the
+scaling of the image is chosen to bring out the faint features so this is
+hard to see. Above and below the zeroth order the read-out streak is
+visible. In both images the X-shape of the grating spectra can be seen. The
+spectra are much wider in the bottom image due to the source
+extension. Still, the grating extraction area (green outlines) is large
+enough to capture most of the signal.</p>
+</div>
+</figcaption>
+</figure>
+<p>We can also use <a class="reference external" href="http://ds9.si.edu/">ds9</a> to record the center of the
+disk (simulation 2) in X,Y coordinates (4096.5, 4096.5) for further processing.</p>
+</section>
+<section id="extract-hetg-spectra">
+<h2>Extract HETG spectra<a class="headerlink" href="#extract-hetg-spectra" title="Link to this heading">¶</a></h2>
+<p>We will extract the HETG spectra and then calculate the response matrix
+for the positive and negative first order in the MEG grating. There is very
+little signal in the higher orders, so they would not help to constrain the fit
+significantly. Extraction of the HEG grating works in a similar way, see the
+<a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> documentation for details.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="c1"># Arguments: root name of files</span>
+<span class="c1"># Call this with the root names of the files as first argument, e.g.</span>
+<span class="c1"># &gt; hetg_ciao.sh hetg_plaw</span>
+<span class="c1"># to process the first example.</span>
+
+<span class="nv">root</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">_evt2.fits&quot;</span>
+<span class="nv">evt1afile</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">_evt1a.fits&quot;</span>
+<span class="nv">reg1afile</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">_reg1a.fits&quot;</span>
+<span class="nv">asol1file</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">_asol1.fits&quot;</span>
+<span class="nv">pha2file</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">_pha2.fits&quot;</span>
+
+<span class="nv">X</span><span class="o">=</span><span class="m">4096</span>.5<span class="p">;</span><span class="w">    </span><span class="c1"># determined by hand in ds9</span>
+<span class="nv">Y</span><span class="o">=</span><span class="m">4096</span>.5<span class="p">;</span><span class="w">    </span><span class="c1"># determined by hand in ds9</span>
+
+tg_create_mask<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$reg1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">use_user_pars</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">last_source_toread</span><span class="o">=</span>A<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">sA_id</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">sA_zero_x</span><span class="o">=</span><span class="nv">$X</span><span class="w"> </span><span class="nv">sA_zero_y</span><span class="o">=</span><span class="nv">$Y</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">grating_obs</span><span class="o">=</span>header_value<span class="w"> </span>
+
+tg_resolve_events<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evt1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$reg1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">acaofffile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asol1file</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">osipfile</span><span class="o">=</span>CALDB<span class="w"> </span><span class="nv">verbose</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+tgextract<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evt1afile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">tg_order_list</span><span class="o">=</span><span class="s2">&quot;-1,1&quot;</span>
+
+<span class="c1"># make response matrices for the MEG +1 and -1 order</span>
+mkgrmf<span class="w"> </span><span class="nv">grating_arm</span><span class="o">=</span><span class="s2">&quot;MEG&quot;</span><span class="w"> </span><span class="nv">order</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">meg-1_rmf.fits&quot;</span><span class="w"> </span><span class="nv">srcid</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">detsubsys</span><span class="o">=</span>ACIS-S3<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">threshold</span><span class="o">=</span>1e-06<span class="w"> </span><span class="nv">obsfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">wvgrid_arf</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span><span class="w"> </span><span class="nv">wvgrid_chan</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span>
+
+mkgrmf<span class="w"> </span><span class="nv">grating_arm</span><span class="o">=</span><span class="s2">&quot;MEG&quot;</span><span class="w"> </span><span class="nv">order</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">meg1_rmf.fits&quot;</span><span class="w"> </span><span class="nv">srcid</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">detsubsys</span><span class="o">=</span>ACIS-S3<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">threshold</span><span class="o">=</span>1e-06<span class="w"> </span><span class="nv">obsfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">wvgrid_arf</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span><span class="w"> </span><span class="nv">wvgrid_chan</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span>
+
+fullgarf<span class="w"> </span><span class="nv">phafile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w">  </span><span class="nv">pharow</span><span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">asol</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asol1file</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;grid(</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">meg-1_rmf.fits[cols ENERG_LO,ENERG_HI])&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">maskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dafile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dtffile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">badpix</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">rootname</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$root</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">ardlibqual</span><span class="o">=</span><span class="s2">&quot;;UNIFORM;bpmask=0&quot;</span>
+
+fullgarf<span class="w"> </span><span class="nv">phafile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$pha2file</span><span class="s2">&quot;</span><span class="w">  </span><span class="nv">pharow</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">asol</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asol1file</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;grid(</span><span class="si">${</span><span class="nv">root</span><span class="si">}</span><span class="s2">meg1_rmf.fits[cols ENERG_LO,ENERG_HI])&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">maskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dafile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dtffile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">badpix</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">rootname</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$root</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">ardlibqual</span><span class="o">=</span><span class="s2">&quot;;UNIFORM;bpmask=0&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="perform-spectral-analysis">
+<h2>Perform spectral analysis<a class="headerlink" href="#perform-spectral-analysis" title="Link to this heading">¶</a></h2>
+<p>As an examples of the spectra analysis, we will fit an absorbed powerlaw to the
+point-like source spectrum. The spectral regions where the extra lines are
+located are ignored in the fit. Fitting the spectrum of the extended source
+works in the similar way. Naturally, a lot more analysis could be done on the
+simulated spectra, the most obvious point might be a fit of the spectral lines
+to determine the spectral resolution of Chandra in this example. (The lines from
+the extended source will appear much wider.) However, that is beyond the scope
+of this example. Please check the manual of your preferred X-ray spectral
+fitting software. In this example below, we use <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>, but <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a> and
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> work very similar.</p>
+<p>This is <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> code to fit an absorbed powerlaw to the simulated spectrum:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>% Load the pha&#39;s and responses:
+
+()=load_data(&quot;hetg_plaw_pha2.fits&quot;,[3,4]);
+
+()=load_arf(&quot;hetg_plawMEG_-1_garf.fits&quot;);
+()=load_arf(&quot;hetg_plawMEG_1_garf.fits&quot;);
+assign_arf(1,1);
+assign_arf(2,2);
+
+()=load_rmf(&quot;hetg_plawmeg-1_rmf.fits&quot;);
+()=load_rmf(&quot;hetg_plawmeg1_rmf.fits&quot;);
+assign_rmf(1,1);
+assign_rmf(2,2);
+
+% Group and notice the data:
+group_data(all_data, 8);
+% 0.6 to 7.5 keV:
+xnotice(all_data, Const_hc/7.5, Const_hc/0.6);
+
+% List the data
+list_data;
+
+% open plot
+plot_open(&quot;hetgmeg1.ps/CPS&quot;);
+
+% Use keV for the X axis in plots:
+plot_unit(&quot;keV&quot;);
+
+% Use log x axis, linear y axis starting at 0.
+xlog; xrange(0.5,10.0);
+ylin; yrange(0.,);
+
+% Can look at the data
+title(&quot;MARX simulation of HETG observation&quot;);
+plot_data_counts(1);
+% show all of these in grey
+oplot_data_counts(1,14);
+oplot_data_counts(2,14);
+
+% Ignore the line regions for the continuum fitting we&#39;ll do
+%   Fe region
+ignore(all_data, 0.95*Const_hc/6.4, 1.05*Const_hc/6.4);
+%   Ne region
+ignore(all_data, 0.97*Const_hc/0.8486, 1.03*Const_hc/0.8486);
+%
+% Replot the spectra again - use some colors:
+oplot_data_counts(1,2);   %  MEG -1  red
+oplot_data_counts(2,8);   %  MEG -1  orange
+
+% Define the fitting function:
+fit_fun(&quot;phabs(1)*powerlaw(1)&quot;);
+
+% Set initial values and limits for the parameters;
+% keep them all &quot;thawed&quot; with 0 as third argument.
+set_par (1, 1.00,  0,  0.1,   10.0);
+set_par (2, 0.01, 0,  1.e-4, 1.0);
+set_par (3, 1.00,  0,  0.5,   2.5);
+
+% Use Gehrels to help with low-counts bins
+set_fit_statistic (&quot;chisqr;sigma=gehrels&quot;);
+
+set_fit_method (&quot;lmdif;default&quot;);
+()=fit_counts;
+list_par;
+
+% overplot one of the model fits
+oplot_model_counts(1, 4);
+
+plot_close();
+</pre></div>
+</div>
+<p>The resulting fit parameters are similar, but not identical, to the
+parameters we put into the simulation above.</p>
+<figure class="align-center" id="id2">
+<img alt="Spectra in count space." src="../../_images/hetgmeg1.png" />
+<figcaption>
+<p><span class="caption-text">Simulated spectra for MEG order +1 and -1</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>The MEG orders are shown as the red and orange line. They differ from
+one another because the effective area is different, e.g. the gaps between
+the ACIS chips fall on different wavelengths. The blue line is the best fit
+model for the spectrum shown in red.</p>
+</div>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">HETG simulation of an extended source</a><ul>
+<li><a class="reference internal" href="#create-the-spectral-file">Create the spectral file</a></li>
+<li><a class="reference internal" href="#setup-and-run-marx">Setup and run <strong>marx</strong></a></li>
+<li><a class="reference internal" href="#extract-hetg-spectra">Extract HETG spectra</a></li>
+<li><a class="reference internal" href="#perform-spectral-analysis">Perform spectral analysis</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../aped/aped.html"
+                          title="previous chapter">Simulating a thermal plasma with the HETGS grating</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../LETGpow/letgplaw.html"
+                          title="next chapter">Simulating an LETG/ACIS-S observation</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../LETGpow/letgplaw.html" title="Simulating an LETG/ACIS-S observation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../aped/aped.html" title="Simulating a thermal plasma with the HETGS grating"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">HETG simulation of an extended source</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

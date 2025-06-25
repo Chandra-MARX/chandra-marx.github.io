@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The marx tool suite &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Further marx parameters" href="othermarxpars.html" />
+    <link rel="prev" title="MARX Frequently Asked Questions" href="faqs.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="othermarxpars.html" title="Further marx parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="faqs.html" title="MARX Frequently Asked Questions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U"><strong>marx</strong> reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The <strong>marx</strong> tool suite</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="the-marx-tool-suite">
+<span id="tools"></span><h1>The <strong>marx</strong> tool suite<a class="headerlink" href="#the-marx-tool-suite" title="Link to this heading">¶</a></h1>
+<p>In addition to <a class="reference internal" href="#marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx</span></code></a> itself, the installation comes with with a selection of post-processing tools
+that convert native <strong>marx</strong> binary output to other file formats.</p>
+<p>In this section, we describe the purpose and calling sequences for the
+various component tools in the <strong>marx</strong> suite. Detailed descriptions for individual tools follow
+in alphabetical order. Brief usage instructions can be obtained for most
+tools in the suite simply by typing the name of the tool followed by
+return. Many of the executables take multi-character
+parameters. These parameters are specified with a double-dash, i.e.
+<code class="docutils literal notranslate"><span class="pre">--chip</span></code>. Optional parameters are enclosed in <code class="docutils literal notranslate"><span class="pre">[</span>&#160; <span class="pre">]</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#marx2dpde"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2dpde</span></code></a></p></td>
+<td><p>Converts <strong>marx</strong> output to SAOSAC DPDE format</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a></p></td>
+<td><p>Converts <strong>marx</strong> output to a FITS events list</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#marx2img"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2img</span></code></a></p></td>
+<td><p>Converts <strong>marx</strong> output to a FITS image</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a></p></td>
+<td><p>Creates an aspect solution file for the <strong>marx</strong> internal dither model</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a></p></td>
+<td><p>Concatenates the results of multiple <strong>marx</strong> simulations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a></p></td>
+<td><p>Folds a <strong>marx</strong> simulation through a FITS RMF file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a></p></td>
+<td><p>Simulates the effect of pileup in ACIS CCDs</p></td>
+</tr>
+</tbody>
+</table>
+<p>There is also a set of small scripts and helper programs. Most of those are executable files, but some
+are written in a scripting language, such as IDL.
+In order to use those users will need to configure their IDL environment so that
+these routines are included in the search path. The <code class="docutils literal notranslate"><span class="pre">IDL_PATH</span></code>
+environment variable provides a convenient way to accomplish this
+configuration:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>setenv IDL_PATH  &quot;.:+/path/to/your/marx/installation/tools/idl&quot;
+</pre></div>
+</div>
+<p>If a tool requires IDL or a similar environment, the individual tool will show the <strong>language</strong>
+in the listing below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tool</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="#bestfocus"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">bestfocus</span></code></a></p></td>
+<td><p>Determines the best focus for a set of rays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#detinfo"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">detinfo</span></code></a></p></td>
+<td><p>Prints detector positional information used internally by <strong>marx</strong>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#dumpwfold"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">dumpwfold</span></code></a></p></td>
+<td><p>Prints the contents of a WFOLD scattering file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#fitsdump"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">fitsdump</span></code></a></p></td>
+<td><p>Prints the contents of a FITS file to the standard output.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#geff"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">geff</span></code></a></p></td>
+<td><p>Calculates grating efficiency curves.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#get_hetg_spect"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">get_hetg_spect</span></code></a></p></td>
+<td><p>Extract exact HETG spectra for a given simulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#get_letg_spect"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">get_letg_spect</span></code></a></p></td>
+<td><p>Extract exact LETG spectra for a given simulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#make_image"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">make_image</span></code></a></p></td>
+<td><p>Make an image from simulation variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a></p></td>
+<td><p>Convert an <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> spectrum to a spectral input for <strong>marx</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#plist"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">plist</span></code></a></p></td>
+<td><p>Prints out parameter files in a readable format.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pset"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">pset</span></code></a></p></td>
+<td><p>Sets parameter values in a parameter file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pwhich"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">pwhich</span></code></a></p></td>
+<td><p>Prints the current search path for parameter files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#read_marx_file"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">read_marx_file</span></code></a></p></td>
+<td><p>Read MARX binary vectors into IDL variables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#rspdump"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">rspdump</span></code></a></p></td>
+<td><p>Prints the contents of a FITS RMF file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#tg_extract"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">tg_extract</span></code></a></p></td>
+<td><p>Extract HETG/LETG spectra for a given simulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xspec2marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">xspec2marx</span></code></a></p></td>
+<td><p>Convert XSPEC ASCII files to MARX format.</p></td>
+</tr>
+</tbody>
+</table>
+<section id="marx-main-program">
+<h2><strong>marx</strong> main program<a class="headerlink" href="#marx-main-program" title="Link to this heading">¶</a></h2>
+<dl class="marxtool">
+<dt class="sig sig-object" id="marx">
+<span class="sig-name descname"><span class="pre">marx</span></span><span class="sig-prename descclassname">&#160; <span class="pre">([parameters]</span> <span class="pre">|</span> <span class="pre">--dump</span> <span class="pre">file</span> <span class="pre">|</span> <span class="pre">--raydump</span> <span class="pre">file</span> <span class="pre">|--version</span> <span class="pre">|</span> <span class="pre">--help</span> <span class="pre">)</span></span><a class="headerlink" href="#marx" title="Link to this definition">¶</a></dt>
+<dd><p>Performs a Chandra raytrace simulation.</p>
+<p>The marx tool comprises the central engine of the suite and actually
+performs the ray trace through the various components of the Chandra
+system. <strong>marx</strong> reads its inputs from an IRAF–style parameter file
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> that is expected in the current directory. <strong>marx</strong> can also accept
+values for any of its parameters on the call line. This overrides values in
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> and is useful to run a grid of marx models from a script where
+only a few parameters change and the rest is taken from <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>.</p>
+<p>Detailed instructions for running marx are presented
+in <a class="reference internal" href="../inbrief/simsetup.html#sect-runningmarx"><span class="std std-ref">Running marx simulations</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameters</strong> – Any <strong>marx</strong> parameter, e.g. <a class="reference internal" href="../inbrief/simsetup.html#parameter-GratingType"><code class="xref std std-par docutils literal notranslate"><span class="pre">GratingType=&quot;HETG&quot;</span></code></a>, see <a class="reference internal" href="../std-parindex.html"><span class="std std-ref">Marx Parameters</span></a>.</p></li>
+<li><p><strong>file</strong> – For dump options; filename to print</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">--dump <var>file</var></span></kbd></dt>
+<dd><p>Prints the contents of a MARX binary vector</p>
+</dd>
+<dt><kbd><span class="option">--raydump <var>file</var></span></kbd></dt>
+<dd><p>Prints the contents of a MARX rayfile</p>
+</dd>
+<dt><kbd><span class="option">--version</span></kbd></dt>
+<dd><p>Prints version information</p>
+</dd>
+<dt><kbd><span class="option">--help</span></kbd></dt>
+<dd><p>Prints brief help information</p>
+</dd>
+</dl>
+<p>The <strong>marx</strong> parameter files are plain text files and it should be easy to
+edit them in any text editor. If required, there is a <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/parameter.html#Contents_of_a_Parameter_File">detailed description
+of the format</a>.</p>
+<p>Example 1: Obtaining brief help information:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx --help
+MARX version 5.1.0, Copyright (C) 2002-2013 Massachusetts Institute of Technology
+
+This program uses an IRAF-style parameter file interface.  It searches for
+the parameter file in the PFILES and UPARM directories.  If one is not
+found, it will look in the current directory.
+
+The name of the parameter file that this program uses is marx.par.
+
+An alternative parameter file may be specified by prefixing the file name
+with &quot;@@&quot; and using the resulting expression as the first command line
+argument, e.g., program-name @@parameter-file-name.
+
+Parameters may be set on the command line via the syntax:
+     PARAMETER-NAME=VALUE PARAMETER-NAME=VALUE ...
+The program will prompt for a parameter&#39;s value if VALUE is not specified,
+e.g., &quot;PARAMETER-NAME=&quot;.  Note that there must be no whitespace surrounding
+the &#39;=&#39; sign.
+
+See your program&#39;s user manual for more information.
+pfile library version: 2.41
+
+marx usage forms:
+   marx [parameters]
+   marx --dump file...
+   marx --raydump file
+   marx --version
+   marx --help
+unix%
+</pre></div>
+</div>
+<p>Example 2: Checking the version of your <strong>marx</strong> installation:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx --version
+MARX version 4.0.8, Copyright (C) 2002 Massachusetts Institute of Technology
+
+JDMATH library version: 1.81
+PFILE library version: 2.32
+JDFITS library version: 1.60
+
+Supported Sources: POINT, GAUSS, LINE, BETA, RAYFILE, DISK, USER, SAOSAC, IMAGE
+Supported Detectors: ACIS-S, ACIS-I, HRC-S, HRC-I
+
+Other Features:
+      HRMA Pitch/Yaw : yes
+    Wfold Scattering : yes
+          Drake Flat : yes
+     Dynamic Linking : yes
+         ACIS Streak : yes
+    ACIS FEF Support : yes
+      Dither Support : yes
+unix%
+</pre></div>
+</div>
+<p>Example 3: Creating an ASCII file from the photon energy list for a given simulation:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx --dump ./ngc1068/energy.dat &gt; energy.out
+</pre></div>
+</div>
+<p>Example 4: Running a simulation with a parameter file located elsewhere on your system:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx @@/home/wise/simulations/clusters/marx.par
+</pre></div>
+</div>
+<p>Example 5: An example of setting parameters on the call line. This example runs a
+50 ksec simulation of a point source as observed with the HETG and
+ACIS–S instruments:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx ExposureTime=50000 GratingType=&quot;HETG&quot;     \
+              DetectorType=&quot;ACIS-S&quot; SourceType=&quot;POINT&quot;
+
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="postprocessing-modules">
+<h2>Post–Processing Modules<a class="headerlink" href="#postprocessing-modules" title="Link to this heading">¶</a></h2>
+<p>The <strong>marx</strong> package currently includes 7 post–processing routines to
+work with the contents of a marx output directory.
+With the exceptions of the <a class="reference internal" href="#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> and <a class="reference internal" href="#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a> tools, each of these
+routines will print a brief summary of their calling options if executed
+with no parameters on the call line.</p>
+<dl class="marxpost">
+<dt class="sig sig-object" id="marxasp">
+<span class="sig-name descname"><span class="pre">marxasp</span></span><span class="sig-prename descclassname"> <span class="pre">[parameters]</span> <span class="pre">--help</span></span><a class="headerlink" href="#marxasp" title="Link to this definition">¶</a></dt>
+<dd><p>Creates an aspect solution file for the <strong>marx</strong> internal dither model.</p>
+<p>This tool will create an ASPSOL file which contains the aspect
+dither motion used in creating a <strong>marx</strong> simulation using the internal
+model. More details are given in <a class="reference internal" href="../indetail/aspect.html#simulatingaspect"><span class="std std-ref">Simulating Aspect with marx</span></a>.</p>
+<p>This ASPSOL file can be used in conjunction with the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tool
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/asphist.html">asphist</a> to produce an aspect histogram file. This aspect histogram file
+is required by the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkarf.html">mkarf</a> and <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkexpmap.html">mkexpmap</a> which may be used to
+realistically analyze the simulated <strong>marx</strong> data. Examples of such
+scientific analysis threads are given in <a class="reference internal" href="../examples/examples.html#examples"><span class="std std-ref">Examples of MARX in use</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>OutputFile</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">sim_asol.fits</span></code>) Output filename</p></li>
+<li><p><strong>MarxDir</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">point</span></code>) Simulation Output Directory</p></li>
+<li><p><strong>TimeDel</strong> – (<em>default:</em> <code class="docutils literal notranslate"><span class="pre">0.256</span></code>) Aspect Sampling interval (sec). The default value of 0.256 sec
+corresponds to the standard value used in the CXC Aspect pipeline
+processing and should in general not be modified.</p></li>
+<li><p><strong>RA_Sigma</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.12</span></code>) RA Uncertainty sigma (arcsec). This parameter should generally stay on the default value.</p></li>
+<li><p><strong>Dec_Sigma</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.12</span></code>) Dec Uncertainty sigma (arcsec). This parameter should generally stay on the default value.</p></li>
+<li><p><strong>Roll_Sigma</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.12</span></code>) Roll Uncertainty sigma (arcsec). This parameter should generally stay on the default value.</p></li>
+<li><p><strong>mode</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hl</span></code>) Mode for parameter file</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">--help</span></kbd></dt>
+<dd><p>Prints brief help information</p>
+</dd>
+</dl>
+<p>Parameters can be given on the command line or in a parameter file like the
+one used in <a class="reference internal" href="#marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx</span></code></a> itself. The parameter files are plain text
+files and it should be easy to edit them in any text editor. If required,
+there is a <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/parameter.html#Contents_of_a_Parameter_File">detailed description of the format</a>.</p>
+<p>Example 1: Obtaining brief help information:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxasp --help
+This program uses an IRAF-style parameter file interface.  It searches for
+the parameter file in the PFILES and UPARM directories.  If one is not
+found, it will look in the current directory.
+
+The name of the parameter file that this program uses is marxasp.par.
+
+An alternative parameter file may be specified by prefixing the file name
+with &quot;@@&quot; and using the resulting expression as the first command line
+argument, e.g., program-name @@parameter-file-name.
+
+Parameters may be set on the command line via the syntax:
+     PARAMETER-NAME=VALUE PARAMETER-NAME=VALUE ...
+The program will prompt for a parameter&#39;s value if VALUE is not specified,
+e.g., &quot;PARAMETER-NAME=&quot;.  Note that there must be no whitespace surrounding
+the &#39;=&#39; sign.
+
+See your program&#39;s user manual for more information.
+pfile library version: 2.11
+
+unix%
+</pre></div>
+</div>
+<p>Example 2: Setting marxasp parameters on the call line:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxasp MarxDir=&#39;clust&#39; OutputFile=&#39;sim_clust_asol.fits&#39; TimeDel=0.1
+</pre></div>
+</div>
+<p>Example 3: Running marxasp for a simulation which did not use the internal dither model:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxasp MarxDir=&#39;clust_noasp&#39;
+*** This simulation did not use the INTERNAL dither model.  Re-run the
+    simulation with DitherModel=INTERNAL.
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxpost">
+<dt class="sig sig-object" id="marxcat">
+<span class="sig-name descname"><span class="pre">marxcat</span></span><span class="sig-prename descclassname"> <span class="pre">[--help]</span> <span class="pre">DIR1</span> <span class="pre">[DIR2</span> <span class="pre">[DIR3</span> <span class="pre">...]]</span> <span class="pre">NEWDIR</span></span><a class="headerlink" href="#marxcat" title="Link to this definition">¶</a></dt>
+<dd><p>Concatenates the results of multiple <strong>marx</strong> simulations.</p>
+<p>The marxcat tool concatenates multiple <strong>marx</strong> simulation directories together. In this manner,
+users may build arbitrarily complex simulations, one component at a time and then merge
+them together to produce the final result (see <a class="reference internal" href="../examples/marxcat/marxcat.html#sect-ex-marxcat"><span class="std std-ref">Simulating two overlapping sources</span></a> for a detailed example).
+Note, marxcat will overwrite the contents of the
+target directory if it already exists. If the directory does not exist, marxcat will create it.
+The marxcat tool works by merging the various binary output vectors contained in the indicated
+<strong>marx</strong> output directories. It is the user’s responsibility to ensure that the simulations being
+concatenated are commensurate. marxcat will compare the contents of the directories being
+merged and skip any files which do not have counterparts in all the directories. The <code class="docutils literal notranslate"><span class="pre">obs.par</span></code>
+file for the final, merged simulation will be copied from the first directory on the call line. If the
+<code class="docutils literal notranslate"><span class="pre">obs.par</span></code> file is missing from the first directory, marxcat will abort with an error message.
+In principle, marxcat places no limits on the number of simulations which can be merged.
+However, in practice, UNIX places constraints on the system resources (filesize, number of open
+files, etc.) which a process may utilize. Users experiencing difficulty concatenating multiple
+simulations may need to override the default values set for these constraints using the UNIX
+command <code class="docutils literal notranslate"><span class="pre">unlimit</span></code>. Similarly, the UNIX command <code class="docutils literal notranslate"><span class="pre">limit</span></code> can be used to examine the current
+defaults.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DIR1...DIRN</strong> – Input simulation directories to merge</p></li>
+<li><p><strong>NEWDIR</strong> – Destination directory for the merged simulation</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example 1: Concatenating two MARX simulations:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[196]apocrypha% marxcat a2256_subclustA a2256_subclustB a2256_total
+Examining files in a2256_subclustA
+Examining files in a2256_subclustB
+Merging directories...
+Creating a2256_total/time.dat
+Creating a2256_total/energy.dat
+Creating a2256_total/xpos.dat
+Creating a2256_total/ypos.dat
+Creating a2256_total/zpos.dat
+Creating a2256_total/xcos.dat
+Creating a2256_total/ycos.dat
+Creating a2256_total/zcos.dat
+Creating a2256_total/pha.dat
+Creating a2256_total/detector.dat
+Creating a2256_total/xpixel.dat
+Creating a2256_total/ypixel.dat
+Creating a2256_total/mirror.dat
+Creating a2256_total/sky_ra.dat
+Creating a2256_total/sky_dec.dat
+Creating a2256_total/b_energy.dat
+unix%
+</pre></div>
+</div>
+<p>Example 2: Example of error message generated by missing obs.par file:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxcat pointA pointB total
+Examining files in pointA
+Examining files in pointB
+Unable to open file pointA/obs.par for reading.
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxpost">
+<dt class="sig sig-object" id="marx2dpde">
+<span class="sig-name descname"><span class="pre">marx2dpde</span></span><span class="sig-prename descclassname">&#160; <span class="pre">[</span> <span class="pre">MARX-OUTPUT-DIR</span> <span class="pre">OUTPUT-FILE-NAME</span> <span class="pre">|</span> <span class="pre">-dump</span> <span class="pre">DPDE-FILE-NAME</span> <span class="pre">]</span></span><a class="headerlink" href="#marx2dpde" title="Link to this definition">¶</a></dt>
+<dd><p>Converts MARX output to SAOSAC DPDE format.</p>
+<p>This2dpde tool converts the contents of a <strong>marx</strong> simulation output directory into a Mission
+Support Team DPDE format, SAOSAC compatible rayfile.
+Using marx2dpde, users can create rayfiles capable of being processed by the MST’s SAOSAC
+raytrace model. The connections between SAOSAC and MARX are described in more detail
+in <a class="reference internal" href="../indetail/saosac.html#saosac"><span class="std std-ref">Using marx with SAOSAC</span></a>. Alternatively, the <code class="docutils literal notranslate"><span class="pre">--dump</span></code> option may be used with marx2dpde to print out the
+contents of a DPDE file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MARX-OUTPUT-DIR</strong> – Path to MARX simulation directory</p></li>
+<li><p><strong>OUPUT-FILE-NAME</strong> – Name of the DPDE file to create</p></li>
+<li><p><strong>DPDE-FILE-NAME</strong> – Name of the DPDE file to print</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example 1: Creating a DPDE format rayfile for further processing with SAOSAC:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2dpde ./ngc1068 &gt; ngc1068.dpde
+</pre></div>
+</div>
+<p>Example 2: Dumping the contents of a binary DPDE format file to an ASCII file for examination:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx -dump AlShell1_B_focus.dpde &gt; AlShell1_B_focus.out
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxpost">
+<dt class="sig sig-object" id="marx2fits">
+<span class="sig-name descname"><span class="pre">marx2fits</span></span><span class="sig-prename descclassname"> <span class="pre">[--help</span> <span class="pre">|</span> <span class="pre">--pileup</span> <span class="pre">|</span> <span class="pre">--pixadj=&lt;OPTION&gt;</span> <span class="pre">]</span> <span class="pre">marx-dir</span> <span class="pre">fitsfile</span></span><a class="headerlink" href="#marx2fits" title="Link to this definition">¶</a></dt>
+<dd><p>Writes MARX output as a standard CXC Level 1 FITS events list.</p>
+<p>This tool converts the contents of a <strong>marx</strong> simulation output directory into a FITS
+events binary table. Information about the simulation is written into the header. The resulting
+FITS binary table will contain entries for the “detected” event properties such as pulse height
+and arrival time as well “tracking” variables such as the photon’s true energy, absolute focal
+plane position, etc. The FITS files generated by marx2fits are standard CXC Level 1 events
+files. By default marx2fits operates on the standard output directories created by the marx
+executable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pileup</strong> – Set this flag (<code class="docutils literal notranslate"><span class="pre">--pileup</span></code>) to convert the output of pileup into a FITS events file.</p></li>
+<li><p><strong>pixadj</strong> – <p>This parameter selects the treatment of sub-pixel
+information for ACIS observations. Options are:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pixadj=&quot;EDSER&quot;</span></code>: Use a subpixel algorithm (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pixadj=&quot;RANDOMIZE&quot;</span></code>: Randomize within a detector pixel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pixadj=&quot;NONE&quot;</span></code>: Do not randomize within a detector pixel (all
+event positions located at pixel centers)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pixadj=&quot;EXACT&quot;</span></code>: Use exact chip coordinates as simulated</p></li>
+</ul>
+</div></blockquote>
+<p>Note that the first three options correspond exactly to the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>
+options <code class="docutils literal notranslate"><span class="pre">EDSER</span></code>, <code class="docutils literal notranslate"><span class="pre">RANDOMIZE</span></code>, and <code class="docutils literal notranslate"><span class="pre">NONE</span></code>. <code class="docutils literal notranslate"><span class="pre">EXACT</span></code> has no
+equivalent when processing observed data, as the exact position within a
+pixel is not known for observed data. On the other hand,
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/acis_process_events.html">acis_process_events</a> offers an option <code class="docutils literal notranslate"><span class="pre">CENTROID</span></code> which uses an
+alternative subpixel event repositioning algorithm to <code class="docutils literal notranslate"><span class="pre">EDSER</span></code>. This
+option is not implemented in marx2fits, because marx currently does not
+include a detector model with sufficient detail on the electron
+propagation in the CCD.</p>
+</p></li>
+<li><p><strong>marx-dir</strong> – Path to MARX simulation directory</p></li>
+<li><p><strong>fitsfile</strong> – Name of the FITS events file to create</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example 1: Converting the results of a typical marx run to a FITS binary events file</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx ExposureTime=50000 GratingType=&quot;HETG&quot;
+DetectorType=&quot;ACIS-S&quot; SourceType=&quot;POINT&quot;
+OutputDir=&quot;point&quot;
+unix% marx2fits point point.fits
+</pre></div>
+</div>
+<p>Example 2: Converting the results of a typical pileup run to a FITS binary events file.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% pileup MarxOutputDir=&quot;point&quot; CCDID=7 FrameTime=3.3 &gt; pileup.log
+unix% marx2fits --pileup point/CCD-7 point_3.3.fits
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxpost">
+<dt class="sig sig-object" id="marx2img">
+<span class="sig-name descname"><span class="pre">marx2img</span></span><span class="sig-prename descclassname"> <span class="pre">[options]</span> <span class="pre">&lt;MARXDIR&gt;</span> <span class="pre">&lt;FITSFILE&gt;</span></span><a class="headerlink" href="#marx2img" title="Link to this definition">¶</a></dt>
+<dd><p>Converts MARX output to FITS images.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The use of this tool is deprecated. Instead, <a class="reference internal" href="#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>
+should be used to generate an event file, which can be converted into a
+image using standard CIAO tools like <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmcopy.html">dmcopy</a>. In this way, the
+header information of the resulting images matches real Chandra data much better.</p>
+</div>
+<p>This tool converts the contents of a <strong>marx</strong> simulation output directory into a FITS
+image. By default, marx2img will use all detected photons to create the FITS image. Alternatively,
+users may screen the events used in the image by a set of option flags. Events may
+currently be screened on the basis of spatial position, photon energy, detector pulse height chan-
+nel, or time. The <code class="docutils literal notranslate"><span class="pre">--chip</span></code> option may be used to generate an image of a single chip. Pixel coordinates
+to marx2img are specified in “tiled detector” coordinates. Energy selections are specified in keV
+while detector energies (minD,maxD) are given in channels. Finally, time selection is in seconds.
+The <code class="docutils literal notranslate"><span class="pre">--scale</span></code> option will produce a FITS image with pixels binned by the indicated scale
+factor. Due to the large pixel area of the HRC–I (16000x16000) and the HRC–S (48000x3200),
+marx2img will by default use a scale factor of 8 when these detectors are selected. This default
+behavior may be overridden by the <code class="docutils literal notranslate"><span class="pre">--scale</span></code> parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MARXDIR</strong> – Path to MARX simulation directory</p></li>
+<li><p><strong>FITSFILE</strong> – Name of the FITS image file to create</p></li>
+</ul>
+</dd>
+</dl>
+<p>Options include:</p>
+<dl class="option-list">
+<dt><kbd><span class="option">--bbox</span></kbd></dt>
+<dd><p>Find bounding box.</p>
+</dd>
+<dt><kbd><span class="option">--minX</span></kbd></dt>
+<dd><p>&lt;MIN_X_PIXEL&gt;</p>
+</dd>
+<dt><kbd><span class="option">--maxX</span></kbd></dt>
+<dd><p>&lt;MAX_X_PIXEL&gt;</p>
+</dd>
+<dt><kbd><span class="option">--minY</span></kbd></dt>
+<dd><p>&lt;MIN_Y_PIXEL&gt;</p>
+</dd>
+<dt><kbd><span class="option">--maxY</span></kbd></dt>
+<dd><p>&lt;MAX_Y_PIXEL&gt;</p>
+</dd>
+<dt><kbd><span class="option">--minE</span></kbd></dt>
+<dd><p>&lt;MIN_ENERGY&gt; (KeV)</p>
+</dd>
+<dt><kbd><span class="option">--maxE</span></kbd></dt>
+<dd><p>&lt;MAX_ENERGY&gt; (KeV)</p>
+</dd>
+<dt><kbd><span class="option">--minT</span></kbd></dt>
+<dd><p>&lt;MIN_TIME&gt; (sec)</p>
+</dd>
+<dt><kbd><span class="option">--maxT</span></kbd></dt>
+<dd><p>&lt;MAX_TIME&gt; (sec)</p>
+</dd>
+<dt><kbd><span class="option">--minD</span></kbd></dt>
+<dd><p>&lt;MIN_DETECTOR_ENERGY&gt; (channel)</p>
+</dd>
+<dt><kbd><span class="option">--maxD</span></kbd></dt>
+<dd><p>&lt;MAX_DETECTOR_ENERGY&gt; (channel)</p>
+</dd>
+<dt><kbd><span class="option">--chip</span></kbd></dt>
+<dd><p>&lt;CHIP_NUMBER&gt;</p>
+<a class="reference internal image-reference" href="../_images/chipmap.png"><img alt="../_images/chipmap.png" class="align-center" src="../_images/chipmap.png" style="height: 250px;" /></a>
+</dd>
+<dt><kbd><span class="option">--scale</span></kbd></dt>
+<dd><p>&lt;PIXEL_SCALE_FACTOR&gt;</p>
+</dd>
+</dl>
+<p>Example 1: Creating a FITS image containing all detected photons for an ACIS–I simulation:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2img ./clust clust_img.fits
+DetectorType: ACIS-I
+Pixel Size Scale Factor: 1
+Num X Pixels: 1024 (per chip)
+Num Y Pixels: 1024 (per chip)
+First Chip Id: 0
+Last Chip Id: 3
+Min X Pixel: 3061
+Max X Pixel: 5131
+Min Y Pixel: 3061
+Max Y Pixel: 5131
+Estimated Image size: 17139600
+73779 counts written to the fits file.
+unix%
+</pre></div>
+</div>
+<p>Example 2: Creating a FITS image of all events between 0.8 and 1.2 keV for an ACIS–I simulation:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2img --minE 0.8 --maxE 1.2 clust clust_img_feL.fits
+DetectorType: ACIS-I
+Pixel Size Scale Factor: 1
+Num X Pixels: 1024 (per chip)
+Num Y Pixels: 1024 (per chip)
+First Chip Id: 0
+Last Chip Id: 3
+Min X Pixel: 3061
+Max X Pixel: 5131
+Min Y Pixel: 3061
+Max Y Pixel: 5131
+Min Energy: 0.800000
+Max Energy: 1.200000
+Estimated Image size: 17139600
+27851 counts written to the fits file.
+unix%
+</pre></div>
+</div>
+<p>Example 3: Creating a FITS image of the I3 frontside chip in the ACIS–I array:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2img --chip 3 clust clust_img_i3.fits
+DetectorType: ACIS-I
+Pixel Size Scale Factor: 1
+Num X Pixels: 1024 (per chip)
+Num Y Pixels: 1024 (per chip)
+First Chip Id: 3
+Last Chip Id: 3
+Min X Pixel: 4108
+Max X Pixel: 5131
+Min Y Pixel: 3061
+Max Y Pixel: 4084
+Estimated Image size: 4186116
+33638 counts written to the fits file.
+unix%
+</pre></div>
+</div>
+<p>Example 4: Creating a FITS image of an HRC–S simulation:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx2img ./ngc5548
+DetectorType: HRC-S
+ngc5548.fits
+***Note: Pixel scale factor not specified. Since the detector is HRC,
+a scale factor of 8 will be used. Set it to 1 via --scale for
+full resolution
+Pixel Size Scale Factor: 8
+Num X Pixels: 512 (per chip)
+Num Y Pixels: 2048 (per chip)
+First Chip Id: 1
+Last Chip Id: 3
+Min X Pixel: 0
+Max X Pixel: 511
+Min Y Pixel: 0
+Max Y Pixel: 6160
+Estimated Image size: 12591040
+93433 counts written to the fits file.
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxpost">
+<dt class="sig sig-object" id="marxrsp">
+<span class="sig-name descname"><span class="pre">marxrsp</span></span><span class="sig-prename descclassname">&#160; <span class="pre">[optional</span> <span class="pre">args]</span> <span class="pre">--rmf</span> <span class="pre">&lt;rmf-file&gt;</span> <span class="pre">--marx</span> <span class="pre">&lt;marx-dir&gt;</span></span><a class="headerlink" href="#marxrsp" title="Link to this definition">¶</a></dt>
+<dd><p>Folds a MARX simulation through a FITS RMF file.</p>
+<p>This tool allows the user to fold the results of a <strong>marx</strong> simulation through a FITS
+response matrix file (RMF). Traditionally, RMF files are used to describe the response of a
+given detector such as an ACIS CCD. The RMF file, also known as a redistribution matrix file,
+describes the mapping of photon energy into detected pulse height. marxrsp reads the energy
+vector for a group of simulated events and uses the specified RMF file to calculate the appropriate
+pulse height values. By default, <strong>marx</strong> calculates a pulse height array (<code class="docutils literal notranslate"><span class="pre">pha.dat</span></code>) for ACIS
+simulations using an approximate, built–in redistribution function. Processing a simulation
+directory with marxrsp will cause <code class="docutils literal notranslate"><span class="pre">pha.dat</span></code> to be overwritten. The original vector of PHA
+values is copied to a file named <code class="docutils literal notranslate"><span class="pre">pha.dat.bak</span></code>. The use of marxrsp is discussed in more detail
+in <a class="reference internal" href="../indetail/rsp.html#rsp"><span class="std std-ref">Using Response Matrices with marx</span></a>.</p>
+<p>The marxrsp tool was designed to be run with RMF files which by definition do not contain
+detector quantum efficiency (QE). The tool checks the value of the HDUCLAS3 FITS keyword
+which should have the value REDIST for an RMF file. The <code class="docutils literal notranslate"><span class="pre">--force</span></code> option can be used
+to make marxrsp accept RMF files with other values of the HDUCLAS3 keyword. By default,
+marxrsp will process all events from the indicated simulation. Users may use the <code class="docutils literal notranslate"><span class="pre">--chip</span></code>
+option to process only those events which were detected on a specific CCD. For finer control,
+the (<code class="docutils literal notranslate"><span class="pre">xmin</span></code>, <code class="docutils literal notranslate"><span class="pre">xmax</span></code>, <code class="docutils literal notranslate"><span class="pre">ymin</span></code>, <code class="docutils literal notranslate"><span class="pre">ymax</span></code>) options can be used to recompute only those events which were
+detected in a given (CHIPX,CHIPY) region.</p>
+<p>The required arguments are:</p>
+<dl class="option-list">
+<dt><kbd><span class="option">--rmf-file</span></kbd></dt>
+<dd><p>FITS RMF file to read</p>
+</dd>
+<dt><kbd><span class="option">--marx-dir</span></kbd></dt>
+<dd><p>Path to MARX simulation directory</p>
+</dd>
+</dl>
+<p>Optional arguments include:</p>
+<dl class="option-list">
+<dt><kbd><span class="option">--chip</span></kbd></dt>
+<dd><p>&lt;ccdid&gt;
+ID numbers are given here:</p>
+<a class="reference internal image-reference" href="../_images/chipmap.png"><img alt="../_images/chipmap.png" class="align-center" src="../_images/chipmap.png" style="height: 250px;" /></a>
+</dd>
+<dt><kbd><span class="option">--xmin</span></kbd></dt>
+<dd><p>&lt;min x pixel&gt;</p>
+</dd>
+<dt><kbd><span class="option">--ymin</span></kbd></dt>
+<dd><p>&lt;min y pixel&gt;</p>
+</dd>
+<dt><kbd><span class="option">--xmax</span></kbd></dt>
+<dd><p>&lt;max x pixel&gt;</p>
+</dd>
+<dt><kbd><span class="option">--ymax</span></kbd></dt>
+<dd><p>&lt;max y pixel&gt;</p>
+</dd>
+<dt><kbd><span class="option">--force</span></kbd></dt>
+<dd><p>This option will allow the use of fits files that have the HDUCLAS3
+keyword set to FULL. Keep in mind that such files already have the effective
+folded in, or are not up to spec.</p>
+</dd>
+</dl>
+<p>Example 1: Fold all events from a simulation through a given RMF:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxrsp --rmf acis7_rmf.fits --marx ./ngc1399
+unix%
+</pre></div>
+</div>
+<p>Example 2: Recalculate all the PHA values for an HETG simulation using RMFs appropriate for each chip:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxrsp --chip 4 --rmf acis4_rmf.fits --marx ./ngc1399
+unix% marxrsp --chip 5 --rmf acis5_rmf.fits --marx ./ngc1399
+unix% marxrsp --chip 6 --rmf acis6_rmf.fits --marx ./ngc1399
+unix% marxrsp --chip 7 --rmf acis7_rmf.fits --marx ./ngc1399
+unix% marxrsp --chip 8 --rmf acis8_rmf.fits --marx ./ngc1399
+unix% marxrsp --chip 9 --rmf acis9_rmf.fits --marx ./ngc1399
+</pre></div>
+</div>
+<p>Example 3: Recompute only those events which were detected in a given (CHIPX,CHIPY) region. The command sequence:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxrsp --chip 7 --xmin 213 --xmax 313 --ymin 457 --ymax 557 --rmf acis7b_aim_pha_rmf.fits --marx therm/
+</pre></div>
+</div>
+<p>would process only those events which were detected in a 100x100 pixel square centered on the aimpoint of CCD 7.</p>
+</dd></dl>
+
+<dl class="marxpost">
+<dt class="sig sig-object" id="marxpileup">
+<span class="sig-name descname"><span class="pre">marxpileup</span></span><span class="sig-prename descclassname">&#160; <span class="pre">[parameters]</span></span><a class="headerlink" href="#marxpileup" title="Link to this definition">¶</a></dt>
+<dd><p>Simulates the effect of pileup in ACIS CCDs.</p>
+<p>This tool allows users to simulate the effects of photon pileup in
+the ACIS CCDs and implements the pileup algorithm developed by John Davis (MIT). This
+same algorithm has been implemented into the <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>, <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a>, and <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a>
+spectral fitting packages. The ACIS pileup model is statistical and is
+not an a priori photon-silicon interaction model which generates charge
+clouds and then PHAs per event “island”. The model is valid for on-axis
+point sources with low to moderate pileup. Users should interpret all
+results including the effects of pileup cautiously.</p>
+<p>Like <strong>marx</strong> itself, <code class="docutils literal notranslate"><span class="pre">pileup</span></code> uses a parameter file (which is called
+<code class="docutils literal notranslate"><span class="pre">pileup.par</span></code> for this tool) to
+control the processing.  The parameter files are plain text files and it
+should be easy to edit them in any text editor. If required, there is a
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/parameter.html#Contents_of_a_Parameter_File">detailed description of the format</a>.</p>
+<p>Alternatively, these parameters can be given as arguments on the
+command line. All relevant parameters for a typical pileup simulation and their default
+values are shown below. In general, none of these parameters will need to be adjusted
+for simulating standard Chandra observations. Using the pileup tool is
+discussed in detail in <a class="reference internal" href="../indetail/pileup.html#pileup"><span class="std std-ref">Simulating ACIS Pileup with marx</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>MarxOutputDir</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">point</span></code>) MARX output directory</p></li>
+<li><p><strong>Alpha</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.5</span></code>) Grade migration factor</p></li>
+<li><p><strong>FrameTime</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">3.2</span></code>) ACIS frame time (sec)</p></li>
+<li><p><strong>FrameTransferTime</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.041</span></code>) ACIS frame transfer time (sec)</p></li>
+<li><p><strong>Verbose</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2</span></code>) Verbosity level</p></li>
+<li><p><strong>mode</strong> – (<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hl</span></code>) Mode for parameter file</p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marxpileup MarxOutputDir=&quot;point&quot;
+Reading ACIS-I/S FEF File
+        /usr/local/src/marx_4.0.8-dist/marx/data/caldb/acisfef.fits
+***WARNING: Gaussian parameters appear invalid: a region with response &lt;= 0 has been detected.
+***WARNING: Gaussian parameters appear invalid: a region with response &lt;= 0 has been detected.
+*** WARNING: One or more energies in region 2259 has an invalid response
+Opening point/b_energy.dat for read
+Opening point/time.dat for read
+Opening point/xpixel.dat for read
+Opening point/ypixel.dat for read
+Opening point/detector.dat for read
+Opening point/energy.dat for read
+Opening point/sky_ra.dat for read
+Opening point/sky_dec.dat for read
+77733 input events available (across all CCDs)
+Opening point/pileup/chipx.dat for write
+Opening point/pileup/chipy.dat for write
+Opening point/pileup/time.dat for write
+Opening point/pileup/frame.dat for write
+Opening point/pileup/b_energy.dat for write
+Opening point/pileup/detector.dat for write
+Opening point/pileup/sky_ra.dat for write
+Opening point/pileup/sky_dec.dat for write
+Opening point/pileup/nphotons.dat for write
+Opening point/pileup/pha.dat for write
+Total Number Input: 77733
+Total Number Detected: 4592
+Efficiency: 5.907401e-02
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="other-scripts-and-helper-programs">
+<h2>Other scripts and helper programs<a class="headerlink" href="#other-scripts-and-helper-programs" title="Link to this heading">¶</a></h2>
+<dl class="marxtool">
+<dt class="sig sig-object" id="bestfocus">
+<span class="sig-name descname"><span class="pre">bestfocus</span></span><span class="sig-prename descclassname"> <span class="pre">--dir</span> <span class="pre">MARX-DATA-DIR</span> <span class="pre">[--par</span> <span class="pre">parfile]</span> <span class="pre">[--order</span> <span class="pre">ORDER]</span> <span class="pre">[--grating</span> <span class="pre">TYPE]</span></span><a class="headerlink" href="#bestfocus" title="Link to this definition">¶</a></dt>
+<dd><p>Determines the best focus for a set of rays.</p>
+<p>This tool reads the contents of a <strong>marx</strong> output directory and
+calculates the best focus position for the rays. It reports the current
+setting of the <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetX"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetX</span></code></a> parameter as well as the recommended setting
+in order to achieve the best focus for the current simulation. For
+grating simulations, individual orders can be specified to optimize the
+focus for a given spectral order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">--dir <var>MARX-DATA-DIR</var></span></kbd></dt>
+<dd><p>Path to <strong>marx</strong> simulation directory</p>
+</dd>
+<dt><kbd><span class="option">--par <var>parfile</var></span></kbd></dt>
+<dd><p>Name of an alternate parameter file to use</p>
+</dd>
+<dt><kbd><span class="option">--order <var>ORDER</var></span></kbd></dt>
+<dd><p>Spectral order to isolate: 0, -1, +1, etc…</p>
+</dd>
+<dt><kbd><span class="option">--grating <var>type</var></span></kbd></dt>
+<dd><p>type can be <code class="docutils literal notranslate"><span class="pre">HEG</span></code> or <code class="docutils literal notranslate"><span class="pre">MEG</span></code>. Use only for HETG simulations</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% bestfocus --dir marx-out/
+
+24110 rays read.
+
+Best focus position [mm]: (0.004071, 0.000153, 0.000143)
+At that position, that mean radius of the spot will be 0.027373 mm
+(about 1.140556 ACIS Pixels)
+
+ Current DetOffsetX value: 0.010000
+ Suggested DetOffsetX value: 0.006476
+ unix%
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="detinfo">
+<span class="sig-name descname"><span class="pre">detinfo</span></span><span class="sig-prename descclassname"> <span class="pre">[--sky]</span> <span class="pre">ACIS-S|ACIS-I|HRC-S|HRC-I</span></span><a class="headerlink" href="#detinfo" title="Link to this definition">¶</a></dt>
+<dd><p>Prints detector positional information used internally by <strong>marx</strong>.</p>
+<p>In <strong>marx</strong>, the positional information used to specify the size
+and location of the focal plane detectors can be accessed using the
+this tool. The tool takes as input the name of one of the four focal
+plane detectors. As output, it prints out a variety of information about
+that detector including: pixel size, number of pixels, chip id’s,
+coordinate system origins, and the location of the corners of each
+detector element. By default, all values are given in millimeters,
+however by using the <code class="docutils literal notranslate"><span class="pre">--sky</span></code> option, values can be expressed in sky
+coordinates with units of arcmin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>detector</strong> – Name of detector to examine (<code class="docutils literal notranslate"><span class="pre">ACIS-S</span></code>, <code class="docutils literal notranslate"><span class="pre">ACIS-I</span></code>, <code class="docutils literal notranslate"><span class="pre">HRC-S</span></code>, or <code class="docutils literal notranslate"><span class="pre">HRC-I</span></code>)</p>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">--sky</span></kbd></dt>
+<dd><p>If specified, prints values in SKY coordinates with units of arcmin</p>
+</dd>
+</dl>
+<p>Example 1: Info about the HRC:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% detinfo HRC-I
+        /path/to/your/marx/installation/marx/data/hrc/hrc_i_geom.txt
+ Detector Name: HRC-I
+  Num X Pixels: 16384 (per chip)
+  Num Y Pixels: 16384 (per chip)
+  X Pixel Size:  6.4294e-03 (mm)
+  Y Pixel Size:  6.4294e-03 (mm)
+ First Chip id: 0
+  Last Chip id: 0
+     Num Chips: 1
+STT-LSI offset: ( 1.0400e+00,  9.7800e-01, -1.3203e+02)
+STF-STT offset: (-1.0400e+00,  0.0000e+00,  1.2698e+02)
+
+Physical Geometry Follows (STF coords at nominal aimpoint, units in mm)
+
+Chip 0:
+ X Length:  9.2600e+01 (pixel-size:  6.4294e-03)
+ Y Length:  9.2600e+01 (pixel-size:  6.4294e-03)
+ Location of corners:
+         0.0000e+00      9.7800e-01      6.0435e+01     (LL)
+         0.0000e+00      6.6456e+01     -5.0430e+00     (LR)
+         0.0000e+00      9.7800e-01     -7.0521e+01     (UR)
+         0.0000e+00     -6.4500e+01     -5.0430e+00     (UL)
+unix%
+</pre></div>
+</div>
+<p>Example 2: The same info, but expressed in sky coordinates:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% detinfo --sky HRC-I
+        /usr/local/src/marx_4.0.8-dist/marx/data/hrc/hrc_i_geom.txt
+ Detector Name: HRC-I
+  Num X Pixels: 16384 (per chip)
+  Num Y Pixels: 16384 (per chip)
+  X Pixel Size:  6.4294e-03 (mm)
+  Y Pixel Size:  6.4294e-03 (mm)
+ First Chip id: 0
+  Last Chip id: 0
+     Num Chips: 1
+STT-LSI offset: ( 1.0400e+00,  9.7800e-01, -1.3203e+02)
+STF-STT offset: (-1.0400e+00,  0.0000e+00,  1.2698e+02)
+
+Sky RA/Dec Geometry Follows (with respect to nominal)
+Chip 0:
+ Location of corners: (RA, Dec, RA--TAN, Dec--TAN (arc-min))
+        -3.3402e-01     -2.3717e+01     -3.3402e-01     -2.3717e+01     (LL)
+        -2.5773e+01      1.7223e+00     -2.5774e+01      1.7224e+00     (LR)
+        -3.3402e-01      2.7162e+01     -3.3402e-01      2.7162e+01     (UR)
+         2.5105e+01      1.7223e+00      2.5106e+01      1.7224e+00     (UL)
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="dumpwfold">
+<span class="sig-name descname"><span class="pre">dumpwfold</span></span><span class="sig-prename descclassname"> <span class="pre">FILENAME</span></span><a class="headerlink" href="#dumpwfold" title="Link to this definition">¶</a></dt>
+<dd><p>Prints the contents of a WFOLD scattering file.</p>
+<p>The dumpwfold tool reads the contents of one Leon VanSpeybroeck’s WFOLD
+output scattering files and prints the contents to standard out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FILENAME</strong> – Name of WFOLD scattering file to print</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% dumpwfold scat_h1_M &gt; scat_h1_M.out
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="fitsdump">
+<span class="sig-name descname"><span class="pre">fitsdump</span></span><span class="sig-prename descclassname"> <span class="pre">[Options]</span> <span class="pre">[-e</span> <span class="pre">&lt;extension</span> <span class="pre">name&gt;]</span> <span class="pre">&lt;fitsfile&gt;</span></span><a class="headerlink" href="#fitsdump" title="Link to this definition">¶</a></dt>
+<dd><p>Prints the contents of a FITS file to the standard output.</p>
+<p>This tool can be used to examine the contents of a specified
+FITS file or to test the integrity of a given FITS file. The entire file
+can be printed out, a particular extension or a specified column. By
+default, fitsdump prints the contents of the indicated file to standard
+output.</p>
+<p>Options:</p>
+<blockquote>
+<div><dl class="option-list">
+<dt><kbd><span class="option">-t</span></kbd></dt>
+<dd><p>test fits file integrity</p>
+</dd>
+<dt><kbd><span class="option">-r</span></kbd></dt>
+<dd><p>dump raw data, do not scale</p>
+</dd>
+<dt><kbd><span class="option">-s</span></kbd></dt>
+<dd><p>apply full scaling</p>
+</dd>
+<dt><kbd><span class="option">-h</span></kbd></dt>
+<dd><p>dump headers</p>
+</dd>
+<dt><kbd><span class="option">-H</span></kbd></dt>
+<dd><p>dump only headers</p>
+</dd>
+<dt><kbd><span class="option">-e <var>&lt;extension name/number&gt;</var></span></kbd></dt>
+<dd><p>dump out a particular extension.  The default is all.</p>
+</dd>
+<dt><kbd><span class="option">-c <var>&lt;column name&gt;</var></span></kbd></dt>
+<dd><p>dump out a particular column with specified name. The default is all.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>fitsfile</strong> – Name of the FITS file to examine</p></li>
+<li><p><strong>extension</strong> – String specifying the extension to be printed, e.g. <code class="docutils literal notranslate"><span class="pre">EVENTS</span></code> or number</p></li>
+<li><p><strong>column</strong> – String containing name of column to examine</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% fitsdump test_evt.fits &gt; all.txt
+unix% fitsdump -e EVENTS test_evt.fits &gt; events.txt
+unix% fitsdump -c DETX test_evt.fits &gt; detx.txt
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="geff">
+<span class="sig-name descname"><span class="pre">geff</span></span><span class="sig-prename descclassname"> <span class="pre">PFILE</span> <span class="pre">min-energy</span> <span class="pre">max-energy</span> <span class="pre">num-energies</span> <span class="pre">min-order</span> <span class="pre">max-order</span></span><a class="headerlink" href="#geff" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates grating efficiency curves.</p>
+<p>This tool calculates grating transmission efficiency curves using
+the current MIT rectangular grating bar model. It takes as input a
+parameter file containing the necessary grating bar parameters,
+quantities which specify the energy grid, and the range of orders to
+include in the calculation. With the appropriate parameters, geff can
+calculate efficiencies for HEG, MEG, or LEG gratings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>PFILE</strong> – Name of the grating parameter file to use</p></li>
+<li><p><strong>min-energy</strong> – Minimum energy of the grid in keV (must be <span class="math notranslate nohighlight">\(&gt;=0.03\)</span>)</p></li>
+<li><p><strong>max-energy</strong> – Maximum energy of the grid in keV (must be <span class="math notranslate nohighlight">\(&lt;10.0\)</span>)</p></li>
+<li><p><strong>num-energies</strong> – Number of energy bins in the grid</p></li>
+<li><p><strong>min-order</strong> – Minimum order to include in calculation</p></li>
+<li><p><strong>max-order</strong> – Maximum order to include in calculation</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% geff meg.par 0.1 9.0 100 -1 1 &gt; meg.dat
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="get_hetg_spect">
+<span class="sig-name descname"><span class="pre">get_hetg_spect</span></span><span class="sig-prename descclassname"> <span class="pre">,path,order,rm,[xm,ym,rh,xh,yh,p,xp,yp]</span></span><a class="headerlink" href="#get_hetg_spect" title="Link to this definition">¶</a></dt>
+<dd><p>Extract exact HETG spectra for a given simulation.</p>
+<p>This routine uses a number of simulation variables
+computed by <strong>marx</strong> to extract the specified HEG and MEG spectral order
+for a given simulation. Optionally, the ACIS pulse height spectrum can
+be returned as well.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IDL</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>path</strong> – String containing path to simulation directory</p></li>
+<li><p><strong>order</strong> – Spectral order to extract</p></li>
+<li><p><strong>rm</strong> – Array of MEG photon dispersion distances [mm]</p></li>
+<li><p><strong>xm</strong> – Energy array for binned MEG photons [keV]</p></li>
+<li><p><strong>ym</strong> – Counts per pixel for the MEG spectrum [counts]</p></li>
+<li><p><strong>rh</strong> – Array of HEG photon dispersion distances [mm]</p></li>
+<li><p><strong>xh</strong> – Energy array for binned HEG photons [keV]</p></li>
+<li><p><strong>yh</strong> – Counts per pixel for the HEG spectrum [counts]</p></li>
+<li><p><strong>p</strong> – Array of photon pulse heights [pha]</p></li>
+<li><p><strong>xp</strong> – Energy array for binned PHA spectrum [keV]</p></li>
+<li><p><strong>yp</strong> – Counts per channel for the binned PHA spectrum [counts]</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>IDL&gt; get_hetg_spect,&#39;./ngc1399&#39;,1,rm,xm,ym,rh,xh,yh,p,xp,yp
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="get_letg_spect">
+<span class="sig-name descname"><span class="pre">get_letg_spect</span></span><span class="sig-prename descclassname"> <span class="pre">,path,order,rl,[xl,yl,p,xp,yp]</span></span><a class="headerlink" href="#get_letg_spect" title="Link to this definition">¶</a></dt>
+<dd><p>Extract exact LETG spectra for a given simulation.</p>
+<p>This routine uses a number of simulation variables
+computed by <strong>marx</strong> to extract the specified LETG spectral order for a
+given simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IDL</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>path</strong> – String containing path to simulation directory</p></li>
+<li><p><strong>order</strong> – Spectral order to extract</p></li>
+<li><p><strong>rm</strong> – Array of LEG photon dispersion distances [mm]</p></li>
+<li><p><strong>xl</strong> – Energy array for binned LEG photons [keV]</p></li>
+<li><p><strong>yl</strong> – Counts per pixel for the LEG spectrum [counts]</p></li>
+<li><p><strong>p</strong> – Array of photon pulse heights [pha]</p></li>
+<li><p><strong>xp</strong> – Energy array for binned PHA spectrum [keV]</p></li>
+<li><p><strong>yp</strong> – Counts per channel for the binned PHA spectrum [counts]</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>IDL&gt; get_letg_spect,&#39;./ngc1399&#39;,1,rl,xl,yl,p,xp,yp
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="make_image">
+<span class="sig-name descname"><span class="pre">make_image</span></span><span class="sig-prename descclassname"> <span class="pre">(vx,</span> <span class="pre">vy,</span> <span class="pre">XRANGE=[xmin,xmax],XAXIS=xax,YRANGE=[ymin,ymax],</span> <span class="pre">XBINSIZE=xbin,</span> <span class="pre">YBINSIZE=ybin,</span> <span class="pre">YAXIS=yax,INDEX_LIST=idx,</span> <span class="pre">REVERSE_INDICES=revidx)</span></span><a class="headerlink" href="#make_image" title="Link to this definition">¶</a></dt>
+<dd><p>Make an image from simulation variables.</p>
+<p>This function returns the two dimensional histogram of two
+variables. The two dimensional density function of the two variables, a
+longword array of dimensions (MAX(v1)+1, MAX(v2)+1). Result(i,j) is
+equal to the number of simultaneous occurrences of V1=i, and V2=j, at
+the same element. This routine is useful for creating images from
+<strong>marx</strong> position vectors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IDL</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>vx</strong> – Input X variable for density histogram</p></li>
+<li><p><strong>vy</strong> – Input Y variable for density histogram</p></li>
+<li><p><strong>XRANGE</strong> – [xmin,xmax] - Range in X input array to make into image</p></li>
+<li><p><strong>YRANGE</strong> – [ymin,ymax] - Range in Y input array to make into image</p></li>
+<li><p><strong>XBINSIZE</strong> – xbin - Binsize for image X</p></li>
+<li><p><strong>YBINSIZE</strong> – ybin - Binsize for image Y</p></li>
+<li><p><strong>XAXIS</strong> – xax - Output X–coordinate vector; <code class="docutils literal notranslate"><span class="pre">xax(i)</span></code> is the <strong>left edge</strong> of bin <code class="docutils literal notranslate"><span class="pre">i</span></code></p></li>
+<li><p><strong>YAXIS</strong> – yax - Output Y–coordinate vector; <code class="docutils literal notranslate"><span class="pre">yax(i)</span></code> is the <strong>left edge</strong> of bin <code class="docutils literal notranslate"><span class="pre">i</span></code></p></li>
+<li><p><strong>INDEX_LIST</strong> – idx - Output vector of array indices of array elements used from vx, vy</p></li>
+<li><p><strong>REVERSE_INDICES</strong> – revidx - output reverse–index vector, but only of the sub–array actually specified by XRANGE, YRANGE</p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>IDL&gt; ypos=read_marx_file(&#39;./ngc1399/ypos.dat&#39;)
+IDL&gt; zpos=read_marx_file(&#39;./ngc1399/zpos.dat&#39;)
+IDL&gt; im=make_image(ypos,zpos,XBINSIZE=0.024,YBINSIZE=0.024)
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="marxflux">
+<span class="sig-name descname"><span class="pre">marxflux</span></span><span class="sig-prename descclassname"> <span class="pre">[options]</span> <span class="pre">isis-par-file</span> <span class="pre">flux-file</span></span><a class="headerlink" href="#marxflux" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a spectrum written to a file by <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> to the <strong>marx</strong> spectrum input
+format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ISIS-script</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>isis-par-file</strong> – may be created using <code class="docutils literal notranslate"><span class="pre">save_par</span></code> in <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>. This optional script may define the model if needed.</p></li>
+<li><p><strong>flux-file</strong> – Name of output file.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Options:</p>
+<blockquote>
+<div><dl class="option-list">
+<dt><kbd><span class="option">-v</span></kbd></dt>
+<dd><p>Print version</p>
+</dd>
+<dt><kbd><span class="option">-h</span></kbd></dt>
+<dd><p>Help message</p>
+</dd>
+<dt><kbd><span class="option">-e</span></kbd></dt>
+<dd><p>Energy grid (keV). If the energy grid is not specified, <code class="docutils literal notranslate"><span class="pre">'[0.03:10:0.001]'</span></code> will be used.</p>
+</dd>
+<dt><kbd><span class="option">-l</span></kbd></dt>
+<dd><p>Wavelength grid (Angstroms)</p>
+</dd>
+<dt><kbd><span class="option">-s</span></kbd></dt>
+<dd><p>Script file</p>
+</dd>
+<dt><kbd><span class="option">-b</span></kbd></dt>
+<dd><p>Integrate the flux over bins</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>marxflux --energy &#39;[0.01:12.0:0.03]&#39; powerlaw.p flux.dat
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="plist">
+<span class="sig-name descname"><span class="pre">plist</span></span><span class="sig-prename descclassname"> <span class="pre">pfiles</span> <span class="pre">...</span></span><a class="headerlink" href="#plist" title="Link to this definition">¶</a></dt>
+<dd><p>Prints out parameter files in a readable format.
+The plist tool lists parameters from one or more PROS/IRAF–style parameter files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>pfiles</strong> – Name of an PROS/IRAF–style parameter file</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% plist marxasp.par
+Parameters for ./marxasp.par
+# marxasp parameter file
+# marxasp creates an aspect solution file for the MARX internal dither model
+#
+OutputFile = sim_clust_asol.fits output filename
+MarxDir = clust
+Simulation Output Directory
+TimeDel = 0.256
+Aspect Sampling interval (seconds)
+#
+(mode = hl)
+mode for parameter file
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="pset">
+<span class="sig-name descname"><span class="pre">pset</span></span><span class="sig-prename descclassname"> <span class="pre">pfile</span> <span class="pre">[p-assign1</span> <span class="pre">...]</span></span><a class="headerlink" href="#pset" title="Link to this definition">¶</a></dt>
+<dd><p>Sets parameter values in a parameter file.
+The pset tool sets one or more parameters in an PROS/IRAF–style parameter file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>paramfile</strong> – Name of an PROS/IRAF–style parameter file</p></li>
+<li><p><strong>passign</strong> – Parameter assignment statement, e.g. <code class="docutils literal notranslate"><span class="pre">PixelSize=24</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Examples::</dt><dd><p>unix% pset pileup.par MarxOutputDir=”point” CCDID=7 FrameTime=3.3</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="pwhich">
+<span class="sig-name descname"><span class="pre">pwhich</span></span><span class="sig-prename descclassname"> <span class="pre">[--verbose]</span> <span class="pre">pfile</span></span><a class="headerlink" href="#pwhich" title="Link to this definition">¶</a></dt>
+<dd><p>Prints the current search path for parameter files.
+The pwhich tool allows the user to track the search path MARX will use in obtaining the
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> parameter file. The output paths from pwhich will apply to any program using
+PROS/IRAF–style parameter files, e.g. FTOOLS .</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>pfile</strong> – Name of an PROS/IRAF-style parameter file</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% pwhich --verbose marxasp.par
+Trying /home/wise/pfiles/marxasp.par.par
+Trying ./marxasp.par.par
+Trying /home/wise/pfiles/marxasp.par
+Trying ./marxasp.par
+Input: ./marxasp.par
+Output: ./marxasp.par
+unix%
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="read_marx_file">
+<span class="sig-name descname"><span class="pre">read_marx_file</span></span><span class="sig-prename descclassname"> <span class="pre">(inpfile[,type,name,rlen,clen,reserv,magic])</span></span><a class="headerlink" href="#read_marx_file" title="Link to this definition">¶</a></dt>
+<dd><p>Read MARX binary vectors into IDL variables.
+The read marx file routine returns the contents of a MARX binary output vector file into
+an internal IDL variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IDL</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>inpfile</strong> – String containing name of the vector to read</p></li>
+<li><p><strong>type</strong> – Single character indicating data type of vector</p></li>
+<li><p><strong>name</strong> – String containing name of vector</p></li>
+<li><p><strong>rlen</strong> – Number of rows</p></li>
+<li><p><strong>clen</strong> – Number of columns</p></li>
+<li><p><strong>reserv</strong> – Reserved space</p></li>
+<li><p><strong>magic</strong> – Magic number</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>IDL&gt; ypos=read_marx_file(’./ngc1399/ypos.dat’)
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="rspdump">
+<span class="sig-name descname"><span class="pre">rspdump</span></span><span class="sig-prename descclassname"> <span class="pre">[--integrate]</span> <span class="pre">[--energy</span> <span class="pre">E]</span> <span class="pre">[--min-chan</span> <span class="pre">f]</span> <span class="pre">[--max-chan</span> <span class="pre">l]</span> <span class="pre">rsp-file</span></span><a class="headerlink" href="#rspdump" title="Link to this definition">¶</a></dt>
+<dd><p>Prints the contents of a FITS RMF file.
+The rspdump tool is a multi–function program for examining FITS response matrix files
+(RMFs). If no parameters are specified, rspdump will print the entire contents of the file.
+The <code class="docutils literal notranslate"><span class="pre">--integrate</span></code> flag can be specified to check the normalization of the file. The energy
+range or channel range can be limited with the <code class="docutils literal notranslate"><span class="pre">--energy</span></code> or <code class="docutils literal notranslate"><span class="pre">--min-chan</span></code>, <code class="docutils literal notranslate"><span class="pre">--max-chan</span></code>
+flags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix executable</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>rsp-file</strong> – Name of the FITS RMF file to examine</p>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">--integrate</span></kbd></dt>
+<dd><p>Integrate across channels</p>
+</dd>
+<dt><kbd><span class="option">--energy</span></kbd></dt>
+<dd><p>Specifies energy of channel to dump</p>
+</dd>
+<dt><kbd><span class="option">--min-chan</span></kbd></dt>
+<dd><p>Specifies minimum channel</p>
+</dd>
+<dt><kbd><span class="option">--max-chan</span></kbd></dt>
+<dd><p>Specifies maximum channel</p>
+</dd>
+</dl>
+<p>Example 1: Dump the complete contents of a FITS RMF file to the standard output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% rspdump acis.rmf
+#NUM ROWS: 1000
+
+#ENERG_LO: 1.000000e-01 ENERG_HI: 1.004616e-01
+        0019   2.779454e-01
+        0020   1.905406e-01
+        0021   1.463122e-01
+        &lt;...&gt;
+</pre></div>
+</div>
+<p>Example 2: Integrate the specified RMF across all channels in order to determine the normalization as a
+function of energy:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% rspdump --integrate acis.rmf
+#NUM ROWS: 1000
+1.000000e-01    1       19          41     1.000000e+00
+1.004616e-01    1       19          41     1.000000e+00
+1.009253e-01    1       19          41     1.000000e+00
+1.013911e-01    1       19          41     9.999999e-01
+&lt;...&gt;
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="tg_extract">
+<span class="sig-name descname"><span class="pre">tg_extract</span></span><span class="sig-prename descclassname"> <span class="pre">,</span> <span class="pre">hml,</span> <span class="pre">maxdist,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">y0,</span> <span class="pre">z0,</span> <span class="pre">dd,</span> <span class="pre">dxd,</span> <span class="pre">[list_selected]</span></span><a class="headerlink" href="#tg_extract" title="Link to this definition">¶</a></dt>
+<dd><p>Extract HETG/LETG spectra for a given simulation.
+The <code class="docutils literal notranslate"><span class="pre">tg_extract</span></code> routine extracts all photons along the spectral dispersion axis within a specified
+spatial window. It returns the dispersion distance for each photon. Unlike, get_hetg_spect and
+get_letg_spect which use simulation variables to determine the exact spectrum for a given
+order, <code class="docutils literal notranslate"><span class="pre">tg_extract</span></code> emulates a realistic analysis scenario using a spatial window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>IDL</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>hml</strong> – String to specify which arm of the ’X’ to use for distance from dispersion line calculation.
+Can be: <code class="docutils literal notranslate"><span class="pre">'h'</span></code> (for HEG) or <code class="docutils literal notranslate"><span class="pre">'m'</span></code> (for MEG) or <code class="docutils literal notranslate"><span class="pre">'l'</span></code> (for LEG)</p></li>
+<li><p><strong>maxdist</strong> – Maximum photon distance from dispersion line to allow [mm]</p></li>
+<li><p><strong>y</strong> – Array of Y axis photon positions in focal plane [mm]</p></li>
+<li><p><strong>z</strong> – Array of Z axis photon positions in focal plane [mm]</p></li>
+<li><p><strong>y0</strong> – Y coordinate of 0th order [mm]</p></li>
+<li><p><strong>z0</strong> – Z coordinate of 0th order [mm]</p></li>
+<li><p><strong>dd</strong> – Output vector of photon distances from zero order parallel to dispersion axis [mm]</p></li>
+<li><p><strong>dxd</strong> – Output vector of photon distances from dispersion line in perpendicular direction [mm]</p></li>
+<li><p><strong>list_selected</strong> – Optional output vector of indices within input vectors of selected photons</p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>IDL&gt;ypos=read_marx_file(’./ngc1399/ypos.dat’)
+IDL&gt;zpos=read_marx_file(’./ngc1399/zpos.dat’)
+IDL&gt;tg_extract,’l’,0.25,y,z,0,0, dd, dxd
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="marxtool">
+<dt class="sig sig-object" id="xspec2marx">
+<span class="sig-name descname"><span class="pre">xspec2marx</span></span><span class="sig-prename descclassname"> <span class="pre">inputfile</span> <span class="pre">&gt;</span> <span class="pre">outputfile</span></span><a class="headerlink" href="#xspec2marx" title="Link to this definition">¶</a></dt>
+<dd><p>Convert XSPEC ASCII files to MARX format.</p>
+<p>The xspec2marx script converts an ASCII file generated with <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a> into a two column format
+suitable for ingestion by MARX. This script simply strips out the energy array and the column
+containing the total flux and writes these arrays to the standard output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Language<span class="colon">:</span></dt>
+<dd class="field-odd"><p>shell script</p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>inputfile</strong> – Name of ASCII file produced by XSPEC</p></li>
+<li><p><strong>outputfile</strong> – Two column ASCII file readable by MARX.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% xspec2marx plaw.out &gt; plaw.dat
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The <strong>marx</strong> tool suite</a><ul>
+<li><a class="reference internal" href="#marx-main-program"><strong>marx</strong> main program</a></li>
+<li><a class="reference internal" href="#postprocessing-modules">Post–Processing Modules</a></li>
+<li><a class="reference internal" href="#other-scripts-and-helper-programs">Other scripts and helper programs</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="faqs.html"
+                          title="previous chapter">MARX Frequently Asked Questions</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="othermarxpars.html"
+                          title="next chapter">Further <strong>marx</strong> parameters</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="othermarxpars.html" title="Further marx parameters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="faqs.html" title="MARX Frequently Asked Questions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" ><strong>marx</strong> reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The <strong>marx</strong> tool suite</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>MARX Frequently Asked Questions &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The marx tool suite" href="tools.html" />
+    <link rel="prev" title="marx reference" href="reference.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="tools.html" title="The marx tool suite"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="marx reference"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U"><strong>marx</strong> reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MARX Frequently Asked Questions</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="marx-frequently-asked-questions">
+<h1>MARX Frequently Asked Questions<a class="headerlink" href="#marx-frequently-asked-questions" title="Link to this heading">¶</a></h1>
+<section id="i-have-a-question-about-marx-that-is-not-addressed-here-where-can-i-get-additional-help">
+<h2>I have a question about marx that is not addressed here. Where can I get additional help?<a class="headerlink" href="#i-have-a-question-about-marx-that-is-not-addressed-here-where-can-i-get-additional-help" title="Link to this heading">¶</a></h2>
+<p><strong>marx</strong> specific questions should be sent to <a class="reference external" href="mailto:marx-help&#37;&#52;&#48;space&#46;mit&#46;edu">marx-help<span>&#64;</span>space<span>&#46;</span>mit<span>&#46;</span>edu</a>.  If
+your question is related to <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>, then you should contact the <a class="reference external" href="http://asc.harvard.edu/helpdesk/index.html">CXC helpdesk</a>.</p>
+</section>
+<section id="i-m-using-marx-on-mac-os-x-and-something-does-not-work">
+<h2>I’m using <strong>marx</strong> on Mac OS X and something does not work.<a class="headerlink" href="#i-m-using-marx-on-mac-os-x-and-something-does-not-work" title="Link to this heading">¶</a></h2>
+<p>Over half of all user queries we receive are related to the broken compiler that ships with XCode on Mac OS X. Please see <a class="reference internal" href="../inbrief/install.html#knownbugs"><span class="std std-ref">Known Bugs and Limitations</span></a>.</p>
+</section>
+<section id="do-you-distribute-marx-binaries">
+<h2>Do you distribute marx binaries?<a class="headerlink" href="#do-you-distribute-marx-binaries" title="Link to this heading">¶</a></h2>
+<p>No.  There are several reasons for this including the lack of
+resources.  Rather, we have tried to make the installation process as
+simple as possible so that even the most inexperienced user can do it.
+Step by step instructions for compiling <strong>marx</strong> are available on the
+<a class="reference internal" href="../inbrief/install.html#installing"><span class="std std-ref">Downloading and Installing Marx</span></a>.  The reward for compiling it
+yourself is that you can be sure that <strong>marx</strong> was built explicitly for
+your system, and as such, no incompatibilities should arise.  One
+cannot make this guarantee for a precompiled binary version.</p>
+</section>
+<section id="how-do-i-create-an-arf-and-rmf-that-match-my-marx-simulation">
+<h2>How do I create an ARF and RMF that match my marx simulation?<a class="headerlink" href="#how-do-i-create-an-arf-and-rmf-that-match-my-marx-simulation" title="Link to this heading">¶</a></h2>
+<p>The answer to this question may be found <a class="reference internal" href="../examples/ACISpowerpileup/powerlaw.html#ex-ciao"><span class="std std-ref">Creating CIAO-based ARFs and RMFs for MARX Simulations</span></a>.</p>
+</section>
+<section id="can-i-simulate-arbitrary-combinations-of-acis-ccds-in-marx">
+<h2>Can I simulate arbitrary combinations of ACIS CCDs in marx?<a class="headerlink" href="#can-i-simulate-arbitrary-combinations-of-acis-ccds-in-marx" title="Link to this heading">¶</a></h2>
+<p>The simple answer is “no”. Out of the box, <strong>marx</strong> allows users to
+select either the ACIS-S array (6 CCDs) or the ACIS-I array (4 CCDs).
+Arbitrary mixtures of chips from the two arrays are not currently
+supported although we plan to add that option in a future version
+of <strong>marx</strong>.</p>
+<p>In the meantime, if you do need to simulate other combinations,
+one can assemble such composites by creating the desired ACIS-S
+and ACIS-I chips separately and them merging the resulting event
+lists with the <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmmerge.html">dmmerge</a> tool in <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>. For such mergers, both pieces
+of the simulation must have the same aimpoint position.
+This configuration can be accomplished by a SIM translation in <strong>marx</strong>
+using the <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetX"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetX</span></code></a> and <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetOffsetZ"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetZ</span></code></a> parameters.</p>
+<p>For example, to create a <strong>marx</strong> simulation where the default
+ACIS-S aimpoint was used, but ACIS-I chips were also active
+during the observation, one would do two separate simulations.
+The ACIS-S portion of the simulation would utilize the <strong>marx</strong> defaults.
+The simulation of the ACIS-I chips however would require moving
+the SIM to position the ACIS-I detector correctly relative to the
+default ACIS-S aimpoint. The appropriate values in the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> file
+would be:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>DetOffsetX=0.0990000
+DetOffsetZ=43.4590
+</pre></div>
+</div>
+<p>Note that the <a class="reference internal" href="othermarxpars.html#parameter-DetOffsetY"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetOffsetY</span></code></a> parameter is not modified since SIM motion
+along the Y axis is not permitted. For simulations using the default
+ACIS-I aimpoint, the ACIS-S simulation would need to be offset
+using the values:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>DetOffsetX=-0.0990000
+DetOffsetZ=-43.4590
+</pre></div>
+</div>
+<p>The <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmmerge.html">dmmerge</a> tool will produce some warning messages during the
+combination of the two event lists, but should produce a valid
+FITS event file. Unwanted CCDs can be removed using <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmcopy.html">dmcopy</a>.</p>
+</section>
+<section id="can-i-simulate-cti-corrected-observations-in-marx">
+<h2>Can I simulate CTI-corrected observations in marx?<a class="headerlink" href="#can-i-simulate-cti-corrected-observations-in-marx" title="Link to this heading">¶</a></h2>
+<p>No. <strong>marx</strong> does not currently recognize the new format
+of the CTI-corrected FEF file available in the CALDB (versions 2.18
+and higher). So simulations cannot be created directly
+which feature the improved spectral response of the front-illuminated
+CCDs after CTI correction. Users wishing to simulate CTI–corrected
+spectra can however use the <a class="reference internal" href="tools.html#marxrsp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxrsp</span></code></a> tool to fold a given <strong>marx</strong>
+simulation through an existing RMF created from the CTI–corrected FEF.</p>
+</section>
+<section id="is-it-possible-to-run-marx-with-a-constant-effective-area">
+<h2>Is it possible to run marx with a constant effective area?<a class="headerlink" href="#is-it-possible-to-run-marx-with-a-constant-effective-area" title="Link to this heading">¶</a></h2>
+<p>If by “constant” you mean an effective area that does not not depend
+upon energy, then the answer is yes.   To do so, use the following
+configuration:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>DetIdeal=yes
+HRMA_Ideal=yes HRMAVig=1.0
+Use_Unit_Efficiencies=yes
+mode=h
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../inbrief/simsetup.html#parameter-DetIdeal"><code class="xref std std-par docutils literal notranslate"><span class="pre">DetIdeal=yes</span></code></a> setting tells <strong>marx</strong> to assume that the detectors
+have 100 percent quantum efficiency.  The line involving the
+<code class="docutils literal notranslate"><span class="pre">HRMA*</span></code> parameters indicates that perfect reflectivity from the
+mirrors is to be assumed and that no rays will suffer vignetting from
+the various baffles.  The <a class="reference internal" href="../indetail/hardwaremodel.html#parameter-Use_Unit_Efficiencies"><code class="xref std std-par docutils literal notranslate"><span class="pre">Use_Unit_Efficiencies=yes</span></code></a> parameter
+setting comes into play only in when the gratings (LETG or HETG)
+are used.  It causes the diffraction efficiencies for all orders to
+be equal, i.e., all diffraction orders will be equally probable.
+Finally, the <a class="reference internal" href="othermarxpars.html#parameter-mode"><code class="xref std std-par docutils literal notranslate"><span class="pre">mode=h</span></code></a> line will cause <strong>marx</strong> to not save these
+values in the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code> file.</p>
+<p>Keep in mind that some photons will still be lost if they scatter from
+the mirror and not hit the detector, fall in detector gaps, etc.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MARX Frequently Asked Questions</a><ul>
+<li><a class="reference internal" href="#i-have-a-question-about-marx-that-is-not-addressed-here-where-can-i-get-additional-help">I have a question about marx that is not addressed here. Where can I get additional help?</a></li>
+<li><a class="reference internal" href="#i-m-using-marx-on-mac-os-x-and-something-does-not-work">I’m using <strong>marx</strong> on Mac OS X and something does not work.</a></li>
+<li><a class="reference internal" href="#do-you-distribute-marx-binaries">Do you distribute marx binaries?</a></li>
+<li><a class="reference internal" href="#how-do-i-create-an-arf-and-rmf-that-match-my-marx-simulation">How do I create an ARF and RMF that match my marx simulation?</a></li>
+<li><a class="reference internal" href="#can-i-simulate-arbitrary-combinations-of-acis-ccds-in-marx">Can I simulate arbitrary combinations of ACIS CCDs in marx?</a></li>
+<li><a class="reference internal" href="#can-i-simulate-cti-corrected-observations-in-marx">Can I simulate CTI-corrected observations in marx?</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-run-marx-with-a-constant-effective-area">Is it possible to run marx with a constant effective area?</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="reference.html"
+                          title="previous chapter"><strong>marx</strong> reference</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="tools.html"
+                          title="next chapter">The <strong>marx</strong> tool suite</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="tools.html" title="The marx tool suite"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="marx reference"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" ><strong>marx</strong> reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">MARX Frequently Asked Questions</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

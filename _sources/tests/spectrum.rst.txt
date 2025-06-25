@@ -1,0 +1,209 @@
+.. _sect-tests.spectrum:
+
+Reproducing an input spectrum
+=============================================================================
+
+|marx| allows users to specify either a flat input spectrum or to pass in a file.
+Here, we generate input spectra with the spectral modeling program `Sherpa`_.
+We run |marx| to
+simulate a point source and extract the data from that simulation using `CIAO`_,
+read it back into `Sherpa`_ and fit the simulated data.
+If everything works well and all detector effects are treated consistently,
+we should recover the same spectral parameters (up to Poisson noise).
+On the other hand, if |marx| and
+`CIAO`_ are inconsistent the fit parameters will deviate from the input
+parameters.
+
+In the past, this has happened after the release of |marx| 5.0, which contains
+some files to describe the ACIS contamination. This contamination changes with
+time and several `CalDB`_ releases had happened before we released |marx| 5.1.
+At that time, |marx| always predicted too many counts at low energies.
+
+The following tests are designed to test **consistency** with `CIAO`_.
+Since there is always some uncertainty about the intrinsic spectrum of
+astrophysical sources, this test is best done with simulated input spectra.
+
+
+
+
+.. _sect-test-SpectrumAbsPowACISS:
+
+Absorbed powerlaw on ACIS-S
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-SpectrumAbsPowACISS`
+
+This test checks the internal consistency of a |marx| spectral simulation
+by simulating a source placed on an back-illuminated chip of ACIS-S.
+The input spectrum is an absorbed powerlaw.
+
+
+
+
+.. figure:: figures/SpectrumAbsPowACISS_spec.*
+   :align: center
+   :alt: Spectra and model shown in top of each other. Differences are described in the text.
+   :scale: 75%
+
+
+
+   Data reduced as required to reproduce the |marx| setup (see :ref:`caveats`) is shown in green, data reduced with standard `CIAO`_ setting in orange. The orange error bars are omitted for clarity. In this display, green and orange points should be on top of each other, but the next figure shows that real differences exist when ARF is needed to calculate the flux. Lines show the input model (red, using the ARF of the green data), the best-fit model to the green data (green line) and to the orange data (orange line).
+
+
+
+.. figure:: figures/SpectrumAbsPowACISS_arf.*
+   :align: center
+   :alt: ARFs differ in the range 2-5 keV
+   :scale: 75%
+
+
+
+   ARFs for both extraction methods (some color as above).
+
+
+
+
+Fit results:
+
+============  ======  ========  ========  ========  ========  ========  ========
+Parameter     Input   MARX special extraction       CIAO default extraction
+------------  ------  ----------------------------  ----------------------------
+name          value   value     err_down  err_up    value     err_down  err_up
+============  ======  ========  ========  ========  ========  ========  ========
+a.nH             1.0      0.95    -0.049     0.051      0.88    -0.046     0.048
+p.PhoIndex       1.8       1.8    -0.058     0.059       1.6    -0.056     0.057
+p.norm         0.001   0.00092  -6.6e-05   7.3e-05   0.00082  -5.7e-05   6.2e-05
+============  ======  ========  ========  ========  ========  ========  ========
+
+
+The table shows how the best fit of the simulated and extracted data compares to the
+parameter values that were used to generate the input spectrum. The two columns compare
+the fit results using an extraction that takes |marx|'s :ref:`caveats` into account
+and an extraction that just applies `CIAO`_ default values.
+
+In a Monte-Carlo simulation we can never expect the fit to hit the input values exactly.
+In fact, a perfect agreement between input and output numbers would indicate
+that the random number generator is not random enough. When running this example
+many times, the average distance should be roughly 1 sigma.
+
+
+
+
+.. _sect-test-SpectrumAbsPowACISS_offaxis:
+
+Powerlaw spectrum of an off-axis source
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-SpectrumAbsPowACISS_offaxis`
+
+Same as above, but for an off-axis source.
+
+
+
+
+.. figure:: figures/SpectrumAbsPowACISS_offaxis_spec.*
+   :align: center
+   :alt: Spectra and model shown in top of each other. Differences are described in the text.
+   :scale: 75%
+
+
+
+   Data reduced as required to reproduce the |marx| setup (see :ref:`caveats`) is shown in green, data reduced with standard `CIAO`_ setting in orange. The orange error bars are omitted for clarity. In this display, green and orange points should be on top of each other, but the next figure shows that real differences exist when ARF is needed to calculate the flux. Lines show the input model (red, using the ARF of the green data), the best-fit model to the green data (green line) and to the orange data (orange line).
+
+
+
+.. figure:: figures/SpectrumAbsPowACISS_offaxis_arf.*
+   :align: center
+   :alt: ARFs differ in the range 2-5 keV
+   :scale: 75%
+
+
+
+   ARFs for both extraction methods (some color as above).
+
+
+
+
+Fit results:
+
+============  ======  ========  ========  ========  ========  ========  ========
+Parameter     Input   MARX special extraction       CIAO default extraction
+------------  ------  ----------------------------  ----------------------------
+name          value   value     err_down  err_up    value     err_down  err_up
+============  ======  ========  ========  ========  ========  ========  ========
+a.nH             1.0       1.0    -0.077      0.08       1.0    -0.077      0.08
+p.PhoIndex       1.8       1.9    -0.076     0.078       1.8    -0.076     0.078
+p.norm         0.001     0.001  -9.9e-05   0.00011     0.001   -0.0001   0.00011
+============  ======  ========  ========  ========  ========  ========  ========
+
+
+The table shows how the best fit of the simulated and extracted data
+compares to the parameter values that were used to generate the input
+spectrum.
+
+See above for a detailed description.
+
+
+
+
+.. _sect-test-SpectrumAPECACISI:
+
+Two thermal components on ACIS-I
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-SpectrumAPECACISI`
+
+Same as above, but for a front-illuminated ACIS-I chip and using
+an input spectrum with two thermal components similar to a stellar corona.
+
+
+
+
+.. figure:: figures/SpectrumAPECACISI_spec.*
+   :align: center
+   :alt: Spectra and model shown in top of each other. Differences are described in the text.
+   :scale: 75%
+
+
+
+   Data reduced as required to reproduce the |marx| setup (see :ref:`caveats`) is shown in green, data reduced with standard `CIAO`_ setting in orange. The orange error bars are omitted for clarity. In this display, green and orange points should be on top of each other, but the next figure shows that real differences exist when ARF is needed to calculate the flux. Lines show the input model (red, using the ARF of the green data), the best-fit model to the green data (green line) and to the orange data (orange line).
+
+
+
+.. figure:: figures/SpectrumAPECACISI_arf.*
+   :align: center
+   :alt: ARFs differ in the range 2-5 keV
+   :scale: 75%
+
+
+
+   ARFs for both extraction methods (some color as above).
+
+
+
+
+Fit results:
+
+============  ======  ========  ========  ========  ========  ========  ========
+Parameter     Input   MARX special extraction       CIAO default extraction
+------------  ------  ----------------------------  ----------------------------
+name          value   value     err_down  err_up    value     err_down  err_up
+============  ======  ========  ========  ========  ========  ========  ========
+a1.kT            0.7       0.7    -0.044     0.039       0.7    -0.042     0.037
+a1.Ne            2.0       2.0      -1.3       1.3       2.1      -1.3       1.3
+a1.norm       0.0002   0.00019  -1.3e-05   1.4e-05    0.0002  -1.4e-05   1.4e-05
+a2.kT            2.0       1.9     -0.11      0.11       2.0     -0.11      0.11
+a2.norm       0.0004    0.0004  -2.3e-05   2.3e-05   0.00042  -2.4e-05   2.5e-05
+============  ======  ========  ========  ========  ========  ========  ========
+
+
+The table shows how the best fit of the simulated and extracted data
+compares to the parameter values that were used to generate the input
+spectrum.
+
+See above for a detailed description.
+
+

@@ -1,0 +1,288 @@
+.. _sect-tests.PSF:
+
+Point Spread Function (PSF)
+=============================================================================
+
+The `point-spread function (PSF) for Chandra <http://cxc.harvard.edu/ciao/PSFs/psf_central.html>`_ describes how the light from a point source is spread over a larger area on the detector. Several effects contribute to this, e.g. the uncertainty in the pointing, the fact that the detectors are flat, while the focal plane of the mirror is curved (specifically for large off-axis angles) and the pixalization of data on detector read-out.
+
+The following tests compare |marx| simulations, `SAOTrace`_ simulations, and data to look at different aspects of the Chandra PSF.
+
+
+
+
+.. _sect-test-ACISSPSF:
+
+On-axis PSF on an ACIS-BI chip
+------------------------------------------------------------------------------
+
+
+:data: `ObsID 15713 <http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&obsid=15713>`_
+
+:code: :ref:`test-code-ACISSPSF`
+
+
+The PSF depends on many things, some of which are common to all observations
+like the shape of the mirror, and some are due to detector effects.
+For ACIS detectors, the
+`sub-pixel event repositioning (EDSER) <http://cxc.harvard.edu/ciao/why/acissubpix.html>`_
+can improve
+the quality of an image by repositioning events based on the event grade.
+This correction depends on the type pf chip (FI or BI). This test compares
+the simulation of a point source on a BI ACIS-S chip to an observation.
+The observed object is TYC 8241 2652 1, a young star, and was observed in
+1/8 sub-array mode to reduce pile-up. The pile-up fraction in the data is
+about 5% in the brightest pixel.
+
+
+
+
+.. figure:: figures/ACISSPSF_ECF.*
+   :align: center
+   :alt: TBD
+   :scale: 75%
+
+
+
+   Enclosed count fraction for observation and simulations. The simulations are run with a count number similar to the (fairly short) observation and thus there is some wiggling due to Poisson noise.
+
+
+
+For BI chips (here ACIS-S3) the |marx| simulated PSF is too narrow. This effect is most pronounced at small radii around 1 pixel. At larger radii the |marx| simulation comes closer to the observed distribution. Running the simulation with a combination of `SAOTrace`_ and |marx| gives PSF distributions that are closer to the observed numbers. However, in the range around 1 pix, the simulations are still too wide. Depending on the way sub-pixel information is handeled, there is a notable difference in the size of the effect. Using energy-dependent sub-pixel event repositioning (EDSER) requires not only a good mirror model, but also a realistic treatment of the flight grades assigned on the detector. This is where the difference between simulation and observations is largest.
+
+The figures show that there are at least two factors contributing to the difference: The mirror model and problems in the simulation of the EDSER algorithm.
+
+The put those numbers into perspective: If I used the |marx| simulation to determine the size of the extraction region that encloses 80% of all source counts, I would find a radius close to 0.9 pixel. However, in reality, such a region will only contain about 65% of all flux, causing me to underestimate the total X-ray flux in this source by 15%. (The exact number depends on the spectrum of the source in question, but for most on-axis sources they will be similar.)
+
+
+
+
+.. _sect-test-ACISIPSF:
+
+On-axis PSF on an ACIS-FI chip
+------------------------------------------------------------------------------
+
+
+:data: `ObsID 4469 <http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&obsid=4469>`_
+
+:code: :ref:`test-code-ACISIPSF`
+
+Same as above for a FI chip. The target of this observations is
+tau Canis Majores.
+
+
+
+
+.. figure:: figures/ACISIPSF_ECF.*
+   :align: center
+   :alt: TBD
+   :scale: 75%
+
+
+
+   Enclosed count fraction for observation and simulations.
+
+
+
+As for the BI chip, |marx| simulations indicate a PSF that is narrower than the observed distribution. Using `SAOTrace`_ as a mirror model, gives better results but they still differ significantly from the observed distribution.
+
+
+
+.. _sect-test-HRCIPSF:
+
+On-axis PSF for an HRC-I observation
+------------------------------------------------------------------------------
+
+
+:data: `ObsID 13182 <http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&obsid=13182>`_
+
+:code: :ref:`test-code-HRCIPSF`
+
+Same as above for an HRC-I observations of AR Lac.
+
+
+
+
+.. figure:: figures/HRCIPSF_ECF.*
+   :align: center
+   :alt: TBD
+   :scale: 75%
+
+
+
+   Enclosed count fraction for observation and simulations.
+
+
+
+The PSF predicted by `SAOTrace`_  + |marx| tracks the general shape pf the observed PSF well, though differences are apparent in the core and in the wings. Like in ACIS, the PSF simulated with |marx| alone is narrower than the observed PSF.
+
+
+
+.. _sect-test-OffAxisPSF:
+
+Off-axis PSF
+------------------------------------------------------------------------------
+
+
+:data: `ObsID 1068 <http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&obsid=1068>`_
+
+:code: :ref:`test-code-OffAxisPSF`
+
+
+For an off-axis source the differences between detector pixel size and different
+event repositioning algorithms is not important any longer. Instead, the size of
+the PSF is dominated by optics errors because the detector plane deviates from
+the curved focal plane and because a Wolter type I optic has fundamental limitations
+for off-axis sources.
+
+The PSF is much larger and it is no longer round. As this test shows, the shadows of
+the support struts become visible. The code to run this test is very similar to
+:ref:`sect-ex-simobs`, where the individual steps are explained in greater detail.
+
+
+
+
+.. figure:: figures/OffAxisPSF_ds9.*
+   :align: center
+   :alt: Three very similar PSFs.
+   :scale: 75%
+
+
+
+   `ds9`_ image of the PSF in the observation (top left), the simulation using only |marx| (top right), and the simulation using `SAOTrace`_ to trace the mirror and |marx| as the instrument model (bottom left)
+
+
+
+The structure of the PSFs is very similar, emphasizing how good both mirror
+models are. On closer inspection, there is a small shadow just above and to the
+right of the point where the support strut shadows meet. This feature is a
+little smaller in |marx| than in `SAOTrace`_ or the real data due to the
+simplification that the |marx| mirror model makes.
+
+
+
+.. _sect-test-Wings:
+
+Wings of the Chandra PSF
+------------------------------------------------------------------------------
+
+
+:data: `ObsID 3662 <http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&obsid=3662>`_
+
+:code: :ref:`test-code-Wings`
+
+The Chandra PSF falls in two regimes: The shape of the core is set by quasi-specular
+reflection from low-frequency surface errors. This component is strongly peaked and dominates
+in the innermost few arcseconds (for and on-axis source). The out part of the PSF has the shape of a powerlaw with an spectral index close to two and is caused by micro-roughness on the mirror surfaces. The `Proposer's Observatory Guide <http://cxc.harvard.edu/proposer/POG/html/chap4.html#tth_sEc4.2.3>`_ and `a memo by T.J. Gaetz <http://cxc.harvard.edu/cal/Hrma/rsrc/Publish/Optics/PSFWings/wing_analysis_rev1b.pdf>`_ discuss this in a lot more detail. The memo is based on a very detailed analysis of a deep Her-X1 observation. In this test we replicate that observation in |marx| and `SAOTrace`_ simulations.
+
+In the memo, T.J. Gaetz goes to great lengths to separate the effect of the intrinsic Chandra PSF on the data from other influences such as the ACIS contamination. When we compare data and |marx| simulation below, we chose a somewhat simpler approach. We perform steps to mitigate the impact of other astrophysical sources (which are not part of the |marx| simulation) and background (which is not part of the |marx| simulation). On the other hand, we just compare the observed count rates with no correction for the ACIS contamination, dithering near chip edges etc. because those effects are included in both the observed and the simulated data.
+
+Read the code for this test to see all details of the data extraction, but here are the most
+important points:
+
+- The source is heavily piled-up, thus the source spectrum is taken from the read-out streak.
+- Because of pile-up in the data, all fitting is restricted to radii above 15 arcsec.
+
+
+
+
+.. figure:: figures/Wings_PowerLaws.*
+   :align: center
+   :alt: Four plots show that the flux in the scattering halo drops as a powerlaw with increasing distance from the source. See text for a comparison of data and observations.
+   :scale: 75%
+
+
+
+   The flux in the scattering halo drops as a powerlaw with increasing distance from the source. The plots show the data (with purely statistical uncertainties) and powerlaw fits. Due to the background that is part of the observations but not the simulated data, the powerlaw flattens out for the observed data in some cases. We add a constant to the model to account for this. `SAOTrace`_ simulations produce a fairly smooth powerlaw similar to the observations. The pure |marx| simulations have much larger deviations due to |marx|'s simplified mirror model.
+
+
+
+.. figure:: figures/Wings_PowerSlope.*
+   :align: center
+   :alt: See caption and summary text for a description.
+   :scale: 75%
+
+
+
+   The surface brightness falls off with increasing distance from the source position as a powerlaw. The exponent of this powerlaw depends on the photon energy as shown in the figure. If spectra are extracted in the scattering halo the observed spectrum will thus change with distance from the source. For the observed data, the low energy end (below about 1 keV) has to be taken with a grain of salt. We applied a correction for the ACIS contamination in the data reduction, but the distribution of the contaminant over the detector area is not well known, leading to systematic uncertainties. For energies above 5 keV, the outer mirror shell does not contribute much effective area any longer. This shell has the roughest surface, which explains why we observe steeper powerlaw slopes for higher eneergies. Both the |marx| and the `SAOTrace` mirror model also have energy dependent exponents.
+
+
+
+Both |marx| and `SAOTrace`_ implement a mirror model that has wide scattering wings which are also seen in actual Chandra data. These wings can be traced out to at least 8 arcmin. On the other hand, these scattering wings are very weak (the flux per surface area drops by about four orders of magnitute between 10 arcsec and 500 arcsec for an on-axis source) and thus they are not not relevant in any but the very brightest objects. The `SAOTrace` mirror model produces a smoother distribution that is more similar to the observed data than |marx|. In both mirror models the slope depends on the energy. `SAOTrace`_ reproduces the shape of the observed data very well, but the exponent is significantly too steep everywhere. Thus, spectra extracted in the halo will be compatible with observed data, but the flux in the simulation will be too low. On the other hand, |marx| produces more realistic exponents above 1 keV, so it will match the observed surface brightness better, but not the spectral properties. 
+
+
+
+.. _sect-test-CompMARXSAOTraceenergies:
+
+On-axis PSF at different energies
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-CompMARXSAOTraceenergies`
+
+The gold standard to test the fidelity of |marx| and `SAOTrace`_
+obviously is to compare simulations to observations.
+However, it is also instructive to look at a few idealized cases with no
+observational counterpart so we can simulate high fidelity PSFs with a
+large number of counts without worrying about background or pile-up.
+The `Chandra Proposers Observatory Guide <http://cxc.harvard.edu/proposer/POG/html/chap4.html#tth_sEc4.2.3>`_
+contains a long section on the PSF and encircled energy based on `SAOTrace`_
+simulations. Some of those simulations are repeated here to compare them
+to pure |marx| simulations.
+
+
+
+
+.. figure:: figures/CompMARXSAOTraceenergies_PSFimages.*
+   :align: center
+   :alt: Gallery of PSf images. See caption for a description.
+   :scale: 75%
+
+
+
+   PSF images for different discrete energies for pure |marx| and `SAOTrace`_ + |marx| simulations. The color scale is linear, but the absolute scaling is different for different images, because the effective area and thus the number of detected photons is lower at higher energies. Contour lines mark flux levels at 30%, 60%, and 90% of the peak flux level. At higher energies, the PSF becomes asymmetric, because mirror pair 6, which is most important at high energies, is slightly tilted with respect to the nominal aimpoint. At the same time, the scatter, and thus the size of the PSF, increase at higher energies.
+
+
+
+.. figure:: figures/CompMARXSAOTraceenergies_ECF.*
+   :align: center
+   :alt: The |marx| PSF is generally narrower than the  `SAOTrace`_ + |marx| PSF. The agreement is best for energies around 2-4 keV.
+   :scale: 75%
+
+
+
+   A different way to present the width of the PSF is the encircled count fraction. **solid line**: |marx| only, **dotted lines**: `SAOTrace`_ + |marx|. For each photon, the radial distance is calculated from the nominal source position. Because the center is offset for hard photons, the PSF appears wider at those energies.
+
+
+
+|marx| and `SAOTrace`_ simulations predict a very similar PSF shape, but for most energies the `SAOTrace`_ model predicts a slightly broader PSF.
+
+
+
+.. _sect-test-CompMARXSAOTraceoffaxis:
+
+Simulated off-axis PSF
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-CompMARXSAOTraceoffaxis`
+
+Compare |marx| and `SAOTrace`_ + |marx| simulations for different
+off-axis angles. For simplicity, this is done here for a single energy.
+We pick 4 keV because it is roughly the center of the Chandra band.
+
+
+
+
+.. figure:: figures/CompMARXSAOTraceoffaxis_ECF.*
+   :align: center
+   :alt: TBD
+   :scale: 75%
+
+
+
+   Radius of encircled count fraction for different off-axis angles. **solid line**: |marx| only, **dotted lines**: `SAOTrace`_ + |marx|. The values shown include the effect of the HRC-I positional uncertainty and the uncertainty in the aspect solution.
+
+
+
+|marx| and |marx| + `SAOTrace`_ simulations show essentially identical off-axis behavior in this test.
+

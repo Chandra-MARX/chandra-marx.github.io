@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Making a release &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Contributing code or documentation" href="contributing.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="contributing.html" title="Contributing code or documentation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Making a release</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="making-a-release">
+<h1>Making a release<a class="headerlink" href="#making-a-release" title="Link to this heading">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <strong>marx</strong> source packages and documentation are build and deployed locally on MIT servers,
+thus these instructions will not be relevant for people outside the MIT/CXC
+group.</p>
+</div>
+<section id="preparation">
+<h2>Preparation<a class="headerlink" href="#preparation" title="Link to this heading">¶</a></h2>
+<p>Ensure that <code class="docutils literal notranslate"><span class="pre">NEWS</span></code> in the source directory and <code class="docutils literal notranslate"><span class="pre">source/inbrief/news.rst</span></code> in
+the documentation repository describe the new release.</p>
+</section>
+<section id="source-repro">
+<h2>Source repro<a class="headerlink" href="#source-repro" title="Link to this heading">¶</a></h2>
+<p>(Commands are shown here as an example for a release called <code class="docutils literal notranslate"><span class="pre">5.1.0</span></code>.)</p>
+<ol class="arabic">
+<li><p>git checkout master</p></li>
+<li><p><em>if necessary</em>: Update the copyright statements in the individual files:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>grep -rli &#39;Copyright (C) 2002-2013 Massachusetts Institute of Technology&#39; * | xargs -i@ sed -i &#39;s/Copyright (C) 2002-2013 Massachusetts Institute of Technology/Copyright (C) 2002-2015 Massachusetts Institute of Technology/g&#39; @
+</pre></div>
+</div>
+<p>Note separate copyright in <code class="docutils literal notranslate"><span class="pre">jdmath/COPYRIGHT</span></code>.</p>
+</li>
+<li><p>Update version string in e.g. the start-up message or <strong>marx</strong> or in the
+comments in <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>. The best way to do this is properly to grep for
+<code class="docutils literal notranslate"><span class="pre">5.0.0</span></code> (or whatever the previous version was called).</p></li>
+<li><p>Update NEWS files in the root directory.</p></li>
+<li><p>commit changes to git</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">v5.1.0</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span> <span class="pre">reproname</span></code> Push tag to all repositories that should have a copy.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">archive</span> <span class="pre">--format=tar</span> <span class="pre">--prefix=marx-5.1.0/</span> <span class="pre">v5.1.0</span> <span class="pre">|</span> <span class="pre">gzip</span> <span class="pre">&gt;</span>
+<span class="pre">marx-dist-5.1.0.tar.gz</span></code></p></li>
+<li><p>Sign with your private key: <code class="docutils literal notranslate"><span class="pre">gpg</span> <span class="pre">--armor</span> <span class="pre">--detach-sig</span>
+<span class="pre">marx-dist-5.1.0.tar.gz</span></code></p></li>
+<li><p>Calculate hash, so that user can verify error-free download: <code class="docutils literal notranslate"><span class="pre">sha1sum</span> <span class="pre">marx-dist-5.1.0*</span> <span class="pre">&gt;</span> <span class="pre">sha1sums.txt</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">marx-dist-5.1.0.tar.gz</span> <span class="pre">space:/space/ftp/pub/cxc/marx/v5.1</span></code> (make
+directory as required)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">marx-dist-5.1.0.tar.gz.asc</span> <span class="pre">space:/space/ftp/pub/cxc/marx/v5.1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">sha1sums.txt</span> <span class="pre">space:/space/ftp/pub/cxc/marx/v5.1</span></code></p></li>
+<li><p>Provide tar file also via https: <code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">marx-dist-5.1.0.tar.gz</span> <span class="pre">space:/space/web/ASC/marx-5.1</span></code></p></li>
+</ol>
+</section>
+<section id="documentation-repro">
+<h2>Documentation repro<a class="headerlink" href="#documentation-repro" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>update <code class="docutils literal notranslate"><span class="pre">copyright</span></code>, <code class="docutils literal notranslate"><span class="pre">version</span></code>, and <code class="docutils literal notranslate"><span class="pre">release</span></code> in <code class="docutils literal notranslate"><span class="pre">conf.py</span></code>. (Note
+that the copyright year turn up further down for LaTeX and epub again.)</p></li>
+<li><p>Update any notes on the front page <code class="docutils literal notranslate"><span class="pre">index.rst</span></code> etc.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">inbrief/news.rst</span></code>.</p></li>
+<li><p>Update file name in <code class="docutils literal notranslate"><span class="pre">aliases.txt</span></code> and <code class="docutils literal notranslate"><span class="pre">inbrief/install.rst</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">clean</span></code></p></li>
+<li><p>Install marx and set path in <code class="docutils literal notranslate"><span class="pre">source/examples/config.inc</span></code> to it, so that
+the examples are build with the new version.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">figures</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">examples</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code>. Fix any errors that come up.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scp</span> <span class="pre">-r</span> <span class="pre">build/html/*</span> <span class="pre">space:/space/web/ASC/marx-5.1</span></code> (Create directory on
+space as required.)</p></li>
+<li><p>On <code class="docutils literal notranslate"><span class="pre">/space/web/ASC</span></code>: <code class="docutils literal notranslate"><span class="pre">rm</span> <span class="pre">marx;</span> <span class="pre">ln</span> <span class="pre">-s</span> <span class="pre">marx-5.1</span> <span class="pre">marx</span></code>.</p></li>
+</ol>
+</section>
+<section id="get-the-word-out">
+<h2>Get the word out<a class="headerlink" href="#get-the-word-out" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Announce release to cxc at mit.edu</p></li>
+<li><p>Announce release on marx-users at space.mit.edu</p></li>
+<li><p>Ask T. Gorcas to include release in next Chandra electronic announcement</p></li>
+<li><p>Ask CIAO team to advertise release through the CIAO Twitter, facebook, Google+ feeds.</p></li>
+</ol>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Making a release</a><ul>
+<li><a class="reference internal" href="#preparation">Preparation</a></li>
+<li><a class="reference internal" href="#source-repro">Source repro</a></li>
+<li><a class="reference internal" href="#documentation-repro">Documentation repro</a></li>
+<li><a class="reference internal" href="#get-the-word-out">Get the word out</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="contributing.html"
+                          title="previous chapter">Contributing code or documentation</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="contributing.html" title="Contributing code or documentation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Making a release</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

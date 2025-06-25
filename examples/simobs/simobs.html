@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Replicating a Chandra Observation / Using ChaRT or SAOTrace &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Detailed information on MARX" href="../../indetail/docs.html" />
+    <link rel="prev" title="Including background in a marx simulation" href="../background/background.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../../indetail/docs.html" title="Detailed information on MARX"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../background/background.html" title="Including background in a marx simulation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Replicating a Chandra Observation / Using ChaRT or SAOTrace</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="replicating-a-chandra-observation-using-chart-or-saotrace">
+<span id="sect-ex-simobs"></span><h1>Replicating a Chandra Observation / Using ChaRT or SAOTrace<a class="headerlink" href="#replicating-a-chandra-observation-using-chart-or-saotrace" title="Link to this heading">¶</a></h1>
+<p>The example presented here was originally designed to see how well the
+<strong>marx</strong> PSF compares to that of an actual Chandra observation of a far
+off-axis source.  We will also be comparing the <strong>marx</strong> intrinsic PSF to
+that of <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> (<a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> is a high-fidelity ray-tracer for the Chandra
+mirrors that simulates many details that are treated statistically in <strong>marx</strong> to
+improve efficiency).
+Hence, this example will serve several purposes:</p>
+<ul class="simple">
+<li><p>How to simulate an existing observation.</p></li>
+<li><p>How to use <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> dithered rays with <strong>marx</strong>.</p></li>
+<li><p>To see how the <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> and <strong>marx</strong> PSFs compare to the observed
+PSF for a far off-axis source.</p></li>
+</ul>
+<p>In this example, we will use the 1999 Chandra calibration observation
+of LMC X-1 observed about 25 arc-minutes off-axis with the ACIS
+detector (ObsID 1068). We download the data with <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/download_chandra_obsid.html">download_chandra_obsid</a>
+and reprocess it with <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/chandra_repro.html">chandra_repro</a>.</p>
+<p>The figure shows the source as seen in <a class="reference external" href="http://ds9.si.edu/">ds9</a>:</p>
+<figure class="align-center" id="id1">
+<span id="fig-ex-simobs-obspsf"></span><a class="reference internal image-reference" href="../../_images/obs1068_chandra.png"><img alt="The Chandra PSF at this position is an ellipse with spokes." src="../../_images/obs1068_chandra.png" style="width: 480.0px; height: 328.8px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> image of the PSF</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The crosshairs in <a class="reference internal" href="#fig-ex-simobs-obspsf"><span class="std std-ref">ds9 image of the PSF</span></a> mark the position where the
+support strut shadows meet
+as determined by eye: ra=84.91093 degrees, dec=-69.74348 degrees,
+(x,y)=(5256,6890). This coordinate will be used as the position of the
+source.  For this observation, this coordinate falls on ACIS-4 (S0).</p>
+<section id="creating-the-source-spectral-file">
+<h2>Creating the source spectral file<a class="headerlink" href="#creating-the-source-spectral-file" title="Link to this heading">¶</a></h2>
+<p>For an accurate simulation of an observed source, it is important to
+make the detector configuration match that of the observation as closely
+as possible.  And since the PSF is energy dependent, a rough idea
+of the energy dependence of the incident source flux must be obtained.
+There are several approaches to get this input spectrum. One way would be to
+extract the spectrum, fit a model using <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a>, <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>, or
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> and write an input file from the model as we did in several previous
+examples.</p>
+<p>Just to illustrate another approach, we will do something different here. (But
+do not worry if that looks like black magic to you; you can download the input
+spectrum file below or select another method to get the input spectrum.
+We just think it is instructive to show something slightly different in each
+example.)</p>
+<p>Here, we will simply extract the
+counts in a region containing the observed PSF and divide it by the
+effective area.  This is known as “flux-correction”, and involves no
+spectral fitting.  Strictly speaking, the validity of this technique
+assumes that the spectrum does not vary much over the scale of the RMF.</p>
+<p>The first step is to create the ARF to be used for the flux-correction.
+The creation of the ARF is straightforward via this Bourne shell script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="nv">X</span><span class="o">=</span><span class="m">5256</span>
+<span class="nv">Y</span><span class="o">=</span><span class="m">6890</span>
+
+<span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;1068/repro/acisf01068_repro_evt2.fits&quot;</span>
+<span class="nv">asolfile</span><span class="o">=</span><span class="s2">&quot;1068/repro/pcadf051708271N003_asol1.fits&quot;</span>
+<span class="nv">aspfile</span><span class="o">=</span><span class="s2">&quot;obs1068.asp&quot;</span>
+<span class="nv">arffile</span><span class="o">=</span><span class="s2">&quot;obs1068.arf&quot;</span>
+
+asphist<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asolfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$aspfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+<span class="c1"># It would be more accuarte to use mkwarf.</span>
+<span class="c1"># However, that&#39;s slower and for our purposes an approximate solution is good enough.</span>
+mkarf<span class="w"> </span><span class="nv">detsubsys</span><span class="o">=</span><span class="s2">&quot;ACIS-S0&quot;</span><span class="w"> </span><span class="nv">grating</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$arffile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">obsfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">asphistfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$aspfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">sourcepixelx</span><span class="o">=</span><span class="nv">$X</span><span class="w"> </span><span class="nv">sourcepixely</span><span class="o">=</span><span class="nv">$Y</span><span class="w"> </span><span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;0.3:8.0:0.1&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">maskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">pbkfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dafile</span><span class="o">=</span>NONE<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">verbose</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span>
+</pre></div>
+</div>
+<p>The next step is to extract the counts in the PSF and divide by the
+ARF to get the flux corrected spectrum.
+Here we show a way using only standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools; there are some comments
+on what’s happening in the scripts.</p>
+<p>First, create a region file containing the source events with
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmellipse.html">dmellipse</a>, and use <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmextract.html">dmextract</a> to create the PI histogram.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dmcopy<span class="w"> </span><span class="s2">&quot;1068/primary/acisf01068N003_evt2.fits.gz[EVENTS][bin x=4950:5530:1,y=6700:7100:1]&quot;</span><span class="w"> </span>image.fits<span class="w"> </span><span class="nv">option</span><span class="o">=</span>image<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmellipse<span class="w"> </span>image.fits<span class="w"> </span>psf90.reg<span class="w"> </span><span class="m">0</span>.9<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+<span class="c1"># We have to use the same energy binning in energy space here that we used for the arf!</span>
+<span class="c1"># So, first convert the PI to energy (to a precision that&#39;s good enough for this example.)</span>
+dmtcalc<span class="w"> </span><span class="s2">&quot;1068/repro/acisf01068_repro_evt2.fits[EVENTS][sky=region(psf90.reg)]&quot;</span><span class="w"> </span>obs1068_evt2_with_energy.fits<span class="w">  </span><span class="nv">expr</span><span class="o">=</span><span class="s2">&quot;energy=(float)pi*0.0149&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmextract<span class="w"> </span><span class="s2">&quot;obs1068_evt2_with_energy.fits[bin energy=.3:7.999:0.1]&quot;</span><span class="w"> </span>obs1068.spec<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">opt</span><span class="o">=</span>generic
+</pre></div>
+</div>
+<p>The energy binning of the ARF and extracted spectrum are the same. Thus, we can
+now calculate the corrected spectrum by dividing the flux by the effective
+area and exposure time.
+There is an extra factor of 0.9, because the ARF assumes that 100% of the
+PSF are included in the data extraction, while the ellipse above only contains
+90% of the counts. Also, we divide by the exposure time (about 1760 s).
+We make intermediary files to copy columns back and
+forth and write the spectrum out as an ASCII table in the end.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dmcopy<span class="w"> </span><span class="s2">&quot;obs1068.arf[cols energ_lo,energ_hi,specresp]&quot;</span><span class="w"> </span>input_spec.fits<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmpaste<span class="w"> </span>input_spec.fits<span class="w"> </span><span class="s2">&quot;obs1068.spec[cols counts]&quot;</span><span class="w"> </span>input_spec_1.fits<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmtcalc<span class="w"> </span>input_spec_1.fits<span class="w"> </span>input_spec_2.fits<span class="w">  </span><span class="nv">expr</span><span class="o">=</span><span class="s2">&quot;flux=counts/((float)specresp * 0.9*1759.8)&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+<span class="c1"># devide by binwidth to turn the flux int oa flux DENSITY for marx</span>
+dmtcalc<span class="w"> </span>input_spec_2.fits<span class="w"> </span>input_spec_3.fits<span class="w">  </span><span class="nv">expr</span><span class="o">=</span><span class="s2">&quot;fluxdens=flux/0.1&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmcopy<span class="w"> </span><span class="s2">&quot;input_spec_3.fits[cols energ_hi,fluxdens]&quot;</span><span class="w"> </span><span class="s2">&quot;input_spec_marx.tbl[opt kernel=text/simple]&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+dmcopy<span class="w"> </span><span class="s2">&quot;input_spec_3.fits[cols energ_lo,energ_hi,flux]&quot;</span><span class="w"> </span><span class="s2">&quot;input_spec_saotrace.tbl[opt kernel=text/simple]&quot;</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+<span class="c1"># We now use a combination of some of the most obscure UNIX tools to</span>
+<span class="c1"># bring the SAOTRACE input spectrum into the right format</span>
+<span class="c1"># see http://cxc.harvard.edu/cal/Hrma/RDB/FileFormat.html</span>
+<span class="c1"># Remove the leading &quot;#&quot; from the line with the column names</span>
+awk<span class="w"> </span><span class="s1">&#39;{ sub(/\# ENERG_LO/,&quot;ENERG_LO&quot;); print }&#39;</span><span class="w"> </span>&lt;<span class="w"> </span>input_spec_saotrace.tbl<span class="w"> </span>&gt;<span class="w"> </span>input_spec_saotrace.temp
+<span class="c1"># Then, replace spaces with tabs</span>
+tr<span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="se">\\</span>t<span class="w"> </span>&lt;<span class="w"> </span>input_spec_saotrace.temp<span class="w"> </span>&gt;<span class="w"> </span>input_spec_saotrace.rdb
+</pre></div>
+</div>
+<p>The resulting ASCII tables <a class="reference download internal" download="" href="../../_downloads/15ec7d2346b71cf3f06254dac6bece28/input_spec_marx.tbl"><code class="xref download docutils literal notranslate"><span class="pre">for</span> <span class="pre">marx</span></code></a> and
+<a class="reference download internal" download="" href="../../_downloads/061274f56e6fb574775ea1825fab4465/input_spec_saotrace.rdb"><code class="xref download docutils literal notranslate"><span class="pre">for</span> <span class="pre">SAOTrace/Chart</span></code></a> with the spectrum
+will be input into both <strong>marx</strong> and <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a>. The spectrum is the same, but
+the format of the tables is two columns (energy, flux <em>density</em>) for <strong>marx</strong> and
+three columns (lower energy, upper energy, flux) for <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> / <a class="reference external" href="http://cxc.harvard.edu/chart/description.html">ChaRT</a>.</p>
+</section>
+<section id="running-marx-without-saotrace">
+<h2>Running <strong>marx</strong> (without SAOTrace)<a class="headerlink" href="#running-marx-without-saotrace" title="Link to this heading">¶</a></h2>
+<p>Running <strong>marx</strong> for this example does not differ much from any of the previous
+examples. We use the <a class="reference internal" href="../../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a> parameter to input the source spectrum
+we estimated above and set the remaining parameters to match the setting of the
+observation for the pointing direction, exposure time, etc. To get the numbers
+we display the header (e.g. in <a class="reference external" href="http://ds9.si.edu/">ds9</a>) and manually look for the required fits
+header keywords (e.g. <code class="docutils literal notranslate"><span class="pre">EXPOSURE</span></code> for <a class="reference internal" href="../../inbrief/simsetup.html#parameter-ExposureTime"><code class="xref std std-par docutils literal notranslate"><span class="pre">ExposureTime</span></code></a>, <code class="docutils literal notranslate"><span class="pre">RA_NOM</span></code> for
+<a class="reference internal" href="../../inbrief/simsetup.html#parameter-RA_Nom"><code class="xref std std-par docutils literal notranslate"><span class="pre">RA_Nom</span></code></a>, etc.). Note the <a class="reference internal" href="../../inbrief/simsetup.html#parameter-TStart"><code class="xref std std-par docutils literal notranslate"><span class="pre">TStart</span></code></a> is given in seconds on the
+spacecraft clock as in the <code class="docutils literal notranslate"><span class="pre">TSTART</span></code> and <code class="docutils literal notranslate"><span class="pre">TSTOP</span></code> header keywords.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx<span class="w"> </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">1737</span><span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">51709004</span>.8724941462<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">GratingType</span><span class="o">=</span><span class="s1">&#39;NONE&#39;</span><span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s1">&#39;ACIS-S&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">85</span>.368613<span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span>-70.12585<span class="w"> </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">116</span>.86955<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">84</span>.91093<span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span>-69.74348<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s1">&#39;FILE&#39;</span><span class="w"> </span><span class="nv">DitherFile</span><span class="o">=</span><span class="s1">&#39;1068/repro/pcadf051708271N003_asol1.fits&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">SourceFlux</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s1">&#39;FILE&#39;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s1">&#39;input_spec_marx.tbl&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">OutputDir</span><span class="o">=</span><span class="s1">&#39;marx_only&#39;</span>
+
+marx2fits<span class="w"> </span>marx_only<span class="w"> </span>marx_only.fits
+</pre></div>
+</div>
+</section>
+<section id="running-saotrace-chart-and-marx">
+<h2>Running SAOTrace / Chart and <strong>marx</strong><a class="headerlink" href="#running-saotrace-chart-and-marx" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> is a high fidelity ray-trace of the Chandra mirrors, which
+simulates details of the mirror roughness and alignment that are only
+approximated in <strong>marx</strong> because these details are not important for almost all
+Chandra simulations and they require a much longer run time.</p>
+<p><a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> is a separate, stand-alone program that you need to download and
+install following the instructions in the <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> documentation at
+<a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/Raytrace/SAOTrace.html">http://cxc.harvard.edu/cal/Hrma/Raytrace/SAOTrace.html</a>. Alternatively, you can
+use <a class="reference external" href="http://cxc.harvard.edu/chart/description.html">ChaRT</a>, which is a web interface to <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a>. Using <a class="reference external" href="http://cxc.harvard.edu/chart/description.html">ChaRT</a> saves you
+the installation, but it is less flexible (e.g. it can only simulate single
+sources).</p>
+<p>Below, we use the installed version of <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a>, but to follow this example,
+you can equally well upload <a class="reference download internal" download="" href="../../_downloads/061274f56e6fb574775ea1825fab4465/input_spec_saotrace.rdb"><code class="xref download docutils literal notranslate"><span class="pre">input_spec_saotrace.rdb</span></code></a> to <cite>ChaRT</cite>.
+<a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> itself is a very complex system of many different parts. Here, we
+will explain the parameters used in this example, but we need to refer to the
+<a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> documentation for details.</p>
+<p>We define the source in a file called <code class="docutils literal notranslate"><span class="pre">saotrace_source.lua</span></code>:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">ra_pnt</span> <span class="o">=</span> <span class="mf">85.368613</span>
+<span class="n">dec_pnt</span> <span class="o">=</span> <span class="o">-</span><span class="mf">70.12585</span>
+<span class="n">roll_pnt</span> <span class="o">=</span> <span class="mf">116.86955</span>
+
+<span class="n">dither_asol_chandra</span><span class="p">{</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;1068/repro/pcadf051708271N003_asol1.fits&quot;</span><span class="p">,</span> 
+                     <span class="n">ra</span> <span class="o">=</span> <span class="n">ra_pnt</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">dec_pnt</span><span class="p">,</span> <span class="n">roll</span> <span class="o">=</span> <span class="n">roll_pnt</span> <span class="p">}</span>
+
+<span class="n">point</span><span class="p">{</span> <span class="n">position</span> <span class="o">=</span> <span class="p">{</span> <span class="n">ra</span> <span class="o">=</span> <span class="mf">84.91093</span><span class="p">,</span>
+          <span class="n">dec</span> <span class="o">=</span> <span class="o">-</span><span class="mf">69.74348</span><span class="p">,</span>
+          <span class="n">ra_aimpt</span> <span class="o">=</span> <span class="n">ra_pnt</span><span class="p">,</span>
+          <span class="n">dec_aimpt</span> <span class="o">=</span> <span class="n">dec_pnt</span><span class="p">,</span>
+       <span class="p">},</span>
+       <span class="n">spectrum</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{</span> <span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;input_spec_saotrace.rdb&quot;</span><span class="p">,</span> 
+                      <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;photons/s/cm2&quot;</span><span class="p">,</span> 
+                      <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+                      <span class="n">format</span> <span class="o">=</span> <span class="s2">&quot;rdb&quot;</span><span class="p">,</span>
+                      <span class="n">emin</span> <span class="o">=</span> <span class="s2">&quot;ENERG_LO&quot;</span><span class="p">,</span>
+                      <span class="n">emax</span> <span class="o">=</span> <span class="s2">&quot;ENERG_HI&quot;</span><span class="p">,</span>
+                      <span class="n">flux</span> <span class="o">=</span> <span class="s2">&quot;FLUX&quot;</span><span class="p">}</span> <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>and run <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> with the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>trace-nest<span class="w">                    </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">tag</span><span class="o">=</span>saotrace<span class="w">                  </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">srcpars</span><span class="o">=</span>saotrace_source.lua<span class="w">   </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">tstart</span><span class="o">=</span><span class="m">51709004</span>.8724941462<span class="w">   </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">limit</span><span class="o">=</span><span class="m">1759</span>.8607333824<span class="w">  </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">limit_type</span><span class="o">=</span>sec
+</pre></div>
+</div>
+<p>This gives us a ray file called <a class="reference download internal" download="" href="../../_downloads/aa21943e892e1327c54e544dd50b5c79/saotrace.fits"><code class="xref download docutils literal notranslate"><span class="pre">saotrace.fits</span></code></a>. We take this file as
+input for <strong>marx</strong> using <a class="reference internal" href="../../indetail/models.html#parameter-SourceType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceType=&quot;SAOSAC&quot;</span></code></a> and
+<a class="reference internal" href="../../indetail/models.html#parameter-SAOSACFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SAOSACFile=&quot;saotrace.fits&quot;</span></code></a>. All the remaining parameters for the
+exposure time, pointing direction etc. are the same as above:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx<span class="w"> </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">1737</span><span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">51709004</span>.8724941462<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">GratingType</span><span class="o">=</span><span class="s1">&#39;NONE&#39;</span><span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s1">&#39;ACIS-S&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">85</span>.368613<span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span>-70.12585<span class="w"> </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">116</span>.86955<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">84</span>.91093<span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span>-69.74348<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s1">&#39;FILE&#39;</span><span class="w"> </span><span class="nv">DitherFile</span><span class="o">=</span><span class="s1">&#39;1068/repro/pcadf051708271N003_asol1.fits&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">SourceFlux</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">SourceType</span><span class="o">=</span><span class="s1">&#39;SAOSAC&#39;</span><span class="w"> </span><span class="nv">SAOSACFile</span><span class="o">=</span><span class="s1">&#39;saotrace.fits&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">OutputDir</span><span class="o">=</span><span class="s1">&#39;marx_saotrace&#39;</span>
+
+marx2fits<span class="w"> </span>marx_saotrace<span class="w"> </span>marx_saotrace.fits
+</pre></div>
+</div>
+<p>As a last step, we will apply a GTI filter to the output, because the asol
+file, which contains the “aspect solution” (describing where exactly Chandra
+points at any one time), can have a short period of time in the beginning, when
+the telescope is still slewing.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dmcopy<span class="w"> </span><span class="s2">&quot;marx_saotrace.fits[@1068/repro/acisf01068_repro_evt2.fits[GTI4]]&quot;</span><span class="w"> </span>marx_saotrace-filtered.fits
+</pre></div>
+</div>
+</section>
+<section id="comparing-the-results">
+<h2>Comparing the results<a class="headerlink" href="#comparing-the-results" title="Link to this heading">¶</a></h2>
+<p>We can now use <a class="reference external" href="http://ds9.si.edu/">ds9</a> to compare the observation with the two simulated event
+lists:</p>
+<figure class="align-center" id="id2">
+<span id="fig-ex-simobs-simpsf"></span><a class="reference internal image-reference" href="../../_images/compare_sims.png"><img alt="Three very similar PSFs." src="../../_images/compare_sims.png" style="width: 800.0px; height: 500.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> image of the PSF in the observation (top left), the simulation using
+only <strong>marx</strong> (top right), and the simulation using <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> to trace the
+mirror and <strong>marx</strong> as the instrument model (bottom left).</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The structure of the PSFs is very similar, emphasizing how good both mirror
+models are. On closer inspection, there is a small shadow just above and to the
+right of the point where the support strut shadows meet. This feature is a
+little smaller in <strong>marx</strong> than in <a class="reference external" href="http://cxc.harvard.edu/cal/Hrma/SAOTrace.html">SAOTrace</a> or the real data due to the
+simplification that the <strong>marx</strong> mirror model makes. However, very few point
+sources are observed long enough this far off-axis that these tiny differences
+actually matter.</p>
+<p>So, we can see from this comparison that <strong>marx</strong> is the tool of choice for
+almost all Chandra simulations.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Replicating a Chandra Observation / Using ChaRT or SAOTrace</a><ul>
+<li><a class="reference internal" href="#creating-the-source-spectral-file">Creating the source spectral file</a></li>
+<li><a class="reference internal" href="#running-marx-without-saotrace">Running <strong>marx</strong> (without SAOTrace)</a></li>
+<li><a class="reference internal" href="#running-saotrace-chart-and-marx">Running SAOTrace / Chart and <strong>marx</strong></a></li>
+<li><a class="reference internal" href="#comparing-the-results">Comparing the results</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../background/background.html"
+                          title="previous chapter">Including background in a <strong>marx</strong> simulation</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../../indetail/docs.html"
+                          title="next chapter">Detailed information on MARX</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../../indetail/docs.html" title="Detailed information on MARX"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../background/background.html" title="Including background in a marx simulation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Replicating a Chandra Observation / Using ChaRT or SAOTrace</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

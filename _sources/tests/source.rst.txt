@@ -1,0 +1,111 @@
+.. _sect-tests.source:
+
+Sources in |marx|
+=============================================================================
+
+|marx| offers several different source shapes. Tests in this module exercise
+those sources (except ``SAOSAC``, which is heavily used in
+:ref:`sect-tests.PSF` already).
+
+
+
+
+
+
+.. _sect-test-GeometricSources:
+
+Build-in geometric sources
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-GeometricSources`
+
+This test exercises build-in |marx| sources with different geometric
+shapes.
+Most source types have parameters, and not all parameters are tested here.
+See :ref:`sect-sourcemodels` for a detailed description of source
+parameters.
+
+
+
+
+.. figure:: figures/GeometricSources_ds9.*
+   :align: center
+   :alt: Six PSFs.
+   :scale: 75%
+
+
+
+   `ds9`_ image of the simulated PSFs in alphabetical order (beta distribution, disk, disk with hole, Gauss, line, and point).
+
+
+
+
+
+
+
+.. _sect-test-ImageSource:
+
+Image as source
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-ImageSource`
+
+An image can be used as |marx| input. In this case, the intensity of the
+X-ray radiation on that sky is taken to be proportional to the value of the
+image at that point.
+
+
+
+
+.. figure:: figures/ImageSource_ds9.*
+   :align: center
+   :alt: The simulated events generally follow the input image, but with significant noise because of the short observation time.
+   :scale: 75%
+
+
+
+   `ds9`_ shows the input image (left) and the simulated event list (right).
+
+
+
+
+
+
+
+.. _sect-test-UserSource:
+
+Compiling a USER source
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-UserSource`
+
+Run an example for a USER source.
+
+|marx| comes with several examples for user written source in C.
+These can be compiled as shared objects and dynamically linked into |marx|
+at run time.
+To test this, we copy one of the source files from the installed |marx|
+version and compile it with gcc. This particular case is not very useful,
+because |marx| already has a point source with the same properties
+build-in. The purpose of this test is only to have an automatic check that
+the dynamic linking works.
+
+
+
+
+.. figure:: figures/UserSource_ds9.*
+   :align: center
+   :alt: A point source
+   :scale: 75%
+
+
+
+   `ds9`_ shows that the distribution of source is indeed a point source.
+
+
+
+
+

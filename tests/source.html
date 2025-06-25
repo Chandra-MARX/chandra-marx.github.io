@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sources in marx &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Coordinates on the sky and the chip" href="positions.html" />
+    <link rel="prev" title="Reproducing an input spectrum" href="spectrum.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="positions.html" title="Coordinates on the sky and the chip"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spectrum.html" title="Reproducing an input spectrum"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U"><strong>marx</strong> accuracy and testing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Sources in <strong>marx</strong></a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="sources-in-marx">
+<span id="sect-tests-source"></span><h1>Sources in <strong>marx</strong><a class="headerlink" href="#sources-in-marx" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> offers several different source shapes. Tests in this module exercise
+those sources (except <code class="docutils literal notranslate"><span class="pre">SAOSAC</span></code>, which is heavily used in
+<a class="reference internal" href="PSF.html#sect-tests-psf"><span class="std std-ref">Point Spread Function (PSF)</span></a> already).</p>
+<section id="build-in-geometric-sources">
+<span id="sect-test-geometricsources"></span><h2>Build-in geometric sources<a class="headerlink" href="#build-in-geometric-sources" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/GeometricSources.html#test-code-geometricsources"><span class="std std-ref">Build-in geometric sources</span></a></p>
+</dd>
+</dl>
+<p>This test exercises build-in <strong>marx</strong> sources with different geometric
+shapes.
+Most source types have parameters, and not all parameters are tested here.
+See <a class="reference internal" href="../indetail/models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a> for a detailed description of source
+parameters.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="../_images/GeometricSources_ds9.png"><img alt="Six PSFs." src="../_images/GeometricSources_ds9.png" style="width: 600.0px; height: 411.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> image of the simulated PSFs in alphabetical order (beta distribution, disk, disk with hole, Gauss, line, and point).</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="image-as-source">
+<span id="sect-test-imagesource"></span><h2>Image as source<a class="headerlink" href="#image-as-source" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/ImageSource.html#test-code-imagesource"><span class="std std-ref">Image as source</span></a></p>
+</dd>
+</dl>
+<p>An image can be used as <strong>marx</strong> input. In this case, the intensity of the
+X-ray radiation on that sky is taken to be proportional to the value of the
+image at that point.</p>
+<figure class="align-center" id="id2">
+<a class="reference internal image-reference" href="../_images/ImageSource_ds9.png"><img alt="The simulated events generally follow the input image, but with significant noise because of the short observation time." src="../_images/ImageSource_ds9.png" style="width: 600.0px; height: 411.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> shows the input image (left) and the simulated event list (right).</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="compiling-a-user-source">
+<span id="sect-test-usersource"></span><h2>Compiling a USER source<a class="headerlink" href="#compiling-a-user-source" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">code<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="code/UserSource.html#test-code-usersource"><span class="std std-ref">Compiling a USER source</span></a></p>
+</dd>
+</dl>
+<p>Run an example for a USER source.</p>
+<p><strong>marx</strong> comes with several examples for user written source in C.
+These can be compiled as shared objects and dynamically linked into <strong>marx</strong>
+at run time.
+To test this, we copy one of the source files from the installed <strong>marx</strong>
+version and compile it with gcc. This particular case is not very useful,
+because <strong>marx</strong> already has a point source with the same properties
+build-in. The purpose of this test is only to have an automatic check that
+the dynamic linking works.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/UserSource_ds9.png"><img alt="A point source" src="../_images/UserSource_ds9.png" style="width: 600.0px; height: 411.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><a class="reference external" href="http://ds9.si.edu/">ds9</a> shows that the distribution of source is indeed a point source.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sources in <strong>marx</strong></a><ul>
+<li><a class="reference internal" href="#build-in-geometric-sources">Build-in geometric sources</a></li>
+<li><a class="reference internal" href="#image-as-source">Image as source</a></li>
+<li><a class="reference internal" href="#compiling-a-user-source">Compiling a USER source</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="spectrum.html"
+                          title="previous chapter">Reproducing an input spectrum</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="positions.html"
+                          title="next chapter">Coordinates on the sky and the chip</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="positions.html" title="Coordinates on the sky and the chip"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spectrum.html" title="Reproducing an input spectrum"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" ><strong>marx</strong> accuracy and testing</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Sources in <strong>marx</strong></a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

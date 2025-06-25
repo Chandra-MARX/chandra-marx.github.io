@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating a user-defined CCD spectrum with ACIS &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Simulating a thermal plasma with the HETGS grating" href="../aped/aped.html" />
+    <link rel="prev" title="Examples of MARX in use" href="../examples.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../aped/aped.html" title="Simulating a thermal plasma with the HETGS grating"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../examples.html" title="Examples of MARX in use"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating a user-defined CCD spectrum with ACIS</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simulating-a-user-defined-ccd-spectrum-with-acis">
+<span id="sect-ex-acisccd"></span><h1>Simulating a user-defined CCD spectrum with ACIS<a class="headerlink" href="#simulating-a-user-defined-ccd-spectrum-with-acis" title="Link to this heading">¶</a></h1>
+<p>The purpose of this example is to show how to use <strong>marx</strong> to simulate an ACIS
+observation of a point source with a user-specified spectrum.  For
+simplicity, suppose that we wish to simulate a 3000 ksec observation of
+an on-axis point source whose spectrum is represented by an absorbed powerlaw,
+with a spectral index of 1.8, and a column density of 10^22 atoms/cm^2.
+The normalization of the powerlaw will be set to 0.001
+photons/keV/cm^2/s at 1 keV.  The large exposure time was chosen to
+illustrate the consistency of the <strong>marx</strong> ray trace with that of the
+underlying calibration data.</p>
+<section id="creating-the-spectral-file">
+<h2>Creating the spectral file<a class="headerlink" href="#creating-the-spectral-file" title="Link to this heading">¶</a></h2>
+<p>The first step is to create a 2-column text file that tabulates
+the flux [photons/sec/keV/cm^2] (second column) as a
+function of energy [keV] (first column).  The easiest way to create
+such a file is to make use of a spectral modeling program such as <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>,
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> or <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSpec</a>.   The rest of this tutorial is given in the context of
+<a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>.</p>
+<p>In <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> the absorbed powerlaw model is specified using:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fit_fun(&quot;phabs(1)*powerlaw(1)&quot;);
+set_par(1, 1);
+set_par(2, 0.001);
+set_par(3, 1.8);
+save_par (&quot;plaw.p&quot;);
+list_par;
+</pre></div>
+</div>
+<p>The model parameters lists by <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> should look like this:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phabs(1)*powerlaw (1)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     0                1           0      100000  10^22
+  2  powerlaw(1).norm       0     0            0.001           0        0.01
+  3  powerlaw(1).PhoIndex   0     0              1.8           1           3
+</pre></div>
+</div>
+<p>The next step is to convert the parameter file <code class="docutils literal notranslate"><span class="pre">plaw.p</span></code> to the
+spectrum file that <strong>marx</strong> expects.  The <a class="reference internal" href="../../Reference/tools.html#marxflux"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxflux</span></code></a> script may be used to
+create a file called <a class="reference download internal" download="" href="../../_downloads/88be3080551afb20f87f154e7adcce42/plawflux.tbl"><code class="xref download docutils literal notranslate"><span class="pre">plawflux.tbl</span></code></a> in the appropriate format via:</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>marxflux -e &#39;[0.3:12.0:0.003]&#39; plaw.p plawflux.tbl
+</pre></div>
+</div>
+<p>This script requires <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> to be installed and linked to at least
+version 2.1 of the <a class="reference external" href="http://www.jedsoft.org/slang/">S-Lang</a> library.  (For <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSpec</a> users, <strong>marx</strong> is distributed with a
+script called <a class="reference internal" href="../../Reference/tools.html#xspec2marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">xspec2marx</span></code></a> that may be used to create such a file,
+and <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a> users find instructions here:
+<a class="reference external" href="http://cxc.harvard.edu/sherpa/threads/marx/">http://cxc.harvard.edu/sherpa/threads/marx/</a> ).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">plawflux.tbl</span></code> file is input to <strong>marx</strong> using the following
+<code class="docutils literal notranslate"><span class="pre">marx.par</span></code> parameters:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>SpectrumType=FILE
+SpectrumFile=plawflux.tbl
+SourceFlux=-1
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../indetail/models.html#parameter-SpectrumType"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumType</span></code></a> parameter is set to <code class="docutils literal notranslate"><span class="pre">FILE</span></code> to indicate that
+<strong>marx</strong> is to read the spectrum from the file specified by the
+<a class="reference internal" href="../../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a> parameter.  The <a class="reference internal" href="../../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameter may be
+used to indicate the integrated flux of the spectrum.  The value of <code class="docutils literal notranslate"><span class="pre">-1</span></code>
+as given above means that the integrated flux is to be taken from the
+file.</p>
+</section>
+<section id="running-marx">
+<h2>Running marx<a class="headerlink" href="#running-marx" title="Link to this heading">¶</a></h2>
+<p>The next step is to run <strong>marx</strong> in the desired configuration.  Some
+prefer to use tools such as <a class="reference internal" href="../../Reference/tools.html#pset"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">pset</span></code></a> to update the <code class="docutils literal notranslate"><span class="pre">marx.par</span></code>
+file and then run <strong>marx</strong>.  Here, the parameters will be explicitly
+passed to <strong>marx</strong> via the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;plawflux.tbl&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">ExposureTime</span><span class="o">=</span><span class="m">3000000</span><span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">2012</span>.5<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">OutputDir</span><span class="o">=</span>plaw<span class="w"> </span><span class="nv">GratingType</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span><span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span><span class="w"> </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span><span class="m">40</span><span class="w"> </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">30</span><span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">Verbose</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h
+</pre></div>
+</div>
+<p>This will run the simulation and place the results in a subdirectory
+called <code class="docutils literal notranslate"><span class="pre">plaw</span></code>.  The results may be converted to a standard Chandra
+level-2 fits file by the <a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> program:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx2fits<span class="w"> </span>plaw<span class="w"> </span>plaw_evt2.fits
+</pre></div>
+</div>
+<p>The resulting fits file <code class="docutils literal notranslate"><span class="pre">plaw_evt2.fits</span></code> may be further processed
+with standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools.  As some of these tools require the aspect
+history, the <a class="reference internal" href="../../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> program will be used to create an aspect
+solution file that matches the simulation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;plaw&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;plaw_asol1.fits&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="creating-ciao-based-arfs-and-rmfs-for-marx-simulations">
+<span id="ex-ciao"></span><h2>Creating CIAO-based ARFs and RMFs for MARX Simulations<a class="headerlink" href="#creating-ciao-based-arfs-and-rmfs-for-marx-simulations" title="Link to this heading">¶</a></h2>
+<p>Armed with the simulated event file <code class="docutils literal notranslate"><span class="pre">plaw_evt2.fits</span></code> and the aspect
+solution file <code class="docutils literal notranslate"><span class="pre">plaw_asol1.fits</span></code>, a PHA file, ARF and RMF may be
+made using the standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools. First, extract the PHA data. The <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/asphist.html">asphist</a> CIAO
+tool may be used to create an aspect histogram from an aspect solution
+file, as seen in this Bourne shell script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extraction region parameters: circle of radius R at (X,Y)</span>
+<span class="nv">X</span><span class="o">=</span><span class="m">4096</span>.5
+<span class="nv">Y</span><span class="o">=</span><span class="m">4096</span>.5
+<span class="nv">R</span><span class="o">=</span><span class="m">20</span>.0<span class="p">;</span>
+
+<span class="nv">phagrid</span><span class="o">=</span><span class="s2">&quot;pi=1:1024:1&quot;</span>
+
+<span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;plaw_evt2.fits&quot;</span>
+<span class="nv">asolfile</span><span class="o">=</span><span class="s2">&quot;plaw_asol1.fits&quot;</span>
+<span class="nv">phafile</span><span class="o">=</span><span class="s2">&quot;plaw_pha.fits&quot;</span>
+<span class="nv">rmffile</span><span class="o">=</span><span class="s2">&quot;plaw_rmf.fits&quot;</span>
+<span class="nv">arffile</span><span class="o">=</span><span class="s2">&quot;plaw_arf.fits&quot;</span>
+<span class="nv">asphistfile</span><span class="o">=</span><span class="s2">&quot;plaw_asp.fits&quot;</span>
+
+asphist<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asolfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asphistfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">verbose</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+dmextract<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">[sky=Circle(</span><span class="nv">$X</span><span class="s2">,</span><span class="nv">$Y</span><span class="s2">,</span><span class="nv">$R</span><span class="s2">)][bin </span><span class="nv">$phagrid</span><span class="s2">]&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$phafile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">verbose</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+</pre></div>
+</div>
+<p>While <strong>marx</strong> strives to accurately model of the Chandra Observatory, there
+are some differences that need to be taken into account when
+processing <strong>marx</strong> generated data with <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>.  As described in <a class="reference internal" href="../../inbrief/caveats.html#caveats"><span class="std std-ref">Current caveats for MARX</span></a>
+page, <strong>marx</strong> does not incorporate the
+non-uniformity maps for the ACIS detector, nor does it employ the
+spatially varying CTI-corrected pha redistribution matrices (RMFs).
+As such there will be systematic differences between the <strong>marx</strong> ACIS
+effective area and that of the <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkarf.html">mkarf</a> CIAO tool when run in its
+default mode.  Similarly, the mapping from energy to pha by <strong>marx</strong> will
+be different from that predicted by <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkacisrmf.html">mkacisrmf</a>.</p>
+<section id="creating-an-arf-to-match-a-marx-simulation">
+<h3>Creating an ARF to match a marx simulation<a class="headerlink" href="#creating-an-arf-to-match-a-marx-simulation" title="Link to this heading">¶</a></h3>
+<p>As mentioned above, <strong>marx</strong> does not implement the ACIS QE uniformity
+maps.  The following commands show how to set the <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkarf.html">mkarf</a> parameters
+to produce an ARF that is consistent with the <strong>marx</strong> effective area (this
+continues the Bourne shell script from the last paragraph):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select a CCD.</span>
+<span class="nv">ccdid</span><span class="o">=</span><span class="m">7</span><span class="p">;</span>
+
+<span class="nv">detname</span><span class="o">=</span><span class="s2">&quot;ACIS-</span><span class="nv">$ccdid</span><span class="s2">;UNIFORM;bpmask=0&quot;</span>
+<span class="nv">grating</span><span class="o">=</span><span class="s2">&quot;NONE&quot;</span>
+<span class="c1"># For ACIS-I, use engrid=&quot;0.3:11.0:0.003&quot;. This reflects a limitation of mkrmf.</span>
+<span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;0.3:12.0:0.003&quot;</span>
+
+mkarf<span class="w"> </span><span class="nv">mirror</span><span class="o">=</span><span class="s2">&quot;hrma&quot;</span><span class="w"> </span><span class="nv">detsubsys</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$detname</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">grating</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$grating</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$arffile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">obsfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$evtfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$engrid</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">asphistfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$asphistfile</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">sourcepixelx</span><span class="o">=</span><span class="nv">$X</span><span class="w"> </span><span class="nv">sourcepixely</span><span class="o">=</span><span class="nv">$Y</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">maskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">pbkfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dafile</span><span class="o">=</span>NONE<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">verbose</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+</pre></div>
+</div>
+<p>Notice the settings <code class="docutils literal notranslate"><span class="pre">detsubsys=&quot;ACIS-7;uniform;bpmask=0&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">maskfile=NONE</span>
+<span class="pre">pbkfile=NONE</span> <span class="pre">dafile=NONE</span></code> that are different from the way a normal Chandra
+observation would be processed.</p>
+</section>
+<section id="creating-an-rmf-to-match-a-marx-simulation">
+<h3>Creating an RMF to match a marx simulation<a class="headerlink" href="#creating-an-rmf-to-match-a-marx-simulation" title="Link to this heading">¶</a></h3>
+<p><strong>marx</strong> maps energies to phas using the FEF gaussian parametrization utilized by
+the <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> CIAO tool.  The newer <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkacisrmf.html">mkacisrmf</a> tool uses a more
+complicated convolution model that does not appear to permit a fast,
+memory-efficient random number generation algorithm that <strong>marx</strong> would
+require.  In contrast, a gaussian-distributed random number generator
+is all that is required to produce pha values that are consistent with
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> generated responses.</p>
+<p>The Chandra CALDB includes several FEF files.  The one that
+<strong>marx</strong> currently employs is
+<code class="docutils literal notranslate"><span class="pre">acisD2000-01-29fef_phaN0005.fits</span></code>, and is located in
+the <code class="docutils literal notranslate"><span class="pre">$CALDB/data/chandra/acis/cpf/fefs/</span></code> directory.  This file must
+be specified as the <code class="docutils literal notranslate"><span class="pre">infile</span></code> <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> parameter.</p>
+<p>For a point source simulation, look at the <a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> generated event
+file and find the average chip coordinates.  The CIAO <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmstat.html">dmstat</a> tool
+may be used for this purpose.  The <code class="docutils literal notranslate"><span class="pre">CCD_ID</span></code> and the mean chip
+coordinates are important for the creation of the filter that will be
+passed to <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> to select the appropriate FEF tile.  For simplicity
+suppose that the mean point source detector location is at (308,494)
+on ACIS-7.  Then run <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a> using (continuing the shell script form above):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mean chip position</span>
+<span class="nv">chipx</span><span class="o">=</span><span class="m">221</span><span class="p">;</span>
+<span class="nv">chipy</span><span class="o">=</span><span class="m">532</span><span class="p">;</span>
+
+<span class="nv">fef</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$CALDB</span><span class="s2">/data/chandra/acis/fef_pha/acisD2000-01-29fef_phaN0005.fits&quot;</span>
+
+<span class="nv">cxfilter</span><span class="o">=</span><span class="s2">&quot;chipx_hi&gt;=</span><span class="nv">$chipx</span><span class="s2">,chipx_lo&lt;=</span><span class="nv">$chipx</span><span class="s2">&quot;</span>
+<span class="nv">cyfilter</span><span class="o">=</span><span class="s2">&quot;chipy_hi&gt;=</span><span class="nv">$chipy</span><span class="s2">,chipy_lo&lt;=</span><span class="nv">$chipy</span><span class="s2">&quot;</span>
+mkrmf<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$fef</span><span class="s2">[ccd_id=</span><span class="nv">$ccdid</span><span class="s2">,</span><span class="nv">$cxfilter</span><span class="s2">,</span><span class="nv">$cyfilter</span><span class="s2">]&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$rmffile</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">axis1</span><span class="o">=</span><span class="s2">&quot;energy=</span><span class="nv">$engrid</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">axis2</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$phagrid</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">thresh</span><span class="o">=</span>1e-8<span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">verbose</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Notice, how the FEF file is set explicitly to
+<code class="docutils literal notranslate"><span class="pre">fef=&quot;$CALDB/data/chandra/acis/cpf/fefs/acisD2000-01-29fef_phaN0005.fits&quot;</span></code>
+and that the correct tile of that FEF file is chosen with
+<code class="docutils literal notranslate"><span class="pre">fef[ccd_id=7,chipx_hi&gt;=221,chipx_lo&lt;=221,chipy_hi&gt;=532,chipy_lo&lt;=532]</span></code></p>
+<p>See the <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> threads for other ways of running <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/mkrmf.html">mkrmf</a>.  The important
+thing is to specify the correct FEF and tile.</p>
+</section>
+</section>
+<section id="analyzing-the-simulated-data">
+<h2>Analyzing the simulated data<a class="headerlink" href="#analyzing-the-simulated-data" title="Link to this heading">¶</a></h2>
+<p>The PHA, ARF, and RMF files may
+be used in a spectral modelling program such as <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> to see whether or
+not one can reach the desired science goal from the simulated
+observation.  For this example, the goal is to verify that the marx
+simulation is consistent with the input spectrum.  To this end, <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a>
+will be used to fit an absorbed powerlaw to the pha spectrum.  The
+figure below showing the resulting fit was created via the following
+ISIS script:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>load_dataset (&quot;plaw_pha.fits&quot;, &quot;plaw_rmf.fits&quot;, &quot;plaw_arf.fits&quot;);
+rebin_data (1, 30);
+xnotice_en (1, 0.3, 11);
+fit_fun(&quot;phabs(1)*powerlaw(1)&quot;);
+set_par(1,1,1);
+fit_counts;
+list_par;
+plot_open(&quot;plawfit.ps/CPS&quot;);
+xrange(0.3,11);
+rplot_counts (1);
+plot_close ();
+</pre></div>
+</div>
+<p>This script produced the following parameter values with a reduced
+chi-square of 1.2:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> Parameters[Variable] = 3[2]
+            Data bins = 600
+           Chi-square = 722.847
+   Reduced chi-square = 1.208774
+phabs(1)*powerlaw(1)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     1                1           0      100000  10^22
+  2  powerlaw(1).norm       0     0      0.001003397           0       1e+10
+  3  powerlaw(1).PhoIndex   0     0         1.826904          -2           9
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">rplot_counts</span></code> may be used to produce a plot of the resulting
+fit.</p>
+<img alt="Plot of the spectrum" src="../../_images/plawfit.png" />
+<p>The residuals show that the model is systematically high for some
+energies.  The reason for this can be traced back to energy-dependent
+scattering where photons are scattered outside the extraction region.
+The CIAO effective area does not include this loss factor, and as a
+result, this omission appears in the residuals.  This effect is
+apparant because of the enormous number of counts in this simulation.</p>
+</section>
+</section>
+<section id="simulating-pile-up-in-an-acis-ccd-spectrum">
+<h1>Simulating pile-up in an ACIS CCD spectrum<a class="headerlink" href="#simulating-pile-up-in-an-acis-ccd-spectrum" title="Link to this heading">¶</a></h1>
+<p>The purpose of this example is to show how to to use the <a class="reference internal" href="../../Reference/tools.html#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a>
+program to simulate the effects of pileup. It is a post-processor that
+performs a frame-by-frame analysis of an existing <strong>marx</strong> simulation.
+We continue the example from above, where the spectrum had a
+somewhat large normalization to ensure that pileup would occur.</p>
+<section id="creating-an-event-file-with-pile-up">
+<h2>Creating an event file with pile-up<a class="headerlink" href="#creating-an-event-file-with-pile-up" title="Link to this heading">¶</a></h2>
+<p><a class="reference internal" href="../../Reference/tools.html#marxpileup"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxpileup</span></code></a> can be run on the eventfile generated by <strong>marx</strong> using:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxpileup<span class="w"> </span><span class="nv">MarxOutputDir</span><span class="o">=</span>plaw
+</pre></div>
+</div>
+<p>This will create a directory called <code class="docutils literal notranslate"><span class="pre">plaw/pileup/</span></code> and place the
+pileup results there.  It also writes a brief summary to the display
+resembling:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Total Number Input: 770961
+Total Number Detected: 482771
+Efficiency: 6.261938e-01
+</pre></div>
+</div>
+<p>This shows that because of pileup, nearly 40 percent of the events
+were lost.</p>
+<p>The next step is to run <a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a> to create a
+corresponding level-2 file called <code class="docutils literal notranslate"><span class="pre">plaw_pileup_evt2.fits</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx2fits<span class="w"> </span>--pileup<span class="w"> </span>plaw/pileup<span class="w"> </span>plaw_pileup_evt2.fits
+</pre></div>
+</div>
+<p>Since this is a pileup simulation, the <code class="docutils literal notranslate"><span class="pre">--pileup</span></code> flag was passed
+to <a class="reference internal" href="../../Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>.</p>
+<p>In this case we can use the same ARF and RMF as above. However,
+it is necessary to create a new PHA file from the
+<code class="docutils literal notranslate"><span class="pre">plaw_pileup_evt2.fits</span></code> event file.  For analyzing a piled
+observation of a near on-axis point source, it is recommended that the
+extraction region have a radius of 4 ACIS tangent plane pixels.  A
+Bourne shell script that runs <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/dmextract.html">dmextract</a> to produce the PHA file
+<code class="docutils literal notranslate"><span class="pre">plaw_pileup_pha.fits</span></code> is <a class="reference download internal" download="" href="../../_downloads/5f468c7a501504b7d79eb62f84042eb8/pileup_ciao.sh"><code class="xref download docutils literal notranslate"><span class="pre">pileup_ciao.sh</span></code></a>.</p>
+</section>
+<section id="id1">
+<h2>Analyzing the simulated data<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>As before, <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> will be used to analyze the piled spectrum.</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>load_dataset (&quot;plaw_pileup_pha.fits&quot;, &quot;plaw_rmf.fits&quot;, &quot;plaw_arf.fits&quot;);
+rebin_data (1, 30);
+xnotice_en (1, 0.3, 11.0);
+fit_fun(&quot;phabs(1)*powerlaw(1)&quot;);
+set_par (1, 1, 1);                     %  freeze nH
+fit_counts;
+list_par;
+</pre></div>
+</div>
+<p>The fit produces a rather large chi-square per dof of more than 7.5:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> Parameters[Variable] = 3[2]
+            Data bins = 659
+           Chi-square = 4946.838
+   Reduced chi-square = 7.529434
+phabs(1)*powerlaw(1)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     1                1           0      100000  10^22
+  2  powerlaw(1).norm       0     0     0.0004742587           0       1e+10
+  3  powerlaw(1).PhoIndex   0     0         1.593586          -2           9
+</pre></div>
+</div>
+<p>Note also that the parameters are different
+from the power-law parameters that went into the simulation.  For
+example, the normalization is less than half of what was expected, and the
+powerlaw index is somewhat low compared to the expected value of 1.8.
+In fact, the <code class="docutils literal notranslate"><span class="pre">conf</span></code> function shows that the 99 percent confidence
+interval on the powerlaw index is from 1.59 to 1.62.</p>
+<p>Suspecting that this observation suffers from pileup, we enable the
+<a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> pileup kernel, which introduces a few additional parameters:</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>set_kernel (1, &quot;pileup&quot;);
+list_par;
+</pre></div>
+</div>
+<p>which gives:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phabs(1)*powerlaw(1)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     1                1           0      100000  10^22
+  2  powerlaw(1).norm       0     0     0.0004742587           0       1e+10
+  3  powerlaw(1).PhoIndex   0     0         1.593586          -2           9
+  4  pileup(1).nregions     0     1                1           1          10
+  5  pileup(1).g0           0     1                1           0           1
+  6  pileup(1).alpha        0     0              0.5           0           1
+  7  pileup(1).psffrac      0     1             0.95           0           1
+</pre></div>
+</div>
+<p>Given the fact that the PSF fraction varies with
+off-axis angle and spectral shape, we will allow it to vary during the
+fit:</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>thaw (7);
+</pre></div>
+</div>
+<p>As before, the <code class="docutils literal notranslate"><span class="pre">fit_counts</span></code> command may be used to compute the best
+fit parameters.  However, the parameter space in the context of the
+pileup kernel is very complex with many local minima, even for a
+function as simple as an absorbed powerlaw.  For this reason it is
+strongly recommended that pileup fits be performed many times with
+different initial values for the parameters to better explore the
+parameter space.  The easiest way to do this in <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> is to use the
+<code class="docutils literal notranslate"><span class="pre">fit_search</span></code> function, which randomly samples the parameter space
+by choosing parameter values uniformly distributed between their
+minimum and maximum parameter values.  Before starting, let’s set
+the powerlaw normalization’s maximum value to something reasonable:</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>set_par (2; max=0.01);
+list_par;
+</pre></div>
+</div>
+<p>The above produces:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>phabs(1)*powerlaw(1)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     1                1           0      100000  10^22
+  2  powerlaw(1).norm       0     0     0.0004742587           0        0.01
+  3  powerlaw(1).PhoIndex   0     0         1.593586          -2           9
+  4  pileup(1).nregions     0     1                1           1          10
+  5  pileup(1).g0           0     1                1           0           1
+  6  pileup(1).alpha        0     0              0.5           0           1
+  7  pileup(1).psffrac      0     0             0.95           0           1
+</pre></div>
+</div>
+<p>The next step is to use <code class="docutils literal notranslate"><span class="pre">fit_search</span></code> to perform the
+minimization.  Here we will explore the parameter space by having
+<code class="docutils literal notranslate"><span class="pre">fit_search</span></code> run the <code class="docutils literal notranslate"><span class="pre">fit_counts</span></code> function at 100 randomly
+sampled locations.  It should be noted that <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> will run a number of
+the fits in parallel by distributing the computations across the
+available CPU cores.</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>s = fit_search (100, &amp;fit_counts);
+eval_counts;
+list_par;
+</pre></div>
+</div>
+<p>This gives:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> Parameters[Variable] = 7[4]
+            Data bins = 659
+           Chi-square = 751.8835
+   Reduced chi-square = 1.147914
+phabs(1)*powerlaw(1)
+ idx  param             tie-to  freeze         value         min         max
+  1  phabs(1).nH            0     1                1           0      100000  10^22
+  2  powerlaw(1).norm       0     0     0.0007544917           0        0.01
+  3  powerlaw(1).PhoIndex   0     0         1.790701          -2           9
+  4  pileup(1).nregions     0     1                1           1          10
+  5  pileup(1).g0           0     1                1           0           1
+  6  pileup(1).alpha        0     0        0.4686956           0           1
+  7  pileup(1).psffrac      0     0         0.775919           0           1
+</pre></div>
+</div>
+<p>We see that the reduced chi-square is near what one would expect for a
+good fit and that the powerlaw index is very close to the expected
+value.  We can use the <code class="docutils literal notranslate"><span class="pre">conf</span></code> function to obtain its confidence
+interval:</p>
+<div class="code highlight-none notranslate"><div class="highlight"><pre><span></span>conf(3);
+</pre></div>
+</div>
+<p>This indicates that the 90 percent confidence interval on the powerlaw
+index to be between 1.78 and 1.80.</p>
+<p>The powerlaw normalization may appears to be a bit lower than
+expected.  For a near on-axis point source, the 2 arc-second radius
+extraction region used contains roughly 90 percent of the flux. Hence
+the expected powerlaw normalization should be somewhere in the
+neighborhood of 0.0009.  However, it is much less constrained, as can
+be seen by computing its 90 percent confidence interval, which runs
+from from 0.006 to 0.003.</p>
+<p>Here is a plot of the resulting fit, as produced by the
+<code class="docutils literal notranslate"><span class="pre">rplot_counts</span></code> function:</p>
+<figure class="align-center" id="id2">
+<img alt="Plot of the pile-up spectrum. Model and data fit well now." src="../../_images/plawpileupfit.png" />
+<figcaption>
+<p><span class="caption-text">Plot of the pileup spectrum</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Simulating a user-defined CCD spectrum with ACIS</a><ul>
+<li><a class="reference internal" href="#creating-the-spectral-file">Creating the spectral file</a></li>
+<li><a class="reference internal" href="#running-marx">Running marx</a></li>
+<li><a class="reference internal" href="#creating-ciao-based-arfs-and-rmfs-for-marx-simulations">Creating CIAO-based ARFs and RMFs for MARX Simulations</a><ul>
+<li><a class="reference internal" href="#creating-an-arf-to-match-a-marx-simulation">Creating an ARF to match a marx simulation</a></li>
+<li><a class="reference internal" href="#creating-an-rmf-to-match-a-marx-simulation">Creating an RMF to match a marx simulation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analyzing-the-simulated-data">Analyzing the simulated data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simulating-pile-up-in-an-acis-ccd-spectrum">Simulating pile-up in an ACIS CCD spectrum</a><ul>
+<li><a class="reference internal" href="#creating-an-event-file-with-pile-up">Creating an event file with pile-up</a></li>
+<li><a class="reference internal" href="#id1">Analyzing the simulated data</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../examples.html"
+                          title="previous chapter">Examples of MARX in use</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../aped/aped.html"
+                          title="next chapter">Simulating a thermal plasma with the HETGS grating</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../aped/aped.html" title="Simulating a thermal plasma with the HETGS grating"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../examples.html" title="Examples of MARX in use"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating a user-defined CCD spectrum with ACIS</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

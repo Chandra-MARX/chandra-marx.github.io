@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Further marx parameters &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing code or documentation" href="../developer/contributing.html" />
+    <link rel="prev" title="The marx tool suite" href="tools.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../developer/contributing.html" title="Contributing code or documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tools.html" title="The marx tool suite"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U"><strong>marx</strong> reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Further <strong>marx</strong> parameters</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="further-marx-parameters">
+<span id="spacecraftpars"></span><h1>Further <strong>marx</strong> parameters<a class="headerlink" href="#further-marx-parameters" title="Link to this heading">¶</a></h1>
+<p><strong>marx</strong> accepts a large number of parameters. Only a small fraction of those is
+needed by the average <strong>marx</strong> user and those parameters are explained in detail
+in this manual. For each parameter, <a class="reference internal" href="../genindex.html"><span class="std std-ref">Index</span></a> links to the section that
+explains its use.</p>
+<p>However, many parameters are only required for calibration purposes.  These
+parameters are listed here with a short (or longer) explanation.  Their
+defaults point to a file with calibration information that is shipped with
+<strong>marx</strong> or they set a parameter of the the Chandra geometry.  Those parameters
+typically should not be changed from their default value.  Other parameters are
+only of historical interest (e.g. <a class="reference internal" href="#parameter-dNumRays"><code class="xref std std-par docutils literal notranslate"><span class="pre">dNumRays</span></code></a> optimizes <strong>marx</strong> for
+computers with less then 50 MB of memory).</p>
+<p>Parameters can be set on the command line. All parameters not set in this way
+will be read from a parameter file. These files are plain text files and it
+should be easy to edit them in any text editor. If required, there is a
+<a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/parameter.html#Contents_of_a_Parameter_File">detailed description of the format</a>.
+See the description of <a class="reference internal" href="tools.html#marx"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx</span></code></a> for different ways to select a
+parameter file.</p>
+<section id="parameter-file">
+<h2>Parameter file<a class="headerlink" href="#parameter-file" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-mode">
+<span class="sig-name descname"><span class="pre">mode</span></span><a class="headerlink" href="#parameter-mode" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hl</span></code>) mode for parameter file.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DataDirectory">
+<span class="sig-name descname"><span class="pre">DataDirectory</span></span><a class="headerlink" href="#parameter-DataDirectory" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">$MARX_DATA_DIR</span></code>) directory for input data</p>
+</dd></dl>
+
+</section>
+<section id="simulation-control">
+<h2>Simulation control<a class="headerlink" href="#simulation-control" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-dNumRays">
+<span class="sig-name descname"><span class="pre">dNumRays</span></span><a class="headerlink" href="#parameter-dNumRays" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">100000</span></code>) This parameter determines the number of rays per iteration which will be used.
+This parameter is only of historical interest. It was used for computers
+with less than about 50 MB of memory.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DumpToRayFile">
+<span class="sig-name descname"><span class="pre">DumpToRayFile</span></span><a class="headerlink" href="#parameter-DumpToRayFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) Output in MARX rayfile format?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SourceDistance">
+<span class="sig-name descname"><span class="pre">SourceDistance</span></span><a class="headerlink" href="#parameter-SourceDistance" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Source distance in meters (<cite>0</cite> means infinite).
+<strong>marx</strong> can also simulate photons from a source at a finite
+distance. This functionality is useful for XRCF simulations
+where the X-ray source was not at infinity.
+Non-astronomical sources can be specified using the
+<code class="docutils literal notranslate"><span class="pre">SourceDistance</span></code> parameter which sets the distance
+between the source and the front aperture of the HRMA in meters.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DetOffsetY">
+<span class="sig-name descname"><span class="pre">DetOffsetY</span></span><a class="headerlink" href="#parameter-DetOffsetY" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Offset in mm from the nominal on-axis, in-focus SIM position.</p>
+<p>For simulating flight behavior, the user should note that
+<code class="docutils literal notranslate"><span class="pre">DetOffsetY=0</span></code> always as Y axis translation of the flight
+SIM is not permitted.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-SAOSAC_Color_Rays">
+<span class="sig-name descname"><span class="pre">SAOSAC_Color_Rays</span></span><a class="headerlink" href="#parameter-SAOSAC_Color_Rays" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) This option is no longer supported</p>
+</dd></dl>
+
+</section>
+<section id="output-vectors">
+<h2>Output Vectors<a class="headerlink" href="#output-vectors" title="Link to this heading">¶</a></h2>
+<p>Although users are encouraged to use the default settings for the <strong>marx</strong>
+output, the available options are listed below for completeness:</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-OutputVectors">
+<span class="sig-name descname"><span class="pre">OutputVectors</span></span><a class="headerlink" href="#parameter-OutputVectors" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">ETXYZ123DxyMPOabcdSrB</span></code>) This parameter specifies a list of output files that <strong>marx</strong> writes.
+Each <strong>marx</strong> output file contains information on a given photon property
+(arrival time, energy, etc.) and each is <span class="math notranslate nohighlight">\(N\)</span> elements long where
+<span class="math notranslate nohighlight">\(N\)</span> is the number of <em>detected</em> photons.</p>
+<p>This parameter is set to a string where each desired output
+file is represented as a string.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Filename</p></th>
+<th class="head"><p>Code</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>b_energy.dat</p></td>
+<td><p>B</p></td>
+<td><p>Detected energy of event [keV]</p></td>
+</tr>
+<tr class="row-odd"><td><p>detector.dat</p></td>
+<td><p>D</p></td>
+<td><p>Chip ID (CCD for ACIS or MCP for HRC)</p></td>
+</tr>
+<tr class="row-even"><td><p>energy.dat</p></td>
+<td><p>E</p></td>
+<td><p>The true photon energy [keV]</p></td>
+</tr>
+<tr class="row-odd"><td><p>marx.par</p></td>
+<td><p>–</p></td>
+<td><p>Updated parameter file</p></td>
+</tr>
+<tr class="row-even"><td><p>mirror.dat</p></td>
+<td><p>M</p></td>
+<td><p>Reflection shell of the HRMA</p></td>
+</tr>
+<tr class="row-odd"><td><p>obs.par</p></td>
+<td><p>–</p></td>
+<td><p>Information summary for FITS header</p></td>
+</tr>
+<tr class="row-even"><td><p>pha.dat</p></td>
+<td><p>P</p></td>
+<td><p>The pulse height of the detected photon [PHA]</p></td>
+</tr>
+<tr class="row-odd"><td><p>time.dat</p></td>
+<td><p>T</p></td>
+<td><p>Photon arrival time [sec]</p></td>
+</tr>
+<tr class="row-even"><td><p>xcos.dat</p></td>
+<td><p>1</p></td>
+<td><p>The X–axis direction cosine of the photon</p></td>
+</tr>
+<tr class="row-odd"><td><p>xpixel.dat</p></td>
+<td><p>x</p></td>
+<td><p>The X–axis detection pixel</p></td>
+</tr>
+<tr class="row-even"><td><p>xpos.dat</p></td>
+<td><p>X</p></td>
+<td><p>The X–axis position of the photon [mm]</p></td>
+</tr>
+<tr class="row-odd"><td><p>ycos.dat</p></td>
+<td><p>2</p></td>
+<td><p>The Y–axis direction cosine of the photon</p></td>
+</tr>
+<tr class="row-even"><td><p>ypixel.dat</p></td>
+<td><p>y</p></td>
+<td><p>The Y–axis detection pixel</p></td>
+</tr>
+<tr class="row-odd"><td><p>ypos.dat</p></td>
+<td><p>Y</p></td>
+<td><p>The Y–axis position of the photon [mm]</p></td>
+</tr>
+<tr class="row-even"><td><p>zcos.dat</p></td>
+<td><p>3</p></td>
+<td><p>The Z–axis direction cosine of the photon</p></td>
+</tr>
+<tr class="row-odd"><td><p>zpos.dat</p></td>
+<td><p>Z</p></td>
+<td><p>The Z–axis position of the photon [mm]</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><strong>Additional HRC specific files</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>region.dat</p></td>
+<td><p>r</p></td>
+<td><p>Detection region on the HRC detector</p></td>
+</tr>
+<tr class="row-even"><td><p>hrc_u.dat</p></td>
+<td><p>–</p></td>
+<td><p>The raw HRC U coordinate of the detected event</p></td>
+</tr>
+<tr class="row-odd"><td><p>hrc_v.dat</p></td>
+<td><p>–</p></td>
+<td><p>The raw HRC V coordinate of the detected event</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><strong>Additional HETG specific files</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>order.dat</p></td>
+<td><p>O</p></td>
+<td><p>The diffraction order of the photon</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><strong>Additional LETG specific files</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>ocoarse1.dat</p></td>
+<td><p>d</p></td>
+<td><p>The order of a photon diffracted by the coarse
+wire support structure of the LETG</p></td>
+</tr>
+<tr class="row-even"><td><p>ocoarse2.dat</p></td>
+<td><p>c</p></td>
+<td><p>The order of a photon diffracted by the coarse
+wire support structure of the LETG</p></td>
+</tr>
+<tr class="row-odd"><td><p>ocoarse3.dat</p></td>
+<td><p>b</p></td>
+<td><p>The order of a photon diffracted by the coarse
+wire support structure of the LETG</p></td>
+</tr>
+<tr class="row-even"><td><p>ofine.dat</p></td>
+<td><p>a</p></td>
+<td><p>The order of a photon diffracted by the fine
+wire support structure of the LETG</p></td>
+</tr>
+<tr class="row-odd"><td><p>order.dat</p></td>
+<td><p>O</p></td>
+<td><p>The primary diffraction order of the photon</p></td>
+</tr>
+<tr class="row-even"><td colspan="3"><p><strong>Additional Aspect specific files</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>sky_ra.dat</p></td>
+<td><p>S</p></td>
+<td><p>The Sky X pixel value</p></td>
+</tr>
+<tr class="row-even"><td><p>sky_dec.dat</p></td>
+<td><p>S</p></td>
+<td><p>The Sky Y pixel value</p></td>
+</tr>
+<tr class="row-odd"><td><p>sky_roll.dat</p></td>
+<td><p>S</p></td>
+<td><p>The sky roll angle</p></td>
+</tr>
+</tbody>
+</table>
+<p>The following table describes the format of the binary output files (Length
+and Offset are given in bytes):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Offset</p></th>
+<th class="head"><p>Length</p></th>
+<th class="head"><p>Interpretation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>4</p></td>
+<td><p>Magic number: 0x83 0x13 0x89 0x8D</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>1</p></td>
+<td><p>Data type:
+- “A” : 8 bit signed integer (character)
+- “I” : 16 bit signed integer
+- “J” : 32 bit signed integer
+- “E” : 32 bit float
+- “D” : 64 bit float</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>15</p></td>
+<td><p>Data column name. If the length of the name is less
+than 15 characters, it will be padded with 0. If the
+name is 15 characters, there will be no padding.</p></td>
+</tr>
+<tr class="row-odd"><td><p>20</p></td>
+<td><p>4</p></td>
+<td><p>Number of Rows</p></td>
+</tr>
+<tr class="row-even"><td><p>24</p></td>
+<td><p>4</p></td>
+<td><p>Number of Columns, if 0 it is a vector</p></td>
+</tr>
+<tr class="row-odd"><td><p>28</p></td>
+<td><p>4</p></td>
+<td><p>Reserved</p></td>
+</tr>
+<tr class="row-even"><td><p>32</p></td>
+<td><p>N</p></td>
+<td><p>Data</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>For example, the command:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx OutputVectors=&quot;ETXYZP&quot;
+</pre></div>
+</div>
+<p>would run a marx simulation but only print out vectors containing the
+energy, time, focal plane position, and detector pulse height for the
+detected photons.</p>
+<p>These native binary vectors provide convenient access to the individual
+properties of detected photons. For example, to create an ASCII file
+containing only the times and pulse heights for a set of detected
+photons, we can use:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>unix% marx --dump point/time.dat point/pha.dat &gt; list.txt
+unix% more list.txt
+#            TIME             PHA
+    3.199424e+00             241
+    3.702556e+00             302
+    3.722314e+00             256
+    4.840378e+00             257
+    5.336663e+00             284
+    6.659723e+00             345
+    7.989861e+00             255
+    1.041432e+01             260
+    1.131393e+01             279
+    1.195770e+01             270
+    1.259386e+01             332
+    1.346374e+01             237
+    1.532549e+01             322
+</pre></div>
+</div>
+<p>In this example, the marx simulation directory was assumed to be named
+point. Alternatively, for IDL users, <a class="reference internal" href="tools.html#read_marx_file"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">read_marx_file</span></code></a> can be
+used to read these binary output vectors into internal IDL variables.
+These direct means of accessing the properties of detected photons can
+be much more efficient than reading individual columns from the
+equivalent FITS events file, especially for large simulations.</p>
+</section>
+<section id="xrcf-shutter-control">
+<h2>XRCF Shutter Control<a class="headerlink" href="#xrcf-shutter-control" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Shutters1">
+<span class="sig-name descname"><span class="pre">Shutters1</span></span><a class="headerlink" href="#parameter-Shutters1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0000</span></code>) mirror 1 shutter bitmap (0 == open, 1 == closed)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Shutters3">
+<span class="sig-name descname"><span class="pre">Shutters3</span></span><a class="headerlink" href="#parameter-Shutters3" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0000</span></code>) mirror 3 shutter bitmap (0 == open, 1 == closed)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Shutters4">
+<span class="sig-name descname"><span class="pre">Shutters4</span></span><a class="headerlink" href="#parameter-Shutters4" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0000</span></code>) mirror 4 shutter bitmap (0 == open, 1 == closed)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Shutters6">
+<span class="sig-name descname"><span class="pre">Shutters6</span></span><a class="headerlink" href="#parameter-Shutters6" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0000</span></code>) mirror 6 shutter bitmap (0 == open, 1 == closed)</p>
+</dd></dl>
+
+</section>
+<section id="hrma-setup">
+<h2>HRMA Setup<a class="headerlink" href="#hrma-setup" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-FocalLength">
+<span class="sig-name descname"><span class="pre">FocalLength</span></span><a class="headerlink" href="#parameter-FocalLength" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10070</span></code>) Mirror Focal Length</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Use_WFold">
+<span class="sig-name descname"><span class="pre">HRMA_Use_WFold</span></span><a class="headerlink" href="#parameter-HRMA_Use_WFold" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use WFold scattering tables?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Use_Blur">
+<span class="sig-name descname"><span class="pre">HRMA_Use_Blur</span></span><a class="headerlink" href="#parameter-HRMA_Use_Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use HRMA Blur factors</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Use_Scale_Factors">
+<span class="sig-name descname"><span class="pre">HRMA_Use_Scale_Factors</span></span><a class="headerlink" href="#parameter-HRMA_Use_Scale_Factors" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use Effarea scale factors?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Use_Struts">
+<span class="sig-name descname"><span class="pre">HRMA_Use_Struts</span></span><a class="headerlink" href="#parameter-HRMA_Use_Struts" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use HRMA struts?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Ideal">
+<span class="sig-name descname"><span class="pre">HRMA_Ideal</span></span><a class="headerlink" href="#parameter-HRMA_Ideal" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) Assume perfect reflection from HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_P1_File">
+<span class="sig-name descname"><span class="pre">WFold_P1_File</span></span><a class="headerlink" href="#parameter-WFold_P1_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_p1_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_H1_File">
+<span class="sig-name descname"><span class="pre">WFold_H1_File</span></span><a class="headerlink" href="#parameter-WFold_H1_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_h1_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_P3_File">
+<span class="sig-name descname"><span class="pre">WFold_P3_File</span></span><a class="headerlink" href="#parameter-WFold_P3_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_p3_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_H3_File">
+<span class="sig-name descname"><span class="pre">WFold_H3_File</span></span><a class="headerlink" href="#parameter-WFold_H3_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_h3_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_P4_File">
+<span class="sig-name descname"><span class="pre">WFold_P4_File</span></span><a class="headerlink" href="#parameter-WFold_P4_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_p4_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_H4_File">
+<span class="sig-name descname"><span class="pre">WFold_H4_File</span></span><a class="headerlink" href="#parameter-WFold_H4_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_h4_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_P6_File">
+<span class="sig-name descname"><span class="pre">WFold_P6_File</span></span><a class="headerlink" href="#parameter-WFold_P6_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_p6_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-WFold_H6_File">
+<span class="sig-name descname"><span class="pre">WFold_H6_File</span></span><a class="headerlink" href="#parameter-WFold_H6_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/scat_h6_M.bin</span></code>) wfold filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMAOptConst">
+<span class="sig-name descname"><span class="pre">HRMAOptConst</span></span><a class="headerlink" href="#parameter-HRMAOptConst" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/iridium.dat</span></code>) optical const filename for HRMA</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMAOptConstScale">
+<span class="sig-name descname"><span class="pre">HRMAOptConstScale</span></span><a class="headerlink" href="#parameter-HRMAOptConstScale" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) Scale factor for HRMA opt constants</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMAVig">
+<span class="sig-name descname"><span class="pre">HRMAVig</span></span><a class="headerlink" href="#parameter-HRMAVig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) HRMA Vignetting factor</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Yaw">
+<span class="sig-name descname"><span class="pre">HRMA_Yaw</span></span><a class="headerlink" href="#parameter-HRMA_Yaw" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) HRMA Yaw (arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Pitch">
+<span class="sig-name descname"><span class="pre">HRMA_Pitch</span></span><a class="headerlink" href="#parameter-HRMA_Pitch" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) HRMA Pitch (arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Geometry_File">
+<span class="sig-name descname"><span class="pre">HRMA_Geometry_File</span></span><a class="headerlink" href="#parameter-HRMA_Geometry_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrma/EKCHDOS06.rdb</span></code>) HRMA rdb geometry file</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P1Blur">
+<span class="sig-name descname"><span class="pre">P1Blur</span></span><a class="headerlink" href="#parameter-P1Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.303427</span></code>) HRMA P1 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H1Blur">
+<span class="sig-name descname"><span class="pre">H1Blur</span></span><a class="headerlink" href="#parameter-H1Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0051428</span></code>) HRMA H1 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P3Blur">
+<span class="sig-name descname"><span class="pre">P3Blur</span></span><a class="headerlink" href="#parameter-P3Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0951899</span></code>) HRMA P3 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H3Blur">
+<span class="sig-name descname"><span class="pre">H3Blur</span></span><a class="headerlink" href="#parameter-H3Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0713614</span></code>) HRMA H3 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P4Blur">
+<span class="sig-name descname"><span class="pre">P4Blur</span></span><a class="headerlink" href="#parameter-P4Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.178899</span></code>) HRMA P4 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H4Blur">
+<span class="sig-name descname"><span class="pre">H4Blur</span></span><a class="headerlink" href="#parameter-H4Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0101367</span></code>) HRMA H4 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P6Blur">
+<span class="sig-name descname"><span class="pre">P6Blur</span></span><a class="headerlink" href="#parameter-P6Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.151085</span></code>) HRMA P6 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H6Blur">
+<span class="sig-name descname"><span class="pre">H6Blur</span></span><a class="headerlink" href="#parameter-H6Blur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0239287</span></code>) HRMA H6 Blur angle (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H1ScatFactor">
+<span class="sig-name descname"><span class="pre">H1ScatFactor</span></span><a class="headerlink" href="#parameter-H1ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">3.2451338</span></code>) Scattering Fudge Factor for H1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P1ScatFactor">
+<span class="sig-name descname"><span class="pre">P1ScatFactor</span></span><a class="headerlink" href="#parameter-P1ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.8420331</span></code>) Scattering Fudge Factor for P1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H3ScatFactor">
+<span class="sig-name descname"><span class="pre">H3ScatFactor</span></span><a class="headerlink" href="#parameter-H3ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.4618956</span></code>) Scattering Fudge Factor for H3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P3ScatFactor">
+<span class="sig-name descname"><span class="pre">P3ScatFactor</span></span><a class="headerlink" href="#parameter-P3ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.7305226</span></code>) Scattering Fudge Factor for P3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H4ScatFactor">
+<span class="sig-name descname"><span class="pre">H4ScatFactor</span></span><a class="headerlink" href="#parameter-H4ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.9027099</span></code>) Scattering Fudge Factor for H4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P4ScatFactor">
+<span class="sig-name descname"><span class="pre">P4ScatFactor</span></span><a class="headerlink" href="#parameter-P4ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0077613</span></code>) Scattering Fudge Factor for P4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-H6ScatFactor">
+<span class="sig-name descname"><span class="pre">H6ScatFactor</span></span><a class="headerlink" href="#parameter-H6ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.0209803</span></code>) Scattering Fudge Factor for H6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-P6ScatFactor">
+<span class="sig-name descname"><span class="pre">P6ScatFactor</span></span><a class="headerlink" href="#parameter-P6ScatFactor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.1199425</span></code>) Scattering Fudge Factor for P6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_Cap_X">
+<span class="sig-name descname"><span class="pre">HRMA_Cap_X</span></span><a class="headerlink" href="#parameter-HRMA_Cap_X" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10079.771554</span></code>) HRMA Cap X position (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_P1H1_XOffset">
+<span class="sig-name descname"><span class="pre">HRMA_P1H1_XOffset</span></span><a class="headerlink" href="#parameter-HRMA_P1H1_XOffset" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-3.277664</span></code>) HRMA P1H1 X offset (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_P3H3_XOffset">
+<span class="sig-name descname"><span class="pre">HRMA_P3H3_XOffset</span></span><a class="headerlink" href="#parameter-HRMA_P3H3_XOffset" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-0.257891</span></code>) HRMA P3H3 X offset (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_P4H4_XOffset">
+<span class="sig-name descname"><span class="pre">HRMA_P4H4_XOffset</span></span><a class="headerlink" href="#parameter-HRMA_P4H4_XOffset" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.733315</span></code>) HRMA P4H4 X offset (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRMA_P6H6_XOffset">
+<span class="sig-name descname"><span class="pre">HRMA_P6H6_XOffset</span></span><a class="headerlink" href="#parameter-HRMA_P6H6_XOffset" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-0.541755</span></code>) HRMA P6H6 X offset (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-PointingOffsetY">
+<span class="sig-name descname"><span class="pre">PointingOffsetY</span></span><a class="headerlink" href="#parameter-PointingOffsetY" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Optical-Axis/Pointing Y Misalignment (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-PointingOffsetZ">
+<span class="sig-name descname"><span class="pre">PointingOffsetZ</span></span><a class="headerlink" href="#parameter-PointingOffsetZ" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Optical-Axis/Pointing Z Misalignment (arcsec)</p>
+</dd></dl>
+
+</section>
+<section id="ea-mirror-setup">
+<h2>EA mirror setup<a class="headerlink" href="#ea-mirror-setup" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorRadius1">
+<span class="sig-name descname"><span class="pre">MirrorRadius1</span></span><a class="headerlink" href="#parameter-MirrorRadius1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">600</span></code>) Mirror 1 radius (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorRadius3">
+<span class="sig-name descname"><span class="pre">MirrorRadius3</span></span><a class="headerlink" href="#parameter-MirrorRadius3" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">480</span></code>) Mirror 3 radius (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorRadius4">
+<span class="sig-name descname"><span class="pre">MirrorRadius4</span></span><a class="headerlink" href="#parameter-MirrorRadius4" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">425</span></code>) Mirror 4 radius (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorRadius6">
+<span class="sig-name descname"><span class="pre">MirrorRadius6</span></span><a class="headerlink" href="#parameter-MirrorRadius6" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">310</span></code>) Mirror 6 radius (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorVig">
+<span class="sig-name descname"><span class="pre">MirrorVig</span></span><a class="headerlink" href="#parameter-MirrorVig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.9</span></code>) HRMA Vignetting factor</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorUseEA">
+<span class="sig-name descname"><span class="pre">MirrorUseEA</span></span><a class="headerlink" href="#parameter-MirrorUseEA" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Use effective area for HRMA?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorEAFile">
+<span class="sig-name descname"><span class="pre">MirrorEAFile</span></span><a class="headerlink" href="#parameter-MirrorEAFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">ea-mirror/Ae_s1346.dat</span></code>) mirror effective filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorBlur">
+<span class="sig-name descname"><span class="pre">MirrorBlur</span></span><a class="headerlink" href="#parameter-MirrorBlur" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">yes</span></code>) Perform mirror blur?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MirrorBlurFile">
+<span class="sig-name descname"><span class="pre">MirrorBlurFile</span></span><a class="headerlink" href="#parameter-MirrorBlurFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">ea-mirror/mirr-ee.bin</span></code>) mirror blur filename</p>
+</dd></dl>
+
+</section>
+<section id="grating-setup-and-control">
+<h2>Grating Setup and Control<a class="headerlink" href="#grating-setup-and-control" title="Link to this heading">¶</a></h2>
+<p>Further parameters for the grating setup and control are discussed in detail in <a class="reference internal" href="../indetail/hardwaremodel.html#gratingefficiency"><span class="std std-ref">Grating Efficiency</span></a> and
+in <a class="reference internal" href="../indetail/hardwaremodel.html#misalignments"><span class="std std-ref">Facet Period Variations and Misalignments</span></a>.</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HEGRowlandDiameter">
+<span class="sig-name descname"><span class="pre">HEGRowlandDiameter</span></span><a class="headerlink" href="#parameter-HEGRowlandDiameter" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">8632.48</span></code>) HEG Rowland Torus Diameter (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MEGRowlandDiameter">
+<span class="sig-name descname"><span class="pre">MEGRowlandDiameter</span></span><a class="headerlink" href="#parameter-MEGRowlandDiameter" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">8632.48</span></code>) MEG Rowland Torus Diameter (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LEGRowlandDiameter">
+<span class="sig-name descname"><span class="pre">LEGRowlandDiameter</span></span><a class="headerlink" href="#parameter-LEGRowlandDiameter" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">8637.0</span></code>) LEG Rowland Torus Diameter (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-GratingOptConsts">
+<span class="sig-name descname"><span class="pre">GratingOptConsts</span></span><a class="headerlink" href="#parameter-GratingOptConsts" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/optical-constants.dat</span></code>) optical constants filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-Use_This_Order">
+<span class="sig-name descname"><span class="pre">Use_This_Order</span></span><a class="headerlink" href="#parameter-Use_This_Order" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) If non-zero, diffract into this plus/minus order</p>
+</dd></dl>
+
+</section>
+<section id="hetg-efficiency-table-model-parameters">
+<h2>HETG Efficiency Table Model Parameters<a class="headerlink" href="#hetg-efficiency-table-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Sector1_File">
+<span class="sig-name descname"><span class="pre">HETG_Sector1_File</span></span><a class="headerlink" href="#parameter-HETG_Sector1_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp1D1996-11-01marxsectorN0002.tbl</span></code>) HETG sector file for shell 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Sector3_File">
+<span class="sig-name descname"><span class="pre">HETG_Sector3_File</span></span><a class="headerlink" href="#parameter-HETG_Sector3_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp3D1996-11-01marxsectorN0002.tbl</span></code>) HETG sector file for shell 3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Sector4_File">
+<span class="sig-name descname"><span class="pre">HETG_Sector4_File</span></span><a class="headerlink" href="#parameter-HETG_Sector4_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp4D1996-11-01marxsectorN0003.tbl</span></code>) HETG sector file for shell 4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Sector6_File">
+<span class="sig-name descname"><span class="pre">HETG_Sector6_File</span></span><a class="headerlink" href="#parameter-HETG_Sector6_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp6D1996-11-01marxsectorN0003.tbl</span></code>) HETG sector file for shell 6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell1_File">
+<span class="sig-name descname"><span class="pre">HETG_Shell1_File</span></span><a class="headerlink" href="#parameter-HETG_Shell1_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp1D1996-11-01greffN0004.dat</span></code>) grating efficiency table for shell 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell3_File">
+<span class="sig-name descname"><span class="pre">HETG_Shell3_File</span></span><a class="headerlink" href="#parameter-HETG_Shell3_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp3D1996-11-01greffN0004.dat</span></code>) grating efficiency table for shell 3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell4_File">
+<span class="sig-name descname"><span class="pre">HETG_Shell4_File</span></span><a class="headerlink" href="#parameter-HETG_Shell4_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp4D1996-11-01greffN0004.dat</span></code>) grating efficiency table for shell 4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell6_File">
+<span class="sig-name descname"><span class="pre">HETG_Shell6_File</span></span><a class="headerlink" href="#parameter-HETG_Shell6_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/hetgmp6D1996-11-01greffN0004.dat</span></code>) grating efficiency table for shell 6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell1_Vig">
+<span class="sig-name descname"><span class="pre">HETG_Shell1_Vig</span></span><a class="headerlink" href="#parameter-HETG_Shell1_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell3_Vig">
+<span class="sig-name descname"><span class="pre">HETG_Shell3_Vig</span></span><a class="headerlink" href="#parameter-HETG_Shell3_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell4_Vig">
+<span class="sig-name descname"><span class="pre">HETG_Shell4_Vig</span></span><a class="headerlink" href="#parameter-HETG_Shell4_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell6_Vig">
+<span class="sig-name descname"><span class="pre">HETG_Shell6_Vig</span></span><a class="headerlink" href="#parameter-HETG_Shell6_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell1_Theta">
+<span class="sig-name descname"><span class="pre">HETG_Shell1_Theta</span></span><a class="headerlink" href="#parameter-HETG_Shell1_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">4.755</span></code>) dispersion angle for shell 1 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell3_Theta">
+<span class="sig-name descname"><span class="pre">HETG_Shell3_Theta</span></span><a class="headerlink" href="#parameter-HETG_Shell3_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">4.755</span></code>) dispersion angle for shell 3 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell4_Theta">
+<span class="sig-name descname"><span class="pre">HETG_Shell4_Theta</span></span><a class="headerlink" href="#parameter-HETG_Shell4_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-5.205</span></code>) dispersion angle for shell 4 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell6_Theta">
+<span class="sig-name descname"><span class="pre">HETG_Shell6_Theta</span></span><a class="headerlink" href="#parameter-HETG_Shell6_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-5.205</span></code>) dispersion angle for shell 6 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell1_dTheta">
+<span class="sig-name descname"><span class="pre">HETG_Shell1_dTheta</span></span><a class="headerlink" href="#parameter-HETG_Shell1_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>) shell 1 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell3_dTheta">
+<span class="sig-name descname"><span class="pre">HETG_Shell3_dTheta</span></span><a class="headerlink" href="#parameter-HETG_Shell3_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>) shell 3 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell4_dTheta">
+<span class="sig-name descname"><span class="pre">HETG_Shell4_dTheta</span></span><a class="headerlink" href="#parameter-HETG_Shell4_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>) shell 4 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell6_dTheta">
+<span class="sig-name descname"><span class="pre">HETG_Shell6_dTheta</span></span><a class="headerlink" href="#parameter-HETG_Shell6_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>) shell 6 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell1_Period">
+<span class="sig-name descname"><span class="pre">HETG_Shell1_Period</span></span><a class="headerlink" href="#parameter-HETG_Shell1_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.400195</span></code>) shell 1 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell3_Period">
+<span class="sig-name descname"><span class="pre">HETG_Shell3_Period</span></span><a class="headerlink" href="#parameter-HETG_Shell3_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.400195</span></code>) shell 3 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell4_Period">
+<span class="sig-name descname"><span class="pre">HETG_Shell4_Period</span></span><a class="headerlink" href="#parameter-HETG_Shell4_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.200081</span></code>) shell 4 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell6_Period">
+<span class="sig-name descname"><span class="pre">HETG_Shell6_Period</span></span><a class="headerlink" href="#parameter-HETG_Shell6_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.200081</span></code>) shell 6 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell1_dPoverP">
+<span class="sig-name descname"><span class="pre">HETG_Shell1_dPoverP</span></span><a class="headerlink" href="#parameter-HETG_Shell1_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">162e-6</span></code>) shell 1 grating dP/P (rms)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell3_dPoverP">
+<span class="sig-name descname"><span class="pre">HETG_Shell3_dPoverP</span></span><a class="headerlink" href="#parameter-HETG_Shell3_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">162e-6</span></code>) shell 3 grating dP/P (rms)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell4_dPoverP">
+<span class="sig-name descname"><span class="pre">HETG_Shell4_dPoverP</span></span><a class="headerlink" href="#parameter-HETG_Shell4_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">146e-6</span></code>) shell 4 grating dP/P (rms)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HETG_Shell6_dPoverP">
+<span class="sig-name descname"><span class="pre">HETG_Shell6_dPoverP</span></span><a class="headerlink" href="#parameter-HETG_Shell6_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">146e-6</span></code>) shell 6 grating dP/P (rms)</p>
+</dd></dl>
+
+</section>
+<section id="letg-efficiency-table-model-parameters">
+<h2>LETG Efficiency Table Model Parameters<a class="headerlink" href="#letg-efficiency-table-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Eff_Scale_Factor">
+<span class="sig-name descname"><span class="pre">LETG_Eff_Scale_Factor</span></span><a class="headerlink" href="#parameter-LETG_Eff_Scale_Factor" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.23456790</span></code>) LETG Eff scaling factor</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Sector1_File">
+<span class="sig-name descname"><span class="pre">LETG_Sector1_File</span></span><a class="headerlink" href="#parameter-LETG_Sector1_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/LETG-1-facet.tbl</span></code>) LETG sector file for shell 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Sector3_File">
+<span class="sig-name descname"><span class="pre">LETG_Sector3_File</span></span><a class="headerlink" href="#parameter-LETG_Sector3_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/LETG-3-facet.tbl</span></code>) LETG sector file for shell 3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Sector4_File">
+<span class="sig-name descname"><span class="pre">LETG_Sector4_File</span></span><a class="headerlink" href="#parameter-LETG_Sector4_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/LETG-4-facet.tbl</span></code>) LETG sector file for shell 4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Sector6_File">
+<span class="sig-name descname"><span class="pre">LETG_Sector6_File</span></span><a class="headerlink" href="#parameter-LETG_Sector6_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/LETG-6-facet.tbl</span></code>) LETG sector file for shell 6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell1_File">
+<span class="sig-name descname"><span class="pre">LETG_Shell1_File</span></span><a class="headerlink" href="#parameter-LETG_Shell1_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/letgD1996-11-01greffMARXpr001N0004.dat</span></code>) grating efficiency table for shell 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell3_File">
+<span class="sig-name descname"><span class="pre">LETG_Shell3_File</span></span><a class="headerlink" href="#parameter-LETG_Shell3_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/letgD1996-11-01greffMARXpr001N0004.dat</span></code>) grating efficiency table for shell 3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell4_File">
+<span class="sig-name descname"><span class="pre">LETG_Shell4_File</span></span><a class="headerlink" href="#parameter-LETG_Shell4_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/letgD1996-11-01greffMARXpr001N0004.dat</span></code>) grating efficiency table for shell 4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell6_File">
+<span class="sig-name descname"><span class="pre">LETG_Shell6_File</span></span><a class="headerlink" href="#parameter-LETG_Shell6_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">grating/letgD1996-11-01greffMARXpr001N0004.dat</span></code>) grating efficiency table for shell 6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell1_Vig">
+<span class="sig-name descname"><span class="pre">LETG_Shell1_Vig</span></span><a class="headerlink" href="#parameter-LETG_Shell1_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell3_Vig">
+<span class="sig-name descname"><span class="pre">LETG_Shell3_Vig</span></span><a class="headerlink" href="#parameter-LETG_Shell3_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 3</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell4_Vig">
+<span class="sig-name descname"><span class="pre">LETG_Shell4_Vig</span></span><a class="headerlink" href="#parameter-LETG_Shell4_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 4</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell6_Vig">
+<span class="sig-name descname"><span class="pre">LETG_Shell6_Vig</span></span><a class="headerlink" href="#parameter-LETG_Shell6_Vig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) grating vignetting for shell 6</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell1_Theta">
+<span class="sig-name descname"><span class="pre">LETG_Shell1_Theta</span></span><a class="headerlink" href="#parameter-LETG_Shell1_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.07</span></code>) dispersion angle for shell 1 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell3_Theta">
+<span class="sig-name descname"><span class="pre">LETG_Shell3_Theta</span></span><a class="headerlink" href="#parameter-LETG_Shell3_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.07</span></code>) dispersion angle for shell 3 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell4_Theta">
+<span class="sig-name descname"><span class="pre">LETG_Shell4_Theta</span></span><a class="headerlink" href="#parameter-LETG_Shell4_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.07</span></code>) dispersion angle for shell 4 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell6_Theta">
+<span class="sig-name descname"><span class="pre">LETG_Shell6_Theta</span></span><a class="headerlink" href="#parameter-LETG_Shell6_Theta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.07</span></code>) dispersion angle for shell 6 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell1_dTheta">
+<span class="sig-name descname"><span class="pre">LETG_Shell1_dTheta</span></span><a class="headerlink" href="#parameter-LETG_Shell1_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.617</span></code>) shell 1 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell3_dTheta">
+<span class="sig-name descname"><span class="pre">LETG_Shell3_dTheta</span></span><a class="headerlink" href="#parameter-LETG_Shell3_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.617</span></code>) shell 3 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell4_dTheta">
+<span class="sig-name descname"><span class="pre">LETG_Shell4_dTheta</span></span><a class="headerlink" href="#parameter-LETG_Shell4_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.617</span></code>) shell 4 grating alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell6_dTheta">
+<span class="sig-name descname"><span class="pre">LETG_Shell6_dTheta</span></span><a class="headerlink" href="#parameter-LETG_Shell6_dTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.617</span></code>) shell 6 grating alignment error (sigma arc min)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell1_Period">
+<span class="sig-name descname"><span class="pre">LETG_Shell1_Period</span></span><a class="headerlink" href="#parameter-LETG_Shell1_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.991216</span></code>) shell 1 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell3_Period">
+<span class="sig-name descname"><span class="pre">LETG_Shell3_Period</span></span><a class="headerlink" href="#parameter-LETG_Shell3_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.991216</span></code>) shell 3 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell4_Period">
+<span class="sig-name descname"><span class="pre">LETG_Shell4_Period</span></span><a class="headerlink" href="#parameter-LETG_Shell4_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.991216</span></code>) shell 4 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell6_Period">
+<span class="sig-name descname"><span class="pre">LETG_Shell6_Period</span></span><a class="headerlink" href="#parameter-LETG_Shell6_Period" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.991216</span></code>) shell 6 grating period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell1_dPoverP">
+<span class="sig-name descname"><span class="pre">LETG_Shell1_dPoverP</span></span><a class="headerlink" href="#parameter-LETG_Shell1_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">78e-6</span></code>) shell 1 grating dP/P (rms)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell3_dPoverP">
+<span class="sig-name descname"><span class="pre">LETG_Shell3_dPoverP</span></span><a class="headerlink" href="#parameter-LETG_Shell3_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">78e-6</span></code>) shell 3 grating dP/P (rms)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell4_dPoverP">
+<span class="sig-name descname"><span class="pre">LETG_Shell4_dPoverP</span></span><a class="headerlink" href="#parameter-LETG_Shell4_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">78e-6</span></code>) shell 4 grating dP/P (rms)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LETG_Shell6_dPoverP">
+<span class="sig-name descname"><span class="pre">LETG_Shell6_dPoverP</span></span><a class="headerlink" href="#parameter-LETG_Shell6_dPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">78e-6</span></code>) shell 6 grating dP/P (rms)</p>
+</dd></dl>
+
+</section>
+<section id="heg-rectangular-grating-bar-model-parameters">
+<h2>HEG Rectangular Grating Bar Model Parameters<a class="headerlink" href="#heg-rectangular-grating-bar-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HEGVig">
+<span class="sig-name descname"><span class="pre">HEGVig</span></span><a class="headerlink" href="#parameter-HEGVig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.93</span></code>) HEG Grating Vignetting Factor</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegGold">
+<span class="sig-name descname"><span class="pre">hegGold</span></span><a class="headerlink" href="#parameter-hegGold" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0444</span></code>) HEG gold thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegChromium">
+<span class="sig-name descname"><span class="pre">hegChromium</span></span><a class="headerlink" href="#parameter-hegChromium" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0111</span></code>) HEG chromium thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegNickel">
+<span class="sig-name descname"><span class="pre">hegNickel</span></span><a class="headerlink" href="#parameter-hegNickel" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) HEG nickel thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegPolyimide">
+<span class="sig-name descname"><span class="pre">hegPolyimide</span></span><a class="headerlink" href="#parameter-hegPolyimide" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.978</span></code>) HEG polyimide thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegPeriod">
+<span class="sig-name descname"><span class="pre">hegPeriod</span></span><a class="headerlink" href="#parameter-hegPeriod" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.200081</span></code>) HEG period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegdPoverP">
+<span class="sig-name descname"><span class="pre">hegdPoverP</span></span><a class="headerlink" href="#parameter-hegdPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">146e-6</span></code>) HEG dP/P</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegBarHeight">
+<span class="sig-name descname"><span class="pre">hegBarHeight</span></span><a class="headerlink" href="#parameter-hegBarHeight" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.4896</span></code>) HEG bar height (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegBarWidth">
+<span class="sig-name descname"><span class="pre">hegBarWidth</span></span><a class="headerlink" href="#parameter-hegBarWidth" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.1177</span></code>) HEG bar width (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegNumOrders">
+<span class="sig-name descname"><span class="pre">hegNumOrders</span></span><a class="headerlink" href="#parameter-hegNumOrders" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">23</span></code>) HEG num orders (2n+1)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegTheta">
+<span class="sig-name descname"><span class="pre">hegTheta</span></span><a class="headerlink" href="#parameter-hegTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-5.205</span></code>) HEG dispersion angle (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-hegdTheta">
+<span class="sig-name descname"><span class="pre">hegdTheta</span></span><a class="headerlink" href="#parameter-hegdTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>) HEG alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+</section>
+<section id="meg-rectangular-grating-bar-model-parameters">
+<h2>MEG Rectangular Grating Bar Model Parameters<a class="headerlink" href="#meg-rectangular-grating-bar-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-MEGVig">
+<span class="sig-name descname"><span class="pre">MEGVig</span></span><a class="headerlink" href="#parameter-MEGVig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.93</span></code>) MEG Grating Vignetting Factor</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megGold">
+<span class="sig-name descname"><span class="pre">megGold</span></span><a class="headerlink" href="#parameter-megGold" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0228</span></code>) MEG gold thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megChromium">
+<span class="sig-name descname"><span class="pre">megChromium</span></span><a class="headerlink" href="#parameter-megChromium" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0057</span></code>) MEG chromium thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megNickel">
+<span class="sig-name descname"><span class="pre">megNickel</span></span><a class="headerlink" href="#parameter-megNickel" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) MEG nickel thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megPolyimide">
+<span class="sig-name descname"><span class="pre">megPolyimide</span></span><a class="headerlink" href="#parameter-megPolyimide" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.543</span></code>) MEG polyimide thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megPeriod">
+<span class="sig-name descname"><span class="pre">megPeriod</span></span><a class="headerlink" href="#parameter-megPeriod" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.400141</span></code>) MEG period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megdPoverP">
+<span class="sig-name descname"><span class="pre">megdPoverP</span></span><a class="headerlink" href="#parameter-megdPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">162e-6</span></code>) MEG dP/P</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megBarHeight">
+<span class="sig-name descname"><span class="pre">megBarHeight</span></span><a class="headerlink" href="#parameter-megBarHeight" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.3780</span></code>) MEG bar height (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megBarWidth">
+<span class="sig-name descname"><span class="pre">megBarWidth</span></span><a class="headerlink" href="#parameter-megBarWidth" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.2161</span></code>) MEG bar width (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megNumOrders">
+<span class="sig-name descname"><span class="pre">megNumOrders</span></span><a class="headerlink" href="#parameter-megNumOrders" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">23</span></code>) MEG num orders (2n+1)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megTheta">
+<span class="sig-name descname"><span class="pre">megTheta</span></span><a class="headerlink" href="#parameter-megTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">4.755</span></code>) MEG dispersion angle (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-megdTheta">
+<span class="sig-name descname"><span class="pre">megdTheta</span></span><a class="headerlink" href="#parameter-megdTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.5</span></code>) MEG alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+</section>
+<section id="leg-rectangular-grating-bar-model-parameters">
+<h2>LEG Rectangular Grating Bar Model Parameters<a class="headerlink" href="#leg-rectangular-grating-bar-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DetExtendFlag">
+<span class="sig-name descname"><span class="pre">DetExtendFlag</span></span><a class="headerlink" href="#parameter-DetExtendFlag" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">no</span></code>) Should off-detector coordinates be computed?</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-LEGVig">
+<span class="sig-name descname"><span class="pre">LEGVig</span></span><a class="headerlink" href="#parameter-LEGVig" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.8346</span></code>) LEG Grating Vignetting Factor</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legGold">
+<span class="sig-name descname"><span class="pre">legGold</span></span><a class="headerlink" href="#parameter-legGold" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) LEG gold thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legChromium">
+<span class="sig-name descname"><span class="pre">legChromium</span></span><a class="headerlink" href="#parameter-legChromium" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) LEG chromium thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legNickel">
+<span class="sig-name descname"><span class="pre">legNickel</span></span><a class="headerlink" href="#parameter-legNickel" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) LEG nickel thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legPolyimide">
+<span class="sig-name descname"><span class="pre">legPolyimide</span></span><a class="headerlink" href="#parameter-legPolyimide" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) LEG polyimide thickness (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legPeriod">
+<span class="sig-name descname"><span class="pre">legPeriod</span></span><a class="headerlink" href="#parameter-legPeriod" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.991216</span></code>) LEG period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legdPoverP">
+<span class="sig-name descname"><span class="pre">legdPoverP</span></span><a class="headerlink" href="#parameter-legdPoverP" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">8.67592e-5</span></code>) LEG dP/P</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legBarHeight">
+<span class="sig-name descname"><span class="pre">legBarHeight</span></span><a class="headerlink" href="#parameter-legBarHeight" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.4615</span></code>) LEG bar height (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legBarWidth">
+<span class="sig-name descname"><span class="pre">legBarWidth</span></span><a class="headerlink" href="#parameter-legBarWidth" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.5566</span></code>) LEG bar width (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legTheta">
+<span class="sig-name descname"><span class="pre">legTheta</span></span><a class="headerlink" href="#parameter-legTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.07</span></code>) LEG dispersion angle (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legdTheta">
+<span class="sig-name descname"><span class="pre">legdTheta</span></span><a class="headerlink" href="#parameter-legdTheta" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1.4</span></code>) LEG alignment error (sigma in arcmin)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legNumOrders">
+<span class="sig-name descname"><span class="pre">legNumOrders</span></span><a class="headerlink" href="#parameter-legNumOrders" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">41</span></code>) LEG num orders (2n+1)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legFineNumOrders">
+<span class="sig-name descname"><span class="pre">legFineNumOrders</span></span><a class="headerlink" href="#parameter-legFineNumOrders" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">19</span></code>) LETG Fine Grating num orders (2n+1)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legFinePeriod">
+<span class="sig-name descname"><span class="pre">legFinePeriod</span></span><a class="headerlink" href="#parameter-legFinePeriod" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">25.4</span></code>) LEG fine period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legFineBarWidth">
+<span class="sig-name descname"><span class="pre">legFineBarWidth</span></span><a class="headerlink" href="#parameter-legFineBarWidth" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.5</span></code>) LEG fine bar width (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legFineBarHeight">
+<span class="sig-name descname"><span class="pre">legFineBarHeight</span></span><a class="headerlink" href="#parameter-legFineBarHeight" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2.5</span></code>) LEG fine bar height (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legCoarseNumOrders">
+<span class="sig-name descname"><span class="pre">legCoarseNumOrders</span></span><a class="headerlink" href="#parameter-legCoarseNumOrders" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">121</span></code>) LETG Coarse Grating num orders (2n+1)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legCoarsePeriod">
+<span class="sig-name descname"><span class="pre">legCoarsePeriod</span></span><a class="headerlink" href="#parameter-legCoarsePeriod" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2000</span></code>) LEG Coarse period (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legCoarseBarHeight">
+<span class="sig-name descname"><span class="pre">legCoarseBarHeight</span></span><a class="headerlink" href="#parameter-legCoarseBarHeight" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">26.0</span></code>) LEG Coarse bar height (um)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-legCoarseBarWidth">
+<span class="sig-name descname"><span class="pre">legCoarseBarWidth</span></span><a class="headerlink" href="#parameter-legCoarseBarWidth" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">68.0</span></code>) LEG Coarse bar width (um)</p>
+</dd></dl>
+
+</section>
+<section id="acis-model-parameters">
+<h2>ACIS Model Parameters<a class="headerlink" href="#acis-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS_Exposure_Time">
+<span class="sig-name descname"><span class="pre">ACIS_Exposure_Time</span></span><a class="headerlink" href="#parameter-ACIS_Exposure_Time" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">3.2</span></code>) ACIS exposure time (sec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS_Frame_Transfer_Time">
+<span class="sig-name descname"><span class="pre">ACIS_Frame_Transfer_Time</span></span><a class="headerlink" href="#parameter-ACIS_Frame_Transfer_Time" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.041</span></code>) ACIS frame transfer time (sec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS_Gain_Map_File">
+<span class="sig-name descname"><span class="pre">ACIS_Gain_Map_File</span></span><a class="headerlink" href="#parameter-ACIS_Gain_Map_File" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acisD1999-12-10gain_marxN0001_110.fits</span></code>) This parameter is currently not used; its value will be ignored.</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS_eV_Per_PI">
+<span class="sig-name descname"><span class="pre">ACIS_eV_Per_PI</span></span><a class="headerlink" href="#parameter-ACIS_eV_Per_PI" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">14.6</span></code>) eV per PI bin</p>
+</dd></dl>
+
+</section>
+<section id="acis-s-model-parameters">
+<h2>ACIS-S Model Parameters<a class="headerlink" href="#acis-s-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S0-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-S0-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-S0-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/s0_w168c4r_eff_898_release.dat</span></code>) ACIS Chip 4 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S0-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-S0-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-S0-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_s_xray_trans_1198.dat</span></code>) ACIS Chip 4 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S1-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-S1-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-S1-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/s1_w140c4r_eff_898_release.dat</span></code>) ACIS Chip 5 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S1-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-S1-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-S1-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_s_xray_trans_1198.dat</span></code>) ACIS Chip 5 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S2-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-S2-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-S2-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/s2_w182c4r_eff_898_release.dat</span></code>) ACIS Chip 6 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S2-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-S2-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-S2-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_s_xray_trans_1198.dat</span></code>) ACIS Chip 6 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S3-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-S3-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-S3-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/s3_w134c4r_eff_898_release.dat</span></code>) ACIS Chip 7 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S3-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-S3-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-S3-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_s_xray_trans_1198.dat</span></code>) ACIS Chip 7 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S4-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-S4-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-S4-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/s4_w457c4_eff_898_release.dat</span></code>) ACIS Chip 8 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S4-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-S4-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-S4-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_s_xray_trans_1198.dat</span></code>) ACIS Chip 8 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S5-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-S5-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-S5-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/s5_w201c3r_eff_898_release.dat</span></code>) ACIS Chip 9 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-S5-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-S5-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-S5-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_s_xray_trans_1198.dat</span></code>) ACIS Chip 9 OBF filename</p>
+</dd></dl>
+
+</section>
+<section id="acis-i-model-parameters">
+<h2>ACIS-I Model Parameters<a class="headerlink" href="#acis-i-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I0-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-I0-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-I0-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/i0_w203c4r_eff_898_release.dat</span></code>) ACIS Chip 0 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I0-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-I0-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-I0-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_i_xray_trans_1198.dat</span></code>) ACIS Chip 0 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I1-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-I1-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-I1-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/i1_w193c2_eff_898_release.dat</span></code>) ACIS Chip 1 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I1-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-I1-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-I1-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_i_xray_trans_1198.dat</span></code>) ACIS Chip 1 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I2-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-I2-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-I2-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/i2_w158c4r_eff_898_release.dat</span></code>) ACIS Chip 2 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I2-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-I2-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-I2-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_i_xray_trans_1198.dat</span></code>) ACIS Chip 2 OBF filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I3-QEFile">
+<span class="sig-name descname"><span class="pre">ACIS-I3-QEFile</span></span><a class="headerlink" href="#parameter-ACIS-I3-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/i3_w215c2r_eff_898_release.dat</span></code>) ACIS Chip 3 QE filename</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-ACIS-I3-FilterFile">
+<span class="sig-name descname"><span class="pre">ACIS-I3-FilterFile</span></span><a class="headerlink" href="#parameter-ACIS-I3-FilterFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">acis/acis_i_xray_trans_1198.dat</span></code>) ACIS Chip 3 OBF filename</p>
+</dd></dl>
+
+</section>
+<section id="hrc-i-model-parameters">
+<span id="hrciparameters"></span><h2>HRC-I Model Parameters<a class="headerlink" href="#hrc-i-model-parameters" title="Link to this heading">¶</a></h2>
+<p>The blur parameters were extracted from
+<a class="reference external" href="http://cxc.harvard.edu/twiki/bin/view/HrcCal/DetectorPSF">http://cxc.harvard.edu/twiki/bin/view/HrcCal/DetectorPSF</a> .
+The (Xctr,Yctr) are offset at runtime such that (G1Xctr,G1Yctr)=(0,0).</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG1FWHM">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG1FWHM</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG1FWHM" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">13.8994</span></code>) HRC-I Gauss1 FWHM (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG1Xctr">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG1Xctr</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG1Xctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">64.1124</span></code>) HRC-I Gauss1 Xctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG1Yctr">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG1Yctr</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG1Yctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">64.5285</span></code>) HRC-I Gauss1 Yctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG1Amp">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG1Amp</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG1Amp" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">15.7528</span></code>) HRC-I Gauss1 Amp</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG2FWHM">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG2FWHM</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG2FWHM" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">4.25636</span></code>) HRC-I Gauss2 FWHM (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG2Xctr">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG2Xctr</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG2Xctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">61.35</span></code>) HRC-I Gauss2 Xctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG2Yctr">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG2Yctr</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG2Yctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">64.178</span></code>) HRC-I Gauss2 Yctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurG2Amp">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurG2Amp</span></span><a class="headerlink" href="#parameter-HRC-I-BlurG2Amp" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) HRC-I Gauss2 Amp</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurL1FWHM">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurL1FWHM</span></span><a class="headerlink" href="#parameter-HRC-I-BlurL1FWHM" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10.8269</span></code>) HRC-I Lorentz1 FWHM (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurL1Xctr">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurL1Xctr</span></span><a class="headerlink" href="#parameter-HRC-I-BlurL1Xctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">73.3361</span></code>) HRC-I Lorentz1 Xctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurL1Yctr">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurL1Yctr</span></span><a class="headerlink" href="#parameter-HRC-I-BlurL1Yctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">63.9927</span></code>) HRC-I Lorentz1 Yctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurL1Amp">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurL1Amp</span></span><a class="headerlink" href="#parameter-HRC-I-BlurL1Amp" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) HRC-I Lorentz1 Amp</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-BlurL1Rmax">
+<span class="sig-name descname"><span class="pre">HRC-I-BlurL1Rmax</span></span><a class="headerlink" href="#parameter-HRC-I-BlurL1Rmax" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">256</span></code>) HRC-I Lorentz1 Rmax (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-QEFile">
+<span class="sig-name descname"><span class="pre">HRC-I-QEFile</span></span><a class="headerlink" href="#parameter-HRC-I-QEFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/mcp_qe_i.v2.2.dat</span></code>) HRC-I QE File</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-I-UVISFile">
+<span class="sig-name descname"><span class="pre">HRC-I-UVISFile</span></span><a class="headerlink" href="#parameter-HRC-I-UVISFile" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/uvis_i.v4.dat</span></code>) HRC-I UV/IS file for region 0</p>
+</dd></dl>
+
+</section>
+<section id="hrc-s-model-parameters">
+<span id="hrcsparameters"></span><h2>HRC-S Model Parameters<a class="headerlink" href="#hrc-s-model-parameters" title="Link to this heading">¶</a></h2>
+<p>The blur parameters were extracted from
+<a class="reference external" href="http://cxc.harvard.edu/twiki/bin/view/HrcCal/DetectorPSF">http://cxc.harvard.edu/twiki/bin/view/HrcCal/DetectorPSF</a> .
+The (Xctr,Yctr) are offset at runtime such that (G1Xctr,G1Yctr)=(0,0).</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG1FWHM">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG1FWHM</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG1FWHM" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">13.900</span></code>) HRC-S Gauss1 FWHM (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG1Xctr">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG1Xctr</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG1Xctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">64.110</span></code>) HRC-S Gauss1 Xctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG1Yctr">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG1Yctr</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG1Yctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">64.530</span></code>) HRC-S Gauss1 Yctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG1Amp">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG1Amp</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG1Amp" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">15.750</span></code>) HRC-S Gauss1 Amp</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG2FWHM">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG2FWHM</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG2FWHM" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">4.2560</span></code>) HRC-S Gauss2 FWHM (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG2Xctr">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG2Xctr</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG2Xctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">67.420</span></code>) HRC-S Gauss2 Xctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG2Yctr">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG2Yctr</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG2Yctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">64.110</span></code>) HRC-S Gauss2 Yctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurG2Amp">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurG2Amp</span></span><a class="headerlink" href="#parameter-HRC-S-BlurG2Amp" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) HRC-S Gauss2 Amp</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurL1FWHM">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurL1FWHM</span></span><a class="headerlink" href="#parameter-HRC-S-BlurL1FWHM" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10.820</span></code>) HRC-S Lorentz1 FWHM (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurL1Xctr">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurL1Xctr</span></span><a class="headerlink" href="#parameter-HRC-S-BlurL1Xctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">53.030</span></code>) HRC-S Lorentz1 Xctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurL1Amp">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurL1Amp</span></span><a class="headerlink" href="#parameter-HRC-S-BlurL1Amp" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) HRC-S Lorentz1 Amp</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurL1Yctr">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurL1Yctr</span></span><a class="headerlink" href="#parameter-HRC-S-BlurL1Yctr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">63.880</span></code>) HRC-S Lorentz1 Yctr (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-BlurL1Rmax">
+<span class="sig-name descname"><span class="pre">HRC-S-BlurL1Rmax</span></span><a class="headerlink" href="#parameter-HRC-S-BlurL1Rmax" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">256.000</span></code>) HRC-S Lorentz1 Rmax (1/4 pixels)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-QEFile0">
+<span class="sig-name descname"><span class="pre">HRC-S-QEFile0</span></span><a class="headerlink" href="#parameter-HRC-S-QEFile0" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/mcp_qe_s.v3.dat</span></code>) HRC QE File for MCP 0</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-QEFile1">
+<span class="sig-name descname"><span class="pre">HRC-S-QEFile1</span></span><a class="headerlink" href="#parameter-HRC-S-QEFile1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/mcp_qe_s.v3.dat</span></code>) HRC QE File for MCP 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-QEFile2">
+<span class="sig-name descname"><span class="pre">HRC-S-QEFile2</span></span><a class="headerlink" href="#parameter-HRC-S-QEFile2" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/mcp_qe_s.v3.dat</span></code>) HRC QE File for MCP 2</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-UVISFile0">
+<span class="sig-name descname"><span class="pre">HRC-S-UVISFile0</span></span><a class="headerlink" href="#parameter-HRC-S-UVISFile0" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/uvis_s1.v4.dat</span></code>) HRC UV/IS file for region 0</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-UVISFile1">
+<span class="sig-name descname"><span class="pre">HRC-S-UVISFile1</span></span><a class="headerlink" href="#parameter-HRC-S-UVISFile1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/uvis_s2.v4.dat</span></code>) HRC UV/IS file for region 1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-UVISFile2">
+<span class="sig-name descname"><span class="pre">HRC-S-UVISFile2</span></span><a class="headerlink" href="#parameter-HRC-S-UVISFile2" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/uvis_s56.v4.dat</span></code>) HRC UV/IS file for region 2</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HRC-S-UVISFile3">
+<span class="sig-name descname"><span class="pre">HRC-S-UVISFile3</span></span><a class="headerlink" href="#parameter-HRC-S-UVISFile3" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/uvis_s34.v4.dat</span></code>) HRC UV/IS file for region 3</p>
+</dd></dl>
+
+</section>
+<section id="hesf-model-parameters">
+<h2>HESF Model Parameters<a class="headerlink" href="#hesf-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFOffsetX">
+<span class="sig-name descname"><span class="pre">HESFOffsetX</span></span><a class="headerlink" href="#parameter-HESFOffsetX" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">26.3</span></code>) the HESF X offset of lower plate (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFOffsetZ">
+<span class="sig-name descname"><span class="pre">HESFOffsetZ</span></span><a class="headerlink" href="#parameter-HESFOffsetZ" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-5.359</span></code>) the HESF Z offset of lower plate (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFGapY1">
+<span class="sig-name descname"><span class="pre">HESFGapY1</span></span><a class="headerlink" href="#parameter-HESFGapY1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">28.7</span></code>) the HESF Gap Offset Y1</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFGapY2">
+<span class="sig-name descname"><span class="pre">HESFGapY2</span></span><a class="headerlink" href="#parameter-HESFGapY2" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">36.7</span></code>) the HESF Gap Offset Y2</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFN">
+<span class="sig-name descname"><span class="pre">HESFN</span></span><a class="headerlink" href="#parameter-HESFN" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">2</span></code>) the number of HESF facets</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFLength">
+<span class="sig-name descname"><span class="pre">HESFLength</span></span><a class="headerlink" href="#parameter-HESFLength" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">294.0</span></code>) length of HESF plate</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFCrWidth">
+<span class="sig-name descname"><span class="pre">HESFCrWidth</span></span><a class="headerlink" href="#parameter-HESFCrWidth" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">15.7</span></code>) HESF Chromium strip width</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFOptConstCr">
+<span class="sig-name descname"><span class="pre">HESFOptConstCr</span></span><a class="headerlink" href="#parameter-HESFOptConstCr" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/chromium.dat</span></code>) the Chromium Optical constant filename for the HESF</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFOptConstC">
+<span class="sig-name descname"><span class="pre">HESFOptConstC</span></span><a class="headerlink" href="#parameter-HESFOptConstC" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">hrc/carbon.dat</span></code>) the Carbon Optical constant filename for the HESF</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFHeight1">
+<span class="sig-name descname"><span class="pre">HESFHeight1</span></span><a class="headerlink" href="#parameter-HESFHeight1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">22.3</span></code>) the height of HESF 1 (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFTheta1">
+<span class="sig-name descname"><span class="pre">HESFTheta1</span></span><a class="headerlink" href="#parameter-HESFTheta1" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">4.5</span></code>) the  angle of HESF 1 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFHeight2">
+<span class="sig-name descname"><span class="pre">HESFHeight2</span></span><a class="headerlink" href="#parameter-HESFHeight2" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">50.0</span></code>) the height of HESF 2 (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFTheta2">
+<span class="sig-name descname"><span class="pre">HESFTheta2</span></span><a class="headerlink" href="#parameter-HESFTheta2" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">7</span></code>) the  angle of HESF 2 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFHeight3">
+<span class="sig-name descname"><span class="pre">HESFHeight3</span></span><a class="headerlink" href="#parameter-HESFHeight3" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) the height of HESF 3 (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFTheta3">
+<span class="sig-name descname"><span class="pre">HESFTheta3</span></span><a class="headerlink" href="#parameter-HESFTheta3" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) the  angle of HESF 3 (degrees)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFHeight4">
+<span class="sig-name descname"><span class="pre">HESFHeight4</span></span><a class="headerlink" href="#parameter-HESFHeight4" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) the height of HESF 4 (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-HESFTheta4">
+<span class="sig-name descname"><span class="pre">HESFTheta4</span></span><a class="headerlink" href="#parameter-HESFTheta4" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) the  angle of HESF 4 (degrees)</p>
+</dd></dl>
+
+</section>
+<section id="flat-field-model-parameters">
+<span id="sect-flatfieldparameters"></span><h2>Flat Field Model Parameters<a class="headerlink" href="#flat-field-model-parameters" title="Link to this heading">¶</a></h2>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-FF_MinY">
+<span class="sig-name descname"><span class="pre">FF_MinY</span></span><a class="headerlink" href="#parameter-FF_MinY" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-25</span></code>) FlatField Aperture min Y value (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-FF_MaxY">
+<span class="sig-name descname"><span class="pre">FF_MaxY</span></span><a class="headerlink" href="#parameter-FF_MaxY" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">25</span></code>) FlatField Aperture max Y value (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-FF_MinZ">
+<span class="sig-name descname"><span class="pre">FF_MinZ</span></span><a class="headerlink" href="#parameter-FF_MinZ" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">-25</span></code>) FlatField Aperture min Z value (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-FF_MaxZ">
+<span class="sig-name descname"><span class="pre">FF_MaxZ</span></span><a class="headerlink" href="#parameter-FF_MaxZ" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">25</span></code>) FlatField Aperture max Z value (mm)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-FF_XPos">
+<span class="sig-name descname"><span class="pre">FF_XPos</span></span><a class="headerlink" href="#parameter-FF_XPos" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">10000</span></code>) FlatField Aperture X location (mm)</p>
+</dd></dl>
+
+</section>
+<section id="dither-aspect-parameters">
+<span id="sect-internalditherpars"></span><h2>Dither/Aspect Parameters<a class="headerlink" href="#dither-aspect-parameters" title="Link to this heading">¶</a></h2>
+<p>The most important parameters that control the dither model are described in
+<a class="reference internal" href="../indetail/aspect.html#simulatingaspect"><span class="std std-ref">Simulating Aspect with marx</span></a>. In the following we list parameters that control the internal
+<strong>marx</strong> dither model, if selected by <a class="reference internal" href="../indetail/aspect.html#parameter-DitherModel"><code class="xref std std-par docutils literal notranslate"><span class="pre">DitherModel</span></code></a>. All default values are chosen for ACIS
+observations. See <a class="reference external" href="http://cxc.cfa.harvard.edu/proposer/POG/html/chap5.html#tb:dither">Table 5.4 in the Observatory Guide</a> for the values that are appropriate for HRC observations.
+<strong>marx</strong> also offers the possiblity to dither the roll angle, but this is not done in normal Chandra
+operations.
+(Note that <strong>marx</strong> calls the directions “RA” and “Dec”, while the linked table calls it “pitch” and “yaw”. The difference is historic, the <strong>marx</strong> implementation correctly applies the values as pitch and yaw angle despite the name.)</p>
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherAmp_RA">
+<span class="sig-name descname"><span class="pre">DitherAmp_RA</span></span><a class="headerlink" href="#parameter-DitherAmp_RA" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">8</span></code>) Amplitude for RA dither (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherAmp_Dec">
+<span class="sig-name descname"><span class="pre">DitherAmp_Dec</span></span><a class="headerlink" href="#parameter-DitherAmp_Dec" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">8</span></code>) Amplitude for Dec dither (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherAmp_Roll">
+<span class="sig-name descname"><span class="pre">DitherAmp_Roll</span></span><a class="headerlink" href="#parameter-DitherAmp_Roll" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Amplitude for Roll dither (arcsec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherPeriod_RA">
+<span class="sig-name descname"><span class="pre">DitherPeriod_RA</span></span><a class="headerlink" href="#parameter-DitherPeriod_RA" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1000</span></code>) Period for RA dither (sec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherPeriod_Dec">
+<span class="sig-name descname"><span class="pre">DitherPeriod_Dec</span></span><a class="headerlink" href="#parameter-DitherPeriod_Dec" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">707</span></code>) Period for Dec dither (sec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherPeriod_Roll">
+<span class="sig-name descname"><span class="pre">DitherPeriod_Roll</span></span><a class="headerlink" href="#parameter-DitherPeriod_Roll" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">1e5</span></code>) Period for Roll dither (sec)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherPhase_RA">
+<span class="sig-name descname"><span class="pre">DitherPhase_RA</span></span><a class="headerlink" href="#parameter-DitherPhase_RA" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Phase for RA dither (radians)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherPhase_Dec">
+<span class="sig-name descname"><span class="pre">DitherPhase_Dec</span></span><a class="headerlink" href="#parameter-DitherPhase_Dec" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Phase for Dec dither (radians)</p>
+</dd></dl>
+
+<dl class="parameter">
+<dt class="sig sig-object" id="parameter-DitherPhase_Roll">
+<span class="sig-name descname"><span class="pre">DitherPhase_Roll</span></span><a class="headerlink" href="#parameter-DitherPhase_Roll" title="Link to this definition">¶</a></dt>
+<dd><p>(<em>default</em>: <code class="docutils literal notranslate"><span class="pre">0</span></code>) Phase for Roll dither (radians)</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Further <strong>marx</strong> parameters</a><ul>
+<li><a class="reference internal" href="#parameter-file">Parameter file</a></li>
+<li><a class="reference internal" href="#simulation-control">Simulation control</a></li>
+<li><a class="reference internal" href="#output-vectors">Output Vectors</a></li>
+<li><a class="reference internal" href="#xrcf-shutter-control">XRCF Shutter Control</a></li>
+<li><a class="reference internal" href="#hrma-setup">HRMA Setup</a></li>
+<li><a class="reference internal" href="#ea-mirror-setup">EA mirror setup</a></li>
+<li><a class="reference internal" href="#grating-setup-and-control">Grating Setup and Control</a></li>
+<li><a class="reference internal" href="#hetg-efficiency-table-model-parameters">HETG Efficiency Table Model Parameters</a></li>
+<li><a class="reference internal" href="#letg-efficiency-table-model-parameters">LETG Efficiency Table Model Parameters</a></li>
+<li><a class="reference internal" href="#heg-rectangular-grating-bar-model-parameters">HEG Rectangular Grating Bar Model Parameters</a></li>
+<li><a class="reference internal" href="#meg-rectangular-grating-bar-model-parameters">MEG Rectangular Grating Bar Model Parameters</a></li>
+<li><a class="reference internal" href="#leg-rectangular-grating-bar-model-parameters">LEG Rectangular Grating Bar Model Parameters</a></li>
+<li><a class="reference internal" href="#acis-model-parameters">ACIS Model Parameters</a></li>
+<li><a class="reference internal" href="#acis-s-model-parameters">ACIS-S Model Parameters</a></li>
+<li><a class="reference internal" href="#acis-i-model-parameters">ACIS-I Model Parameters</a></li>
+<li><a class="reference internal" href="#hrc-i-model-parameters">HRC-I Model Parameters</a></li>
+<li><a class="reference internal" href="#hrc-s-model-parameters">HRC-S Model Parameters</a></li>
+<li><a class="reference internal" href="#hesf-model-parameters">HESF Model Parameters</a></li>
+<li><a class="reference internal" href="#flat-field-model-parameters">Flat Field Model Parameters</a></li>
+<li><a class="reference internal" href="#dither-aspect-parameters">Dither/Aspect Parameters</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="tools.html"
+                          title="previous chapter">The <strong>marx</strong> tool suite</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../developer/contributing.html"
+                          title="next chapter">Contributing code or documentation</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../developer/contributing.html" title="Contributing code or documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tools.html" title="The marx tool suite"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" ><strong>marx</strong> reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Further <strong>marx</strong> parameters</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

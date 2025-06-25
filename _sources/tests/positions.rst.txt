@@ -1,0 +1,169 @@
+.. _sect-tests.positions:
+
+Coordinates on the sky and the chip
+=============================================================================
+
+In every |marx| simulation, one or more sources are placed at some sky position.
+|marx| simulates photons coming from that position, traces them through the
+mirror and gratings and finally places them on the chip. With a known
+aspect solution, chip coordinates can then be transformed back to sky
+coordinates. In general, this will not recover the exact sky position where a
+photon started out. A big part of that is scatter in the mirrors, which blurs
+the image (see :ref:`sect-tests.PSF` for tests of the PSF).
+However, with a large number of photons, we can fit the average position which
+should be close to the real sky position.
+
+In real observations, other factors contribute, such as the finite
+resolution of the detectors (|marx| usually takes that into account, but it can
+be switched of through the ``--pixadj="EXACT"`` switch in :marxtool:`marx2fits`)
+and the uncertainty of the aspect solution.
+
+Within a single observation, positions will be less certain for fainter sources
+(due to Poisson statistics) and for sources at a larger off-axis angles (due to the
+larger PSF).
+
+
+
+
+.. _sect-test-ONC:
+
+Chandra Orion Ultradeep project
+------------------------------------------------------------------------------
+
+
+:data: `ObsID 3744 <http://cda.harvard.edu/chaser/startViewer.do?menuItem=details&obsid=3744>`_
+
+:code: :ref:`test-code-ONC`
+
+The `Orion Nebula Cluster (ONC) <http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=onc>`_
+is a dense star forming region with about 1600 X-ray sources observed
+in the COUP survey by
+`Getman et al (2005) <http://adsabs.harvard.edu/abs/2005ApJS..160..319G>`_ .
+We simulate this field with |marx| and then run a source detection to check
+how well we recover the input coordinates. This will depend on the number
+of counts detected and the position in the field.
+To simplify the simulation input, we assume that all sources have flat
+lightcurves and are
+monoenergetic at the observed mean energy (the energy matters because
+the effective area is energy dependent and so is the PSF).
+We write a short C code that reads an input coordiante list and generates
+the photons in this manner. We compile
+the code, and call it as a :ref:`sect-usersource`.
+
+
+
+
+.. figure:: figures/ONC_ds9.*
+   :align: center
+   :alt: 
+   :scale: 75%
+
+
+
+   `ds9`_ image of the observed data (left) and simulation (right). The sources detected in the simulation are overlayed. There are few cases where the read-out streak is identified as source or where two close sources are detected as one larger resolved source. The COUP catalog used as input is based on much longer merged observations and has been checked against optical and IR observations to remove such spurious detections.
+
+
+
+.. figure:: figures/ONC_dist.*
+   :align: center
+   :alt: Scatter plot with distance from aimpoint vs coordinate error in the fit.
+   :scale: 75%
+
+
+
+   Apart from a few outliers close to the aimpoint  (mostly confused sources, see above), the distribution of coordinate errors follows spreads out with increasing distance, i.e. size of the PSF.
+
+
+
+For this field, we know the true input coordinates so we can check how well |marx| reproduces those. In the center of the field (about one armin) the coordiante error is less than the size of an ACIS pixel for all sources and the average error never grows much beyond 1 ACIS pixel even for far off-axis source. The upper envelope of the distribution of errors is approximate linear and reaches 1 arcsec at a distance of 200 arcsec. No strong correlation of coordiante error and count rate of the source is apparent, indicating that the dominant error is not just due to Poisson counting statistics.
+
+
+
+.. _sect-test-RegularGrid:
+
+Regular Grid (ACIS)
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-RegularGrid`
+
+In this example we place a radial grid of sources on the sky. Each source
+emits an equal number of photons (exactly, no Poisson statistics) so that
+we can compare the accuracy of the position we recover. Note that the
+*detected* number of photons will be smaller for off-axis photons because
+of vignetting!
+
+We write a short C code that generates the photons in this manner, compile
+it, and call is as a :ref:`sect-usersource`.
+
+
+
+
+.. figure:: figures/RegularGrid_ds9.*
+   :align: center
+   :alt: Sources positioned like knots in a spider web.
+   :scale: 75%
+
+
+
+   `ds9`_ image of the simulation. The size of the PSF increases further away from the aimpoint.
+
+
+
+.. figure:: figures/RegularGrid_hist.*
+   :align: center
+   :alt: Plot is described in the caption.
+   :scale: 75%
+
+
+
+   *left*: The error in the position (measured radially to the optical axis) increases with the distance to the optical axis. One part of this is just that the effective area and thus the number of counts decreases. There is also a systematic trend where sources at larger off-acis angle are systematically fitted too close to the center. Further investigation is necessary to check if this is a problem of |marx| related or :ciao:`celldetect`. In any case, the typical offset is below 0.2 arcsec, which is less then half a pixel in ACIS. *right*: Difference in position angle between input and fit. (Outliers beyond the plot range are not shown.)
+
+
+
+The input position is typically recovered to much better than one pixel for sources with a few hundred counts. There is a small systematic trend that needs to be studied further.
+
+
+
+.. _sect-test-RegularGridHRCI:
+
+Regular grid (HRC)
+------------------------------------------------------------------------------
+
+
+:code: :ref:`test-code-RegularGridHRCI`
+
+Same as above, but with HRC-I as a detector.
+
+The field-of-view for the HRC-I is larger for than for ACIS-I, but the PSF becomes
+very large at large off-axis angles and thus the positional uncertainty
+will be so large that a comparison to |marx| is no longer helpful to test
+the accuracy of the |marx| simulations.
+
+
+
+
+.. figure:: figures/RegularGridHRCI_ds9.*
+   :align: center
+   :alt: Sources positioned like knots in a spider web. The image is very similar to the previous ACIS example.
+   :scale: 75%
+
+
+
+   `ds9`_ image of the simulation. The size of the PSF increases further away from the aimpoint.
+
+
+
+.. figure:: figures/RegularGridHRCI_hist.*
+   :align: center
+   :alt: Plot is described in the caption.
+   :scale: 75%
+
+
+
+   See previous example. The same trends are visible with a slightly larger scatter.
+
+
+
+In the central few arcmin the input position is typically recovered to better than 0.2 pixels for sources with a few hundred counts.
+

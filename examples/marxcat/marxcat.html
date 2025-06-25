@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simulating two overlapping sources &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="../../_static/documentation_options.js?v=947d29b4"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="../../_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Including background in a marx simulation" href="../background/background.html" />
+    <link rel="prev" title="Simulating an LETG/ACIS-S observation" href="../LETGpow/letgplaw.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../background/background.html" title="Including background in a marx simulation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../LETGpow/letgplaw.html" title="Simulating an LETG/ACIS-S observation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" accesskey="U">Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating two overlapping sources</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simulating-two-overlapping-sources">
+<span id="sect-ex-marxcat"></span><h1>Simulating two overlapping sources<a class="headerlink" href="#simulating-two-overlapping-sources" title="Link to this heading">¶</a></h1>
+<p>In each run of <strong>marx</strong> the user can choose one and only one source from the list
+in <a class="reference internal" href="../../indetail/models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a>. Most of these sources are simple geometric shapes
+like a point or a disk. The <a class="reference internal" href="../../indetail/models.html#sect-imagesource"><span class="std std-ref">IMAGE Source</span></a> allows the user to specify an itensity image as input to define a complicated morphology on the sky, but the spectrum is the same in every position.</p>
+<p>If spectrum <em>and</em> intensity change with position, the user can write his/her own C-code to generate the photons as described in <a class="reference internal" href="../../indetail/models.html#sect-usersource"><span class="std std-ref">USER Source</span></a>. Some of those codes are available for download, see <a class="reference internal" href="../../indetail/models.html#sect-sourcemodels"><span class="std std-ref">The spectrum and the spatial shape of the X-ray source</span></a> for links.</p>
+<p>However, in most cases it is easier to run <strong>marx</strong> several times and use <a class="reference internal" href="../../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> to combine the simulations.</p>
+<p>In this example we want to simulate a binary star, where both components are separated by only a few arcseconds. In the center of the field-of-view that is enough to separate the images of component A and B, but what happens when we insert a grating? Will the dispersed spectra overlap, or can they be separated in the data?</p>
+<p>The parameters in the following example are inspired by the observations of the M-dwarf binary EQ Peg (ObsID 8453). An analysis is presented by <a class="reference external" href="http://adsabs.harvard.edu/abs/2008A%26A...491..859L">Liefke et al. (2008)</a>. We will run two <strong>marx</strong> simulations, one for EQ Peg A and one for EQ Peg B. The parameters of the observations (poining coordinates, roll angle, exposure time, grating) have to be the same for both simulations, but the parameters for the sources (coordinates, count rate, spectrum) are different.</p>
+<section id="creating-a-file-with-the-input-spectra">
+<h2>Creating a file with the input spectra<a class="headerlink" href="#creating-a-file-with-the-input-spectra" title="Link to this heading">¶</a></h2>
+<p>First, we need to generate the input spectra. For this example, we use <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a>, but <a class="reference external" href="http://heasarc.nasa.gov/xanadu/xspec/">XSPEC</a> or <a class="reference external" href="http://space.mit.edu/cxc/isis/">ISIS</a> work very similar.
+We need two 2-column text files that tabulate the model flux [photons/sec/keV/cm^2] (second column) as a function of energy [keV] (first column).</p>
+<p>Stars are generally well described by an optically thin, collisionally excited plasma. We use a model with only a single temperature component with a different temperature for EQ Peg A and EQ Peg B and slightly non-solar abundances as suggested by <a class="reference external" href="http://adsabs.harvard.edu/abs/2008A%26A...491..859L">Liefke et al. (2008)</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># set source properties</span>
+<span class="n">set_source</span><span class="p">(</span><span class="n">xsvapec</span><span class="o">.</span><span class="n">a1</span><span class="p">)</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">Ne</span> <span class="o">=</span> <span class="mf">1.2</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">Fe</span> <span class="o">=</span> <span class="mf">0.8</span>
+
+<span class="c1"># get source</span>
+<span class="n">my_src</span> <span class="o">=</span> <span class="n">get_source</span><span class="p">()</span>
+
+<span class="c1"># set energy grid</span>
+<span class="n">bin_width</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mf">12.</span><span class="p">,</span> <span class="n">bin_width</span><span class="p">)</span>
+
+<span class="c1">### EQ Peg A ###</span>
+<span class="c1"># check that out! Download and take number from real data.</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">0.95</span>
+<span class="c1"># evaluate source on energy grid</span>
+<span class="n">flux</span> <span class="o">=</span> <span class="n">my_src</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+
+<span class="c1"># Sherpa uses the convention that an energy array holds the LOWER end of the bins;</span>
+<span class="c1"># Marx that it holds the UPPER end of a bin.</span>
+<span class="c1"># Thus, we need to shift energies and flux by one bin.</span>
+<span class="c1"># Also, we need to divide the flux by the bin width to obtain the flux density.</span>
+<span class="n">save_arrays</span><span class="p">(</span><span class="s2">&quot;EQPegA_flux.tbl&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">flux</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">bin_width</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;keV&quot;</span><span class="p">,</span><span class="s2">&quot;photons/s/cm**2/keV&quot;</span><span class="p">],</span> <span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1">### EQ Peg B ###</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="mf">0.0003</span>
+<span class="n">a1</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">flux</span> <span class="o">=</span> <span class="n">my_src</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+
+<span class="n">save_arrays</span><span class="p">(</span><span class="s2">&quot;EQPegB_flux.tbl&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">flux</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">bin_width</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;keV&quot;</span><span class="p">,</span><span class="s2">&quot;photons/s/cm**2/keV&quot;</span><span class="p">],</span> <span class="n">ascii</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>More details about the format of the <strong>marx</strong> input spectrum can be found at <a class="reference internal" href="../../indetail/models.html#parameter-SpectrumFile"><code class="xref std std-par docutils literal notranslate"><span class="pre">SpectrumFile</span></code></a>.</p>
+</section>
+<section id="running-marx">
+<h2>Running <strong>marx</strong><a class="headerlink" href="#running-marx" title="Link to this heading">¶</a></h2>
+<p>We run <strong>marx</strong> twice - once for each star.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;EQPegA_flux.tbl&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">ExposureTime</span><span class="o">=</span>5e5<span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">2006</span>.9<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">OutputDir</span><span class="o">=</span>EQPegA<span class="w"> </span><span class="nv">GratingType</span><span class="o">=</span><span class="s2">&quot;HETG&quot;</span><span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span><span class="w"> </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">352</span>.966<span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span><span class="m">19</span>.935<span class="w"> </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">290</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">352</span>.96851<span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span><span class="m">19</span>.937133
+
+marx<span class="w"> </span><span class="nv">SourceFlux</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">SpectrumType</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="w"> </span><span class="nv">SpectrumFile</span><span class="o">=</span><span class="s2">&quot;EQPegB_flux.tbl&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">ExposureTime</span><span class="o">=</span>5e5<span class="w"> </span><span class="nv">TStart</span><span class="o">=</span><span class="m">2006</span>.9<span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">OutputDir</span><span class="o">=</span>EQPegB<span class="w"> </span><span class="nv">GratingType</span><span class="o">=</span><span class="s2">&quot;HETG&quot;</span><span class="w"> </span><span class="nv">DetectorType</span><span class="o">=</span><span class="s2">&quot;ACIS-S&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">DitherModel</span><span class="o">=</span><span class="s2">&quot;INTERNAL&quot;</span><span class="w"> </span><span class="nv">RA_Nom</span><span class="o">=</span><span class="m">352</span>.966<span class="w"> </span><span class="nv">Dec_Nom</span><span class="o">=</span><span class="m">19</span>.935<span class="w"> </span><span class="nv">Roll_Nom</span><span class="o">=</span><span class="m">290</span><span class="w"> </span><span class="se">\</span>
+<span class="w">       </span><span class="nv">SourceRA</span><span class="o">=</span><span class="m">352</span>.97011<span class="w"> </span><span class="nv">SourceDEC</span><span class="o">=</span><span class="m">19</span>.937225
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../indetail/models.html#parameter-SourceFlux"><code class="xref std std-par docutils literal notranslate"><span class="pre">SourceFlux</span></code></a> parameter may be used to indicate the integrated flux of
+the spectrum. The value of <code class="docutils literal notranslate"><span class="pre">-1</span></code> means that the integrated flux is taken
+from the file. The results of the simulation will be written to sub-directories
+called <code class="docutils literal notranslate"><span class="pre">EQPegA</span></code> and <code class="docutils literal notranslate"><span class="pre">EQPegB</span></code>, as specified by the <a class="reference internal" href="../../inbrief/simsetup.html#parameter-OutputDir"><code class="xref std std-par docutils literal notranslate"><span class="pre">OutputDir</span></code></a>
+parameter. We use <a class="reference internal" href="../../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> to combine both simulations in the
+directory <code class="docutils literal notranslate"><span class="pre">EQPeg_both</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxcat<span class="w"> </span>EQPegA<span class="w"> </span>EQPegB<span class="w"> </span>EQPeg_both
+</pre></div>
+</div>
+<p>In the simulation we know exactly which photon comes from which star, so we can generate three fits files, one for EQ Peg A only, one for EQ PEg B only, and one that contains both sources, similar to the observed data.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marx2fits<span class="w"> </span>EQPegA<span class="w"> </span>EQPegA.fits
+marx2fits<span class="w"> </span>EQPegB<span class="w"> </span>EQPegB.fits
+marx2fits<span class="w"> </span>EQPeg_both<span class="w"> </span>EQPeg_both.fits
+</pre></div>
+</div>
+<p>The fits files can be further processed
+with standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> tools.  As some of these tools require the aspect
+history, the <a class="reference internal" href="../../Reference/tools.html#marxasp"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxasp</span></code></a> program is used to create an aspect
+solution file. Since both simulations used the same pointing and dither, we can
+use the same asol file for all three fits files.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>marxasp<span class="w"> </span><span class="nv">MarxDir</span><span class="o">=</span><span class="s2">&quot;EQPegA&quot;</span><span class="w"> </span><span class="nv">OutputFile</span><span class="o">=</span><span class="s2">&quot;EQPeg_asol1.fits&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="analyzing-the-results">
+<h2>Analyzing the results<a class="headerlink" href="#analyzing-the-results" title="Link to this heading">¶</a></h2>
+<p>It is interesting to look at the event file with a viewer such as
+<a class="reference external" href="http://ds9.si.edu/">ds9</a>. The grating spectra of EQ Peg A and EQ Peg B are close to each other on
+the detector, and we’ll now test if the spectrum of EQ Peg A contaminates the
+spectrum of EQ Peg B.</p>
+<figure class="align-center" id="id2">
+<span id="fig-ex-marxcat-image"></span><img alt="Two spectra on a detector very close to each other." src="../../_images/eqpeg_image.jpg" />
+<figcaption>
+<p><span class="caption-text">Small section of the detector image of the combined simulation</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>The grating spectra of both sources are located fairly close to each
+other. On the left is an MEG arm, the fainter signal of an HEG arm is
+seen on the right. The green lines mark the extraction regions for the EQ Peg B
+MEG and HEG spectra. <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tgextract.html">tgextract</a> subdivides this green region into
+source and background regions for spectral extraction.</p>
+</div>
+</figcaption>
+</figure>
+<p>We use <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a> to extract the grating spectrum from <code class="docutils literal notranslate"><span class="pre">EQPegB.fits</span></code> and
+<code class="docutils literal notranslate"><span class="pre">EGPeg_both.fits</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="nv">X</span><span class="o">=</span><span class="m">4068</span>.3<span class="p">;</span><span class="w">    </span><span class="c1"># determined by hand in ds9</span>
+<span class="nv">Y</span><span class="o">=</span><span class="m">4112</span>.7<span class="p">;</span><span class="w">    </span><span class="c1"># determined by hand in ds9</span>
+
+<span class="c1"># We&#39;ll use the same mask for both extractions, because we want the same region.</span>
+tg_create_mask<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;EQPegB.fits&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_reg1a.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">use_user_pars</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">last_source_toread</span><span class="o">=</span>A<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">sA_id</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">sA_zero_x</span><span class="o">=</span><span class="nv">$X</span><span class="w"> </span><span class="nv">sA_zero_y</span><span class="o">=</span><span class="nv">$Y</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes<span class="w"> </span><span class="nv">grating_obs</span><span class="o">=</span>header_value<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">width_factor_hetg</span><span class="o">=</span><span class="m">10</span>
+
+
+<span class="c1">### Extract EQ Peg B from the EQ PEg B - only simulation ###</span>
+
+tg_resolve_events<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;EQPegB.fits&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_evt1a.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_reg1a.fits&quot;</span><span class="w"> </span><span class="nv">acaofffile</span><span class="o">=</span><span class="s2">&quot;EQPeg_asol1.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">osipfile</span><span class="o">=</span>CALDB<span class="w"> </span><span class="nv">verbose</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+tgextract<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;EQPegB_evt1a.fits&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+
+<span class="c1">### Extract EQ Peg B from the combined simulation ###</span>
+
+tg_resolve_events<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;EQPeg_both.fits&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_both_evt1a.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_reg1a.fits&quot;</span><span class="w"> </span><span class="nv">acaofffile</span><span class="o">=</span><span class="s2">&quot;EQPeg_asol1.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="nv">osipfile</span><span class="o">=</span>CALDB<span class="w"> </span><span class="nv">verbose</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+tgextract<span class="w"> </span><span class="nv">infile</span><span class="o">=</span><span class="s2">&quot;EQPegB_both_evt1a.fits&quot;</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_both_pha2.fits&quot;</span><span class="w"> </span><span class="nv">mode</span><span class="o">=</span>h<span class="w"> </span><span class="nv">clobber</span><span class="o">=</span>yes
+
+
+<span class="c1"># make response matrices for the MEG +1 and -1 order</span>
+<span class="c1"># We are extracting the exact same region in both cases above for EXACTLY the same</span>
+<span class="c1"># observational parameters (aimpoint, exposure time, ...).</span>
+<span class="c1"># Thus the arf and rmf files will be identical, so we have to run this only once.</span>
+mkgrmf<span class="w"> </span><span class="nv">grating_arm</span><span class="o">=</span><span class="s2">&quot;MEG&quot;</span><span class="w"> </span><span class="nv">order</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;eqpeg_meg1_rmf.fits&quot;</span><span class="w"> </span><span class="nv">srcid</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">detsubsys</span><span class="o">=</span>ACIS-S3<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">threshold</span><span class="o">=</span>1e-06<span class="w"> </span><span class="nv">obsfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w"> </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">wvgrid_arf</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span><span class="w"> </span><span class="nv">wvgrid_chan</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span>
+
+mkgrmf<span class="w"> </span><span class="nv">grating_arm</span><span class="o">=</span><span class="s2">&quot;MEG&quot;</span><span class="w"> </span><span class="nv">order</span><span class="o">=</span>-1<span class="w"> </span><span class="nv">outfile</span><span class="o">=</span><span class="s2">&quot;eqpegmeg-1_rmf.fits&quot;</span><span class="w"> </span><span class="nv">srcid</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="nv">detsubsys</span><span class="o">=</span>ACIS-S3<span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">threshold</span><span class="o">=</span>1e-06<span class="w"> </span><span class="nv">obsfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w"> </span><span class="nv">regionfile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">wvgrid_arf</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span><span class="w"> </span><span class="nv">wvgrid_chan</span><span class="o">=</span><span class="s2">&quot;compute&quot;</span>
+
+fullgarf<span class="w"> </span><span class="nv">phafile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w">  </span><span class="nv">pharow</span><span class="o">=</span><span class="m">3</span><span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;EQPegB.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">asol</span><span class="o">=</span><span class="s2">&quot;EQPeg_asol1.fits&quot;</span><span class="w"> </span><span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;grid(eqpeg_meg1_rmf.fits[cols ENERG_LO,ENERG_HI])&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">maskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dafile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dtffile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">badpix</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">rootname</span><span class="o">=</span><span class="s2">&quot;eqpeg&quot;</span><span class="w"> </span><span class="nv">ardlibqual</span><span class="o">=</span><span class="s2">&quot;;UNIFORM;bpmask=0&quot;</span>
+
+fullgarf<span class="w"> </span><span class="nv">phafile</span><span class="o">=</span><span class="s2">&quot;EQPegB_pha2.fits&quot;</span><span class="w">  </span><span class="nv">pharow</span><span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="nv">evtfile</span><span class="o">=</span><span class="s2">&quot;EQPegB.fits&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">asol</span><span class="o">=</span><span class="s2">&quot;EQPeg_asol1.fits&quot;</span><span class="w"> </span><span class="nv">engrid</span><span class="o">=</span><span class="s2">&quot;grid(eqpeg_meg1_rmf.fits[cols ENERG_LO,ENERG_HI])&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">   </span><span class="nv">maskfile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dafile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">dtffile</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">badpix</span><span class="o">=</span>NONE<span class="w"> </span><span class="nv">rootname</span><span class="o">=</span><span class="s2">&quot;eqpeg&quot;</span><span class="w"> </span><span class="nv">ardlibqual</span><span class="o">=</span><span class="s2">&quot;;UNIFORM;bpmask=0&quot;</span>
+</pre></div>
+</div>
+<p>Now, we want to make use of our <strong>marx</strong> simulation to see how much the spectrum
+of EQ Peg A contaminates the extracted grating spectrum of EQ Peg B.
+We compare the spectra in <a class="reference external" href="http://cxc.harvard.edu/sherpa/">Sherpa</a>. The difference between the two spectra in
+some of the lines is caused by photons from EQ Peg A that fall in the
+extraction region of EQ Peg B.</p>
+<figure class="align-center" id="id3">
+<span id="fig-ex-marxcat-spectra"></span><img alt="The spetra differ only at short wavelength." src="../../_images/eqpeg_spectra.png" />
+<figcaption>
+<p><span class="caption-text">Contaminated and clean spectrum extracted for EQ Peg B (MEG order +1).</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>The red spectrum shows the uncontaminated spectrum of EQ Peg B, extracted
+from the simulation that contained only one source. The black spectrum is
+extracted from the combined fits file that contains both EQ Peg A and EQ Peg
+B.</p>
+</div>
+</figcaption>
+</figure>
+<p>Looking at this figure, we see that both spectra are very similar, but not
+identical - that is the contamination by EQ Peg A.</p>
+<p><a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tgextract.html">tgextract</a> uses only the innermost part of the green region in figure
+<a class="reference internal" href="#fig-ex-marxcat-image"><span class="std std-ref">Small section of the detector image of the combined simulation</span></a> for the source spectrum and apparently that is
+narrow enough to avoid most of the contamination. Still, if we want to measure
+or fit lines in the EQ Peg B spectrum we have to be careful.</p>
+<p><strong>marx</strong> simulations do not contain any background, but real data does and one
+common (although arguably not the best) approach is to subtract a background
+spectrum from the data. What would happen if we blindly subtracted
+the background from the EQ Peg B spectrum?</p>
+<figure class="align-center" id="id4">
+<span id="fig-ex-marxcat-background"></span><img alt="spectrum with negative bins" src="../../_images/eqpeg_background.png" />
+<figcaption>
+<p><span class="caption-text">“Background subtracted” spectrum for EQ Peg B</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+<div class="legend">
+<p>Because the bright spectrum
+of EQ Peg A falls in the detector region where the background is measured,
+the background is overestimated and causes bins with negative fluxes here.</p>
+</div>
+</figcaption>
+</figure>
+<p>Figure <a class="reference internal" href="#fig-ex-marxcat-background"><span class="std std-ref">“Background subtracted” spectrum for EQ Peg B</span></a> shows that we end up with a spectrum
+with a significant number of negative bins because the much brighter spectrum of EQ
+Peg A falls in the region where <a class="reference external" href="http://cxc.harvard.edu/ciao/ahelp/tgextract.html">tgextract</a> extracts the background,
+leading to an overestimate of the background.</p>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
+<p>This example shows how <a class="reference internal" href="../../Reference/tools.html#marxcat"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marxcat</span></code></a> can be used to build up a more complex distribution of sources on the sky from simple components. We can asses how much the sources overlap and compare the simulated spectra of each component and thus estimate the contamination in the real data.</p>
+<p>In this example we simulated grating spectra of a binary star, but the same principle works for all cases where sources overlap on the detector, e.g. a cluster of galaxies with a foreground HMXB, binary AGN, or imaging of a dense star forming region.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="../../search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="../../index.html">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Simulating two overlapping sources</a><ul>
+<li><a class="reference internal" href="#creating-a-file-with-the-input-spectra">Creating a file with the input spectra</a></li>
+<li><a class="reference internal" href="#running-marx">Running <strong>marx</strong></a></li>
+<li><a class="reference internal" href="#analyzing-the-results">Analyzing the results</a></li>
+<li><a class="reference internal" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../LETGpow/letgplaw.html"
+                          title="previous chapter">Simulating an LETG/ACIS-S observation</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../background/background.html"
+                          title="next chapter">Including background in a <strong>marx</strong> simulation</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="../../_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="../../_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="../background/background.html" title="Including background in a marx simulation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../LETGpow/letgplaw.html" title="Simulating an LETG/ACIS-S observation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">MARX 5.5.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../examples.html" >Examples of MARX in use</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Simulating two overlapping sources</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>

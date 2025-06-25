@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Welcome to MARX’s documentation! &#8212; MARX 5.5.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/marxwebtheme.css?v=c47e7066" />
+    
+    <script src="_static/documentation_options.js?v=947d29b4"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within MARX 5.5.3 documentation"
+          href="_static/opensearch.xml"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="MARX in brief" href="inbrief/overview.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="inbrief/overview.html" title="MARX in brief"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to MARX’s documentation!</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="welcome-to-marx-s-documentation">
+<h1>Welcome to MARX’s documentation!<a class="headerlink" href="#welcome-to-marx-s-documentation" title="Link to this heading">¶</a></h1>
+<div class="admonition-current-version-of-marx-is-release admonition">
+<p class="admonition-title">Current version of <strong>marx</strong> is 5.5.3.</p>
+<p>Version 5.5.3 is identical to the previous version 5.5.2
+except to a small tweak in the installation scripts that help
+when compiling marx on Apple’s ARM chips.
+See <a class="reference internal" href="inbrief/install.html#installing"><span class="std std-ref">Downloading and Installing Marx</span></a> for installation instructions.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is the last release of the <strong>marx</strong> 5.x series. In the next release,
+we will introduce a better treatment of ACIS grades and sub-pixel
+positions. Also, we will remove a few tools that convert marx binary
+results into other formats. Going forward, the only supported tool for
+this purpose is <a class="reference internal" href="Reference/tools.html#marx2fits"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2fits</span></code></a>, followed by standard <a class="reference external" href="http://cxc.harvard.edu/ciao/">CIAO</a>
+procedures to make images or extract spectra. We will remove all the IDL
+tools shipped with <strong>marx</strong> (e.g. <a class="reference internal" href="Reference/tools.html#make_image"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">make_image</span></code></a>) and
+<a class="reference internal" href="Reference/tools.html#marx2dpde"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2dpde</span></code></a> and <a class="reference internal" href="Reference/tools.html#marx2img"><code class="xref std std-marxtool docutils literal notranslate"><span class="pre">marx2img</span></code></a>.</p>
+</div>
+<p><strong>marx</strong> is a suite of programs created and maintained by the
+<a class="reference external" href="http://space.mit.edu/cxc/">MIT/CXC/HETG group</a> group and is designed
+to enable the user to simulate the on-orbit performance of the Chandra
+X-ray Observatory. <strong>marx</strong> provides a detailed ray-trace
+simulation of how Chandra responds to a variety of astrophysical
+sources and can generate standard FITS event files and images as
+output. It contains detailed models for Chandra’s High Resolution
+Mirror Assembly (HRMA), the HETG and LETG gratings, and all the focal
+plane detectors.</p>
+<p>If you publish any work that made use of <strong>marx</strong>, please cite the
+paper <a class="reference external" href="http://adsabs.harvard.edu/abs/2012SPIE.8443E..1AD">Raytracing
+with MARX: x-ray observatory design, calibration, and support (Davis et al. 2012, SPIE 8443, 84431A)</a>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inbrief/overview.html">MARX in brief</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="inbrief/news.html">Highlights for each version of <strong>marx</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="inbrief/install.html">Downloading and Installing Marx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inbrief/caveats.html">Current caveats for MARX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inbrief/simsetup.html">Running <strong>marx</strong> simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inbrief/gettinghelp.html">Reporting a problem or issue</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html">Examples of MARX in use</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/ACISpowerpileup/powerlaw.html">Simulating a user-defined CCD spectrum with ACIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/ACISpowerpileup/powerlaw.html#simulating-pile-up-in-an-acis-ccd-spectrum">Simulating pile-up in an ACIS CCD spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/aped/aped.html">Simulating a thermal plasma with the HETGS grating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/hetgplaw/hetgplaw.html">HETG simulation of an extended source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/LETGpow/letgplaw.html">Simulating an LETG/ACIS-S observation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/marxcat/marxcat.html">Simulating two overlapping sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/background/background.html">Including background in a <strong>marx</strong> simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/simobs/simobs.html">Replicating a Chandra Observation / Using ChaRT or SAOTrace</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="indetail/docs.html">Detailed information on MARX</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="indetail/pileup.html">Simulating ACIS Pileup with <strong>marx</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="indetail/aspect.html">Simulating Aspect with <strong>marx</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="indetail/rsp.html">Using Response Matrices with <strong>marx</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="indetail/saosac.html">Using <strong>marx</strong> with SAOSAC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="indetail/models.html">The spectrum and the spatial shape of the X-ray source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="indetail/hardwaremodel.html">The <strong>marx</strong> Models for the Spacecraft</a></li>
+<li class="toctree-l2"><a class="reference internal" href="indetail/hardwaremodel.html#simulating-ground-calibration-data">Simulating ground calibration data</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests/index.html"><strong>marx</strong> accuracy and testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests/PSF.html">Point Spread Function (PSF)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/grades.html">Flight grade distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/spectrum.html">Reproducing an input spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/source.html">Sources in <strong>marx</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/positions.html">Coordinates on the sky and the chip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/listofcode.html">List of code used to run tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Reference/reference.html"><strong>marx</strong> reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Reference/faqs.html">MARX Frequently Asked Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Reference/tools.html">The <strong>marx</strong> tool suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Reference/othermarxpars.html">Further <strong>marx</strong> parameters</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="std-parindex.html"><span class="std std-ref">Marx Parameters</span></a></p></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+<section id="contributing-to-marx">
+<h1>Contributing to MARX<a class="headerlink" href="#contributing-to-marx" title="Link to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer/contributing.html">Contributing code or documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/release.html">Making a release</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer/release.html#preparation">Preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer/release.html#source-repro">Source repro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer/release.html#documentation-repro">Documentation repro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="developer/release.html#get-the-word-out">Get the word out</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<form action="search.html" method="get">
+<input type="text" name="q" placeholder="Search" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+  <h3><a href="#">Page Content</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to MARX’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#contributing-to-marx">Contributing to MARX</a></li>
+</ul>
+
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="inbrief/overview.html"
+                          title="next chapter">MARX in brief</a></p>
+  </div><hr style="color: #FFF;"></hr>
+<a href="http://cxc.harvard.edu/">
+    <img src="_static/cxcfooterCXCicon.png" 
+	 alt="Chandra X-ray Center" class="img-logo"></img>
+</a>
+<p></p>
+<a href="http://space.mit.edu/cxc/">CXC@MIT</a>
+<p></p>
+<a href="http://space.mit.edu/">
+    <img src="_static/logo-mit-kavli.png" 
+	 alt="MIT Kavli Institute" class="img-logo"></img>
+</a>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="std-parindex.html" title="MARX Parameter Index"
+             >MARX Parameters</a> |</li>
+        <li class="right" >
+          <a href="inbrief/overview.html" title="MARX in brief"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">MARX 5.5.3 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to MARX’s documentation!</a></li> 
+      </ul>
+    </div>
+    <div class="footer">
+    <a href="mailto:marx-help@space.mit.edu">MARX support: marx-help@space.mit.edu</a>
+    <a href="https://accessibility.mit.edu/">Accessibility</a>
+        &copy; Copyright 2002-2023, Massachusetts Institute of Technology.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.2.6.
+    </div>
+  </body>
+</html>
